@@ -1,0 +1,31 @@
+<div class="main">    
+    <div class="sub_main">
+        <h1 id="h_tok">Tokenizer</h1>
+        <p id="introduction">This is the tokenizer demo that I built and trained from scratch. Check my  
+            <a href="https://github.com/danksup/nn-from-scratch/blob/main/engine/tokenizer.py" target="_blank" class="link_introduction">tokenizer</a> 
+            or the full project on
+            <a href="https://github.com/danksup/nn-from-scratch/tree/main/" target="_blank" class="link_introduction">github</a> 
+            for more if you want. </p>
+        <textarea placeholder="Type something here" id="input" rows="10"></textarea>
+        <br>
+        <button id="clear">clear</button>
+        <br><br>
+        <textarea readonly id="output" tabindex="-1" rows="10"></textarea>
+
+        <div class="stat">
+            <div class="stat_token">
+                <p>Tokens: </p>
+                <div class="stat_num" id="token_count">0</div>
+            </div>
+
+            <div class="stat_char">
+                <p>Characters: </p>
+                <div class="stat_num" id="character_count">0</div>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
+<script type="module" src="./script.js"></script>
+<link rel="stylesheet" href="./style.css">
