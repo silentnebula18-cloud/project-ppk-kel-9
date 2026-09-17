@@ -1,37 +1,43 @@
 
-<body id="field_body">
-    <div id="signup_card">
-        <div id="username_wrapper">
-            <input id="username" class="info_field" placeholder="username"></input>
-            <p id="username_taken" class="taken">Username tidak tersedia</p>
-        </div>
-        
-        <div id="password_wrapper"> 
-            <input id="password" class="info_field" placeholder="password" type="password"></input>
-            <label id="show_password_label">
-                <input type="checkbox" id="show_password"> Tunjukkan password
-            </label>
-            <div id="pass_checks">
-                <p id="eight" class="check_pass">Mengandung 8 huruf atau lebih</p>
-                <p id="num" class="check_pass">Mengandung sebuah angka</p>
-                <p id="symbol" class="check_pass">Mengandung sebuah simbol</p>
-            </div>            
-        </div>
-       
-        <div id="email_wrapper">
-            <input id="email" class="info_field" placeholder="email"></input>
-            <p id="email_taken" class="taken">Email sudah terdaftar. <a href="../views/login.html">login</a></p>
-        </div>
+<body>
+    <div id="dashboard_header">
+            <span id="header_logo">⌂</span>
+            <span id="header_title">Signup</span>
+    </div>
 
-        <button id="signup_button">signup</button>
-
-        <div id="helpful_texts">
-            <p  id="signup">sudah punya akun? <a href="../views/login.html">login</a></p>
-        </div>
+    <div id="field_body">
+        <div id="signup_card">
+            <div id="username_wrapper">
+                <input id="username" class="info_field" placeholder="username"></input>
+                <p id="username_taken" class="taken">Username tidak tersedia</p>
+            </div>
+            
+            <div id="password_wrapper"> 
+                <input id="password" class="info_field" placeholder="password" type="password"></input>
+                <label id="show_password_label">
+                    <input type="checkbox" id="show_password"> Tunjukkan password
+                </label>
+                <div id="pass_checks">
+                    <p id="eight" class="check_pass">Mengandung 8 huruf atau lebih</p>
+                    <p id="num" class="check_pass">Mengandung sebuah angka</p>
+                    <p id="symbol" class="check_pass">Mengandung sebuah simbol</p>
+                </div>            
+            </div>
         
+            <div id="email_wrapper">
+                <input id="email" class="info_field" placeholder="email"></input>
+                <p id="email_taken" class="taken">Email sudah terdaftar. <a href="../views/login.html">login</a></p>
+            </div>
+
+            <button id="signup_button">SIGN UP</button>
+
+            <div id="helpful_texts">
+                <p  id="signup">Sudah punya akun? <a href="../views/login.html">login</a></p>
+            </div>
+            
+        </div>
     </div>
 </body>
-
 
 <link rel="stylesheet" href="../public/css/signup_style.css">
 <script type="module" src="../public/js/validasi_signup.js"></script>

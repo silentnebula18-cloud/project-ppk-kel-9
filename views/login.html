@@ -1,27 +1,33 @@
+<body>
+    <div id="dashboard_header">
+            <span id="header_logo">⌂</span>
+            <span id="header_title">Login</span>
+    </div>
 
-<body id="field_body">
-    <div id="login_card">
-        <div id="invalid_div">
-            <p id="invalid_credential_text" role="alert"></p>
-        </div>
-        <input id="username" class="info_field" placeholder="username"></input>
+    <div id="field_body">
         
-        <div id="password_wrapper"> 
-            <input id="password" class="info_field" placeholder="password" type="password"></input>
-            <label id="show_password_label">
-                <input type="checkbox" id="show_password"> Tunjukkan password
-            </label>
-        </div>
+        <div id="login_card">
+            <div id="invalid_div">
+                <p id="invalid_credential_text" role="alert"></p>
+            </div>
+            <input id="username" class="info_field" placeholder="username"></input>
+            
+            <div id="password_wrapper"> 
+                <input id="password" class="info_field" placeholder="password" type="password"></input>
+                <label id="show_password_label">
+                    <input type="checkbox" id="show_password"> Tunjukkan password
+                </label>
+            </div>
 
-        <button id="login_button">LOGIN</button>
-        <div id="login_texts">
-            <p  id="signup">Belum punya akun? <a href="../views/signup.html">Daftar</a></p>
-            <a href="https://youtube.com">lupa password</a>
+            <button id="login_button">LOGIN</button>
+            <div id="login_texts">
+                <p  id="signup">Belum punya akun? <a href="../views/signup.html">Daftar</a></p>
+                <a href="https://youtube.com">lupa password</a>
+            </div>
+            
         </div>
-        
     </div>
 </body>
-
 
 <link rel="stylesheet" href="../public/css/login_style.css">
 <script type="module" src="../public/js/validasi_login.js"></script>

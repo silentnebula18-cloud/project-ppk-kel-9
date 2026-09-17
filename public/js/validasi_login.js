@@ -7,6 +7,12 @@ let invalid_credential_text = document.getElementById("invalid_credential_text")
 let invalid_div = document.getElementById("invalid_div")
 
 let show_password_box = document.getElementById("show_password")
+
+let home_button = document.getElementById("header_logo")
+home_button.addEventListener("click", function(){
+    window.location.replace("../views/index.html")
+})
+
 show_password_box.addEventListener("change", show_password)
 
 login_button.addEventListener("click", on_login_button_click)

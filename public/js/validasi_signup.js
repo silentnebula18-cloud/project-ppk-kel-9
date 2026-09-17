@@ -15,6 +15,11 @@ let email_alert = document.getElementById("email_taken")
 
 let show_password_box = document.getElementById("show_password")
 
+let home_button = document.getElementById("header_logo")
+home_button.addEventListener("click", function(){
+    window.location.replace("../views/index.html")
+})
+
 password_field.addEventListener("input", password_check)
 username_field.addEventListener("input", username_check)
 email_field.addEventListener("input", email_check)
@@ -22,6 +27,8 @@ email_field.addEventListener("input", email_check)
 signup_button.addEventListener("click", signup)
 
 show_password_box.addEventListener("change",show_password)
+
+
 
 function show_password(){
     if (show_password_box.checked){

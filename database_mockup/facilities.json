@@ -1,3 +1,11 @@
 [
-    
+    {
+        "id":0,
+        "fac_name":"A302",
+        "type":"ruang_kelas",
+        "location":"bumi",
+        "capacity":9,
+        "fac_desc":"what",
+        "fac_status":"aktif"
+    }
 ]
