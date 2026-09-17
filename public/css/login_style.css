@@ -1,0 +1,47 @@
+#field_body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+#login_card{
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    max-width: 50vh;
+    width: 100%;
+}
+
+.info_field{
+    box-sizing: border-box;
+    padding: 8px; 
+    width: 100%;
+}
+
+#login_texts{
+    font-size: 14px;
+}
+
+#invalid_div{
+    background-color: pink;
+    padding-left: 10px;
+    visibility: hidden;
+}
+#invalid_credential_text{
+    color: red;
+}
+
+#login_button{
+    padding: 8px; 
+    font-size: 100%;
+}
+
+#show_password_label{
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    margin: 4px 0;
+    cursor: pointer;
+}

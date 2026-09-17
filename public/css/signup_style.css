@@ -1,0 +1,60 @@
+#field_body{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+}
+
+#signup_card{
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    max-width: 50vh;
+    width: 100%;
+}
+
+.info_field{
+    box-sizing: border-box;
+    padding: 8px; 
+    width: 100%;
+}
+
+#helpful_texts{
+    font-size: 14px;
+}
+
+#signup_button{
+    padding: 8px; 
+    font-size: 100%;
+}
+
+#pass_checks{
+    background-color: gainsboro;
+    font-size: 8px;
+    padding-left: 3px;
+}
+
+.check_pass{
+    color: red;
+}
+
+#username_wrapper{
+    display: flex;
+    flex-direction: column;
+    margin: 4px 0 0 0;
+}
+
+.taken{
+    font-size: 10px;
+    color: red;
+    display: none;
+}
+
+#show_password_label{
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+    margin: 4px 0;
+    cursor: pointer;
+}
