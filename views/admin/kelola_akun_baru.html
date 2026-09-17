@@ -1,0 +1,46 @@
+<body id="admin_body">
+    <div id="dashboard_header">
+        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_title">Dashboard Admin</span>
+        <button id="logout_btn">LogOut</button>
+    </div>
+
+    <div id="dashboard_layout">
+        <div id="sidebar" class="hidden">
+            <a class="nav_item" href="admin_beranda.html"><span class="nav_icon">🏠</span>Beranda</a>
+            <a class="nav_item active" href="kelola_akun.html"><span class="nav_icon">👤</span>Kelola akun</a>
+            <a class="nav_item" href="kelola_fasilitas.html"><span class="nav_icon">🏢</span>Kelola fasilitas</a>
+        </div>
+
+        <div id="main_content">
+            <h3>Buat Akun Baru (Petugas/Pengguna)</h3>
+
+            <div class="form_row">
+                <label>Username:</label>
+                <input type="text" id="new_username" placeholder="--">
+            </div>
+            <div class="form_row">
+                <label>Password:</label>
+                <input type="password" id="new_password" placeholder="--">
+            </div>
+            <div class="form_row">
+                <label>Email:</label>
+                <input type="text" id="new_email" placeholder="--">
+            </div>
+            <div class="form_row">
+                <label>Roles:</label>
+                <select id="new_role">
+                    <option value="">--</option>
+                    <option value="Petugas">Petugas</option>
+                    <option value="Pengguna">Pengguna</option>
+                </select>
+            </div>
+
+            <button onclick="createAccount()">Create Account</button>
+        </div>
+    </div>
+</body>
+
+<link rel="stylesheet" href="../../public/css/admin/admin_style.css">
+<script src="../../public/js/admin/sidebar.js"></script>
+<script src="../../public/js/admin/form_actions.js"></script>

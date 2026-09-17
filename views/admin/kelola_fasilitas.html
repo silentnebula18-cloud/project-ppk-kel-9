@@ -1,0 +1,58 @@
+<body id="admin_body">
+    <div id="dashboard_header">
+        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_title">Dashboard Admin</span>
+        <button id="logout_btn">LogOut</button>
+    </div>
+
+    <div id="dashboard_layout">
+        <div id="sidebar" class="hidden">
+            <a class="nav_item" href="admin_beranda.html"><span class="nav_icon">🏠</span>Beranda</a>
+            <a class="nav_item" href="kelola_akun.html"><span class="nav_icon">👤</span>Kelola akun</a>
+            <a class="nav_item active" href="kelola_fasilitas.html"><span class="nav_icon">🏢</span>Kelola fasilitas</a>
+        </div>
+
+        <div id="main_content">
+            <div id="content_top_bar">
+                <h3>Daftar Fasilitas</h3>
+                <a href="kelola_fasilitas_baru.html"><button>Add Fasilitas</button></a>
+            </div>
+
+            <input type="text" placeholder="search by nama fasilitas" oninput="filterTable(this, 'fasilitas_table')">
+
+            <table id="fasilitas_table">
+                <tr>
+                    <th>fac_id</th>
+                    <th>name</th>
+                    <th>...</th>
+                    <th>status</th>
+                    <th>Frekuensi rsv</th>
+                    <th>Frek Kerusakan</th>
+                </tr>
+                <tr>
+                    <td><a href="kelola_fasilitas_detail.html">id123</a></td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                </tr>
+                <tr>
+                    <td><a href="kelola_fasilitas_detail.html">id124</a></td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                </tr>
+            </table>
+
+            <button onclick="downloadRekap()">Download Rekap</button>
+        </div>
+    </div>
+</body>
+
+<link rel="stylesheet" href="../../public/css/admin/admin_style.css">
+<script src="../../public/js/admin/sidebar.js"></script>
+<script src="../../public/js/admin/table_actions.js"></script>
+<script src="../../public/js/admin/form_actions.js"></script>

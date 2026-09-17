@@ -1,0 +1,39 @@
+<body id="admin_body">
+    <div id="dashboard_header">
+        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_title">Dashboard Admin</span>
+        <button id="logout_btn">LogOut</button>
+    </div>
+
+    <div id="dashboard_layout">
+        <div id="sidebar" class="hidden">
+            <a class="nav_item" href="admin_beranda.html"><span class="nav_icon">🏠</span>Beranda</a>
+            <a class="nav_item" href="kelola_akun.html"><span class="nav_icon">👤</span>Kelola akun</a>
+            <a class="nav_item active" href="kelola_fasilitas.html"><span class="nav_icon">🏢</span>Kelola fasilitas</a>
+        </div>
+
+        <div id="main_content">
+            <h3>Masuk Data Fasilitas Baru</h3>
+            <p id="form_note">Catatan: Saat data fasilitas berhasil dimasukan, status langsung aktif (bisa di-rsv)</p>
+
+            <div class="form_row">
+                <label>Data 1:</label>
+                <input type="text" id="fasilitas_data1" placeholder="--">
+            </div>
+            <div class="form_row">
+                <label>Data 2:</label>
+                <input type="text" id="fasilitas_data2" placeholder="--">
+            </div>
+            <div class="form_row">
+                <label>Data 3:</label>
+                <input type="text" id="fasilitas_data3" placeholder="--">
+            </div>
+
+            <button onclick="createFasilitas()">Create Data</button>
+        </div>
+    </div>
+</body>
+
+<link rel="stylesheet" href="../../public/css/admin/admin_style.css">
+<script src="../../public/js/admin/sidebar.js"></script>
+<script src="../../public/js/admin/form_actions.js"></script>

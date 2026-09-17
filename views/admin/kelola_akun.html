@@ -1,0 +1,55 @@
+<body id="admin_body">
+    <div id="dashboard_header">
+        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_title">Dashboard Admin</span>
+        <button id="logout_btn">LogOut</button>
+    </div>
+
+    <div id="dashboard_layout">
+        <div id="sidebar" class="hidden">
+            <a class="nav_item" href="admin_beranda.html"><span class="nav_icon">🏠</span>Beranda</a>
+            <a class="nav_item active" href="kelola_akun.html"><span class="nav_icon">👤</span>Kelola akun</a>
+            <a class="nav_item" href="kelola_fasilitas.html"><span class="nav_icon">🏢</span>Kelola fasilitas</a>
+        </div>
+
+        <div id="main_content">
+            <div id="content_top_bar">
+                <h3>Daftar Akun Pending</h3>
+                <a href="kelola_akun_baru.html"><button>Bikin akun baru</button></a>
+            </div>
+
+            <input type="text" placeholder="Search by Username/Email" oninput="filterTable(this, 'akun_table')">
+
+            <table id="akun_table">
+                <tr>
+                    <th>Username</th>
+                    <th>Password</th>
+                    <th>Email</th>
+                    <th>Role</th>
+                    <th>Tanggal daftar</th>
+                    <th>Admit?</th>
+                </tr>
+                <tr>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td><button onclick="admitAccount(this)">Admit</button></td>
+                </tr>
+                <tr>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td>--</td>
+                    <td><button onclick="admitAccount(this)">Admit</button></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</body>
+
+<link rel="stylesheet" href="../../public/css/admin/admin_style.css">
+<script src="../../public/js/admin/sidebar.js"></script>
+<script src="../../public/js/admin/table_actions.js"></script>

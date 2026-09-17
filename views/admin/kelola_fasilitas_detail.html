@@ -1,0 +1,32 @@
+<body id="admin_body">
+    <div id="dashboard_header">
+        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_title">Dashboard Admin</span>
+        <button id="logout_btn">LogOut</button>
+    </div>
+
+    <div id="dashboard_layout">
+        <div id="sidebar" class="hidden">
+            <a class="nav_item" href="admin_beranda.html"><span class="nav_icon">🏠</span>Beranda</a>
+            <a class="nav_item" href="kelola_akun.html"><span class="nav_icon">👤</span>Kelola akun</a>
+            <a class="nav_item active" href="kelola_fasilitas.html"><span class="nav_icon">🏢</span>Kelola fasilitas</a>
+        </div>
+
+        <div id="main_content">
+            <div id="content_top_bar">
+                <h3>Nama Fasilitas<br><span id="detail_id">id123</span></h3>
+                <button onclick="editFasilitas()">Edit</button>
+            </div>
+
+            <p>Desc..</p>
+            <p>detail lainnya</p>
+
+            <button id="delete_btn" onclick="hapusFasilitas()">Hapus</button>
+        </div>
+    </div>
+</body>
+
+<link rel="stylesheet" href="../../public/css/admin/admin_style.css">
+<script src="../../public/js/admin/sidebar.js"></script>
+<script src="../../public/js/admin/table_actions.js"></script>
+<script src="../../public/js/admin/form_actions.js"></script>
