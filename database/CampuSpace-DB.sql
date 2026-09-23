@@ -98,7 +98,7 @@ CREATE TABLE reports(
             ELSE TRUE
 		END
 		),
-	closed_at TIMESTAMP,
+	closed_at TIMESTAMP NULL,
     
     CONSTRAINT fk_reports_users FOREIGN KEY (user_id) REFERENCES users(user_id),
     CONSTRAINT fk_reports_facilites FOREIGN KEY (fac_id) REFERENCES facilities(fac_id)
