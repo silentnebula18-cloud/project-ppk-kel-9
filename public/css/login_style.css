@@ -76,6 +76,7 @@ button{
     background-color: pink;
     padding-left: 10px;
     visibility: hidden;
+    border-radius: 5px;
 }
 #invalid_credential_text{
     color: red;

@@ -1,4 +1,6 @@
 import users from "../../database_mockup/users.json" with { type: "json" };
+import unverified_accs from "../../database_mockup/unverified_acc.json" with { type: "json" };
+
 
 let username_field = document.getElementById("username")
 let password_field = document.getElementById("password")
@@ -42,7 +44,8 @@ function show_password(){
 function username_check(){
     let username = username_field.value
     let search_username = search(users, "username", username)
-    let exist = search_username[0]
+    let search_username_unverified = search(unverified_accs, "username", username)
+    let exist = search_username[0] || search_username_unverified[0]
     if (exist){
         username_alert.style.display = "block"
     }else{
@@ -103,11 +106,19 @@ function email_check(){
             break
         }
     }
+    for (let user of unverified_accs){
+        if (user["email"] === email){
+            valid_email = false
+            email_alert.style.display = "block"
+            break
+        }
+    }
 
     return valid_email
 }
 
 async function signup(){
+    console.log(email_check() && password_check() && username_check())
     if (email_check() && password_check() && username_check()){
         signup_button.disabled = true
         let password = password_field.value
@@ -130,6 +141,7 @@ async function signup(){
                 let result = await response.json()
 
                 if (result.status == 'success'){
+                    reset_field()
                     console.log('yay')
                 }else{
                     throw `${result.status} ${result.message}`
@@ -154,4 +166,13 @@ function search(obj, key, value){
         }
     }
     return [false, -1]
+}
+
+function reset_field(){
+    username_field.value = ""
+    email_field.value = ""
+    password_field.value = ""
+    password_check()
+    email_check()
+    username_check()
 }

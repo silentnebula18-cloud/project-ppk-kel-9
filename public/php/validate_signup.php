@@ -1,8 +1,8 @@
 <?php
 header('Content-Type: application/json');
 
-$users_raw = file_get_contents('../../database_mockup/unverified_acc.json');
-$users = json_decode($users_raw, true) ?? [];
+$unverified_users_raw = file_get_contents('../../database_mockup/unverified_acc.json');
+$unverified_users = json_decode($unverified_users_raw, true) ?? [];
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -19,8 +19,8 @@ if ($data){
         $username = $data['username'] ;
         $password = $data['password'] ;
 
-        if (validate_password($password) and validate_username($username, $users) and validate_email($email, $users)){
-            update_database($users, $email, $username, $password);
+        if (validate_password($password) and validate_username($username, $unverified_users) and validate_email($email, $unverified_users)){
+            update_database($unverified_users, $email, $username, $password);
             $response = response_success();
         }else{
             $response = response_error(":/");
@@ -42,16 +42,16 @@ function validate_password($password){
     return $passwordLength >= 8 and preg_match('/[0-9]/', $password) and preg_match('/[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]/', $password);
 }
 
-function validate_username($username, $users){
-    $search_user = search($users, "username", $username);
+function validate_username($username, $unverified_users){
+    $search_user = search($unverified_users, "username", $username);
     if ($search_user[0]){
         return false;
     }
     return true;
 }
 
-function validate_email($email, $users){
-    $search_user = search($users, "email", $email);
+function validate_email($email, $unverified_users){
+    $search_user = search($unverified_users, "email", $email);
     if ($search_user[0]){
         return false;
     }
@@ -66,14 +66,14 @@ function response_error($msg){
     return ['status' => 'error', 'message' => $msg];
 }
 
-function update_database($users, $email, $username, $password) {
+function update_database($unverified_users, $email, $username, $password) {
     $next_id = 0;
-    if (!empty($users)) {
-        $last_user = end($users);
-        $next_id = isset($last_user['id']) ? $last_user['id'] + 1 : count($users);
+    if (!empty($unverified_users)) {
+        $last_user = end($unverified_users);
+        $next_id = isset($last_user['id']) ? $last_user['id'] + 1 : count($unverified_users);
     }
 
-    $users[] = [
+    $unverified_users[] = [
         'id'       => $next_id,
         'username' => $username,
         'password' => $password,
@@ -81,7 +81,7 @@ function update_database($users, $email, $username, $password) {
         'email'    => $email
     ];
 
-    $encoded = json_encode($users, JSON_PRETTY_PRINT);
+    $encoded = json_encode($unverified_users, JSON_PRETTY_PRINT);
     file_put_contents("../../database_mockup/unverified_acc.json", $encoded, LOCK_EX);
 }
 
