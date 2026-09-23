@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Dashboard Petugas - PPK</title>
-    <link rel="stylesheet" href="/public/css/style.css"> <!-- Sesuaikan file CSS kamu -->
+    <link rel="stylesheet" href="/public/css/style.css">
 </head>
 <body>
 
@@ -13,6 +13,19 @@
     <div class="main-content" style="flex: 2; border: 2px solid #000; padding: 15px;">
         <h2>Reservations</h2>
         <hr>
+
+        <!-- Notifikasi Pesan Sukses / Gagal (Gagal karena Jadwal Bentrok) -->
+        <?php if (isset($_SESSION['flash_error'])): ?>
+            <div style="background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                <?= $_SESSION['flash_error']; unset($_SESSION['flash_error']); ?>
+            </div>
+        <?php endif; ?>
+
+        <?php if (isset($_SESSION['flash_success'])): ?>
+            <div style="background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb; padding: 10px; margin-bottom: 15px; border-radius: 4px;">
+                <?= $_SESSION['flash_success']; unset($_SESSION['flash_success']); ?>
+            </div>
+        <?php endif; ?>
         
         <?php if (empty($pendingReservations)): ?>
             <p>There are no reservations at the moment...</p>
@@ -26,15 +39,14 @@
                     
                     <!-- Aksi Setujui / Tolak -->
                     <div style="display: flex; gap: 10px; margin-top: 10px;">
-                        <form action="/officer/reservation/approve.php" method="POST">
+                        <!-- Form Setujui -->
+                        <form action="index.php?action=approve_reservation" method="POST">
                             <input type="hidden" name="rsv_id" value="<?= $rsv['rsv_id'] ?>">
-                            <button type="submit" style="background: green; color: white;">Setujui</button>
+                            <button type="submit" style="background: green; color: white; border: none; padding: 6px 12px; cursor: pointer;" onclick="return confirm('Setujui reservasi ini?')">Setujui</button>
                         </form>
                         
-                        <form action="/officer/reservation/reject.php" method="POST">
-                            <input type="hidden" name="rsv_id" value="<?= $rsv['rsv_id'] ?>">
-                            <button type="submit" style="background: red; color: white;">Tolak</button>
-                        </form>
+                        <!-- Tombol Tolak (Memicu Modal Pop-up) -->
+                        <button type="button" style="background: red; color: white; border: none; padding: 6px 12px; cursor: pointer;" onclick="openRejectModal('<?= $rsv['rsv_id'] ?>')">Tolak</button>
                     </div>
                 </div>
             <?php endforeach; ?>
@@ -83,6 +95,34 @@
     </div>
 
 </div>
+
+<!-- Modal Form Penolakan (Pop-up SRS 9) -->
+<div id="rejectModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:999; justify-content:center; align-items:center;">
+    <div style="background:#fff; padding:20px; border-radius:5px; width:400px; box-shadow:0 4px 8px rgba(0,0,0,0.2);">
+        <h3 style="margin-top:0;">Alasan Penolakan</h3>
+        <form action="index.php?action=reject_reservation" method="POST">
+            <input type="hidden" name="rsv_id" id="modal_rsv_id">
+            <label for="rejection_reason">Masukkan alasan penolakan:</label><br>
+            <textarea name="rejection_reason" id="rejection_reason" rows="4" style="width:100%; margin-top:8px; margin-bottom:15px;" required></textarea>
+            
+            <div style="display:flex; justify-content:flex-end; gap:10px;">
+                <button type="button" onclick="closeRejectModal()" style="padding:6px 12px; cursor:pointer;">Batal</button>
+                <button type="submit" style="background:red; color:white; border:none; padding:6px 12px; cursor:pointer;">Kirim Penolakan</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openRejectModal(id) {
+    document.getElementById('modal_rsv_id').value = id;
+    document.getElementById('rejectModal').style.display = 'flex';
+}
+
+function closeRejectModal() {
+    document.getElementById('rejectModal').style.display = 'none';
+}
+</script>
 
 </body>
 </html>
