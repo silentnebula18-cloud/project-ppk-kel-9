@@ -1,0 +1,90 @@
+:root{
+    --primary: #4f46e5;
+    --primary-dark: #4338ca;
+    --bg: #f4f5f9;
+    --surface: #ffffff;
+    --border: #e2e4ea;
+    --text: #1f2430;
+    --text-muted: #6b7280;
+    --danger: #dc2626;
+}
+
+* {
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", sans-serif;
+}
+
+#dashboard_header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: var(--surface);
+    padding: 14px 20px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+}
+
+#header_logo {
+    cursor: pointer;
+    font-size: 18px;
+    color: var(--primary);
+    transition: transform 0.15s;
+}
+
+#header_logo:hover {
+    transform: scale(1.15);
+}
+
+#header_title {
+    flex: 1;
+    font-weight: bold;
+    font-style: italic;
+    color: var(--text);
+}
+
+button {
+    background-color: var(--primary);
+    color: #fff;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    transition: background-color 0.15s;
+}
+
+#logout_btn {
+    background-color: transparent;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+}
+
+#logout_btn:hover {
+    background-color: var(--bg);
+    color: var(--text);
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    background-color: var(--surface);
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
+}
+
+th, td {
+    padding: 10px 12px;
+    text-align: left;
+    font-size: 13px;
+    border-bottom: 1px solid var(--border);
+}
+
+th {
+    background-color: var(--bg);
+    color: var(--text_muted);
+    font-weight: bold;
+}
+
+tr:hover td {
+    background-color: #f9fafc;
+}
