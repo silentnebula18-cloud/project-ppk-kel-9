@@ -159,6 +159,68 @@
     background-color: var(--primary-dark);
 }
 
+/*----------- POP UP DETAIL FASILITAS ------------*/
+#popUp_detail_fas_rsv {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#popUp_detail_fas_rsv.hidden {
+    display: none;
+}
+
+#popUp_content {
+    background-color: var(--surface);
+    padding: 0px;
+    border-radius: 8px;
+    width: 700px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+/* POP UP HEADER */
+#popUp_header {
+   background-color: var(--primary);
+   border-radius: 8px 8px 0px 0px;
+   box-sizing: border-box;
+   height: 35px;
+   padding: 10px;
+   display: flex;
+   align-items: center;
+   justify-content: right;
+}
+
+#popUp_close{
+    color: #ffffff;
+    font-weight: bold;
+    font-size: 25px;
+}
+
+#popUp_close:hover {
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: color 0.15s;
+}
+
+/* POP UP MAIN */
+#popUp_main{
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    overflow: auto;
+}
+
+
+
 /* tombol umum */
 button {
     background-color: var(--primary);
@@ -239,6 +301,7 @@ th {
 
 tr:hover td {
     background-color: #f9fafc;
+    cursor: pointer;
 }
 
 table a {

@@ -6,6 +6,7 @@
   <title>CampuSpace</title>
   <link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
   <script src="../../public/js/pengguna/sidebar.js"></script>
+  <script src="../../public/js/pengguna/pop_up.js"></script>
 </head>
 <body id="pengguna_body">
     <div id="dashboard_header">
@@ -47,7 +48,8 @@
                 <tbody>
                     <?php if (!empty($facilities)): ?>
                         <?php foreach ($facilities as $f): ?>
-                        <tr>
+                        <tr data-fac-id="<?= htmlspecialchars($f['fac_id']); ?>"
+                            onclick="showFacilityDetail(this.dataset.facId)">
                             <td ><?= htmlspecialchars($f['fac_name'] ?? ''); ?></td>
                             <td ><?= htmlspecialchars($f['type'] ?? ''); ?></td>
                             <td><?= htmlspecialchars($f['location'] ?? ''); ?></td>
@@ -63,8 +65,24 @@
                 </tbody>
             </table>
 
-            <div id = "pop_up_bg">
-                
+            <div id = "popUp_detail_fas_rsv" class="hidden">
+                <div id="popUp_content">
+                    <div id="popUp_header">
+                        <span id="popUp_close" onclick="togglePopUp()">×</span>
+                    </div>
+
+                    <div id="popUp_main">
+                        <h2>Detail Fasilitas</h2>
+                        <p> [gambar...] <p>
+                        <p>Nama Fasilitas: <span id="detail_fac_name"></span></p>
+                        <p>Deskripsi: <span id="detail_fac_desc"></span></p>
+                        <p>Tipe: <span id="detail_fac_type"></span></p>
+                        <p>Lokasi: <span id="detail_fac_location"></span></p>
+                        <p>Kapasitas: <span id="detail_fac_capacity"></span></p>
+                        <p>Status: <span id="detail_fac_status"></span></p>
+                        <button id="reserve_btn">Reservasi</button>
+                    </div>
+                </div>
             </div>
 
             <div id="pagination_controls">
