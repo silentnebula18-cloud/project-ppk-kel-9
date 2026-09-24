@@ -8,10 +8,9 @@ CREATE TABLE unverified_acc(
 	unv_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
 	unv_username VARCHAR(30) NOT NULL UNIQUE,
     unv_password VARCHAR(255) NOT NULL,
-    unv_email VARCHAR(255) NOT NULL UNIQUE
+    unv_email VARCHAR(255) NOT NULL UNIQUE,
     unv_registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
-
 
 CREATE TABLE users(
 	user_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
@@ -30,7 +29,6 @@ CREATE TABLE facilities(
     fac_desc VARCHAR(1000) NOT NULL,
     fac_status ENUM("aktif", "dalam perbaikan") NOT NULL
 );
-
 
 CREATE TABLE reservations(
 	rsv_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
@@ -82,7 +80,6 @@ BEGIN
 END //
 DELIMITER ;
 
-
 CREATE TABLE reports(
 	rep_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
@@ -105,6 +102,7 @@ CREATE TABLE reports(
     CONSTRAINT fk_reports_facilites FOREIGN KEY (fac_id) REFERENCES facilities(fac_id)
     
 );
+
 -- Trigger pada tabel reports untuk mengisi kolom closed_at (kapan laporan ditutup)
 DELIMITER //
 CREATE TRIGGER reports_closed_at
@@ -116,4 +114,3 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
-
