@@ -1,8 +1,6 @@
 <?php
 header('Content-Type: application/json');
-
-$unverified_users_raw = file_get_contents('../../database_mockup/unverified_acc.json');
-$unverified_users = json_decode($unverified_users_raw, true) ?? [];
+require_once __DIR__ . '/../../config.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -19,8 +17,8 @@ if ($data){
         $username = $data['username'] ;
         $password = $data['password'] ;
 
-        if (validate_password($password) and validate_username($username, $unverified_users) and validate_email($email, $unverified_users)){
-            update_database($unverified_users, $email, $username, $password);
+        if (validate_password($password) and validate_username($username, $pdo) and validate_email($email, $pdo)){
+            update_database($pdo, $email, $username, $password);
             $response = response_success();
         }else{
             $response = response_error(":/");
@@ -42,18 +40,28 @@ function validate_password($password){
     return $passwordLength >= 8 and preg_match('/[0-9]/', $password) and preg_match('/[!@#$%^&*()_+\-=\[\]{};\':"\\|,.<>\/?]/', $password);
 }
 
-function validate_username($username, $unverified_users){
-    $search_user = search($unverified_users, "username", $username);
-    if ($search_user[0]){
-        return false;
+function validate_username($username, $pdo){
+    $sql = "SELECT 1 FROM unverified_acc WHERE unv_username = ?
+            UNION
+            SELECT 1 FROM users WHERE username = ?";
+            
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$username, $username]);
+    if ($stmt->fetch()) {
+        return false; 
     }
     return true;
 }
 
-function validate_email($email, $unverified_users){
-    $search_user = search($unverified_users, "email", $email);
-    if ($search_user[0]){
-        return false;
+function validate_email($email, $pdo){
+    $sql = "SELECT 1 FROM unverified_acc WHERE unv_email = ?
+            UNION
+            SELECT 1 FROM users WHERE email = ?";
+            
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$email, $email]);
+    if ($stmt->fetch()) {
+        return false; 
     }
     return true;
 }
@@ -66,31 +74,13 @@ function response_error($msg){
     return ['status' => 'error', 'message' => $msg];
 }
 
-function update_database($unverified_users, $email, $username, $password) {
-    $next_id = 0;
-    if (!empty($unverified_users)) {
-        $last_user = end($unverified_users);
-        $next_id = isset($last_user['id']) ? $last_user['id'] + 1 : count($unverified_users);
-    }
+function update_database($pdo, $email, $username, $password) {
+    $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
-    $unverified_users[] = [
-        'id'       => $next_id,
-        'username' => $username,
-        'password' => $password,
-        'role'     => 'user',
-        'email'    => $email
-    ];
+    $sql = "INSERT INTO unverified_acc (unv_username, unv_password, unv_email) 
+            VALUES (?, ?, ?)";
 
-    $encoded = json_encode($unverified_users, JSON_PRETTY_PRINT);
-    file_put_contents("../../database_mockup/unverified_acc.json", $encoded, LOCK_EX);
-}
-
-function search($obj, $key, $value){
-    for($i = 0; $i < count($obj); $i++){
-        if ($obj[$i][$key] == $value){
-            return [true, $obj[$i]['id'], $obj[$i][$key]];
-        };
-    };
-    return [false,-1, -1];
+    $stmt = $pdo->prepare($sql);
+    return $stmt->execute([$username, $hashed_password, $email]);
 }
 ?>
