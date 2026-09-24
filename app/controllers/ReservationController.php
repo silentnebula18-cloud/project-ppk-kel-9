@@ -51,7 +51,7 @@ class ReservationController {
     public function reject() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['rsv_id'])) {
             $id = $_POST['rsv_id'];
-            $reason = trim($_POST['rejection_reason']);
+            $reason = trim($_POST['rejection_reason'] ?? '');
 
             if (empty($reason)) {
                 $_SESSION['flash_error'] = "Alasan penolakan wajib diisi!";
@@ -59,9 +59,21 @@ class ReservationController {
                 exit;
             }
 
-            // Simpan status 'ditolak' dan alasan ke kolom cancel_reason
-            $this->reservationModel->updateStatus($id, 'ditolak', $reason);
-            $_SESSION['flash_success'] = "Reservasi telah ditolak.";
+            // ID petugas yang menolak (harus ada di tabel users)
+            $officerId = $_SESSION['user_id'] ?? null;
+            if (!$officerId) {
+                $_SESSION['flash_error'] = "Sesi login tidak ditemukan, silakan login ulang.";
+                header("Location: index.php?page=dashboard");
+                exit;
+            }
+
+            try {
+                $this->reservationModel->updateStatus($id, 'ditolak', $reason, $officerId);
+                $_SESSION['flash_success'] = "Reservasi telah ditolak.";
+            } catch (PDOException $e) {
+                error_log($e->getMessage());
+                $_SESSION['flash_error'] = "Gagal menolak reservasi: " . $e->getMessage();
+            }
 
             header("Location: index.php?page=dashboard");
             exit;

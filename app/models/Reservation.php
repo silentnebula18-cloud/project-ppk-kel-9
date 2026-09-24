@@ -38,14 +38,17 @@ class Reservation {
     }
 
     // Update Status & Simpan Alasan Penolakan ke cancel_reason
-    public function updateStatus($id, $status, $reason = null) {
+    public function updateStatus($id, $status, $reason = null, $cancelledBy = null) {
         $query = "UPDATE " . $this->table_name . " 
-                  SET rsv_status = :status, cancel_reason = :reason 
-                  WHERE rsv_id = :id";
+                SET rsv_status = :status, 
+                    cancel_reason = :reason,
+                    cancelled_by = :cancelled_by
+                WHERE rsv_id = :id";
 
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":status", $status);
         $stmt->bindParam(":reason", $reason);
+        $stmt->bindParam(":cancelled_by", $cancelledBy);
         $stmt->bindParam(":id", $id);
         return $stmt->execute();
     }
