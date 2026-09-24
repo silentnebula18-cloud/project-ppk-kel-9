@@ -1,5 +1,5 @@
 -- File: Proyek PPK Kel. 9 DB
--- Created at: 08 September 2026 (Updated: 14 September 2026)
+-- Created at: 08 September 2026 (Updated: 22 September 2026)
 
 CREATE DATABASE projectppk;
 USE projectppk;
@@ -9,6 +9,7 @@ CREATE TABLE unverified_acc(
 	unv_username VARCHAR(30) NOT NULL UNIQUE,
     unv_password VARCHAR(255) NOT NULL,
     unv_email VARCHAR(255) NOT NULL UNIQUE
+    unv_registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
