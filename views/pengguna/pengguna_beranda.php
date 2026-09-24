@@ -17,7 +17,7 @@
     <div id="dashboard_layout">
         <div id="sidebar" class="hidden">
             <a class="nav_item active" href="pengguna_beranda.html"><span class="nav_icon">🏠</span>Beranda</a>
-            <a class="nav_item" href="katalog_fasilitas.html"><span class="nav_icon">🚪</span>Fasilitas</a>
+            <a class="nav_item" href="../../index.php?page=fasilitas"><span class="nav_icon">🚪</span>Fasilitas</a>
             <a class="nav_item" href="reservasi_saya.html"><span class="nav_icon">📅</span>Reservasi Saya</a>
             <a class="nav_item" href="pengguna_laporan.html"><span class="nav_icon">📝</span>Laporan</a>
         </div>

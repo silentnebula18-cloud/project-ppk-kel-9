@@ -3,19 +3,13 @@ function togglePopUp() {
     popUp.classList.toggle("hidden");
 }
 
-function showFacilityDetail(facilityId) {
+function showFacilityDetail(fac_id) {
 
-    console.log("ID yang dikirim:", facilityId);
-
-    fetch(`../../index.php?page=detail_fasilitas&fac_id=${facilityId}`)
+    fetch(`../../index.php?page=detail_fasilitas&fac_id=${fac_id}`)
         .then(response => {
-            console.log("Response:", response);
-            console.log("Status:", response.status);
-
             return response.json();
         })
         .then(data => {
-            console.log("Data dari PHP:", data);
 
             document.getElementById("detail_fac_name").textContent = data.fac_name;
             document.getElementById("detail_fac_desc").textContent = data.fac_desc;
