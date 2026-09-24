@@ -1,0 +1,44 @@
+<?php
+require_once __DIR__ . "/../../app/models/account_model.php";
+require_once __DIR__ . "/../../app/models/facility_model.php";
+
+$pendingCount = countPendingAccounts($conn);
+$petugasCount = countUsersByRole($conn, 'petugas');
+$fasilitasCount = countFacilitiesByStatus($conn, 'Aktif');
+?>
+<body id="admin_body">
+    <div id="dashboard_header">
+        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_title">Dashboard Admin</span>
+        <button id="logout_btn">LogOut</button>
+    </div>
+
+    <div id="dashboard_layout">
+        <div id="sidebar" class="hidden">
+            <a class="nav_item active" href="admin_beranda.php"><span class="nav_icon">🏠</span>Beranda</a>
+            <a class="nav_item" href="kelola_akun.php"><span class="nav_icon">👤</span>Kelola akun</a>
+            <a class="nav_item" href="kelola_fasilitas.php"><span class="nav_icon">🏢</span>Kelola fasilitas</a>
+        </div>
+
+        <div id="main_content">
+            <h3>Ringkasan hari ini</h3>
+            <div id="summary_cards">
+                <div class="summary_card">
+                    <p class="card_label">Akun pending</p>
+                    <span class="card_value"><?= $pendingCount ?></span>
+                </div>
+                <div class="summary_card">
+                    <p class="card_label">Total petugas</p>
+                    <span class="card_value"><?= $petugasCount ?></span>
+                </div>
+                <div class="summary_card">
+                    <p class="card_label">Fasilitas aktif</p>
+                    <span class="card_value"><?= $fasilitasCount ?></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<link rel="stylesheet" href="../../public/css/admin/admin_style.css">
+<script src="../../public/js/admin/sidebar.js"></script>

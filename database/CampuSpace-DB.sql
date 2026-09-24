@@ -1,5 +1,5 @@
 -- File: Proyek PPK Kel. 9 DB
--- Created at: 08 September 2026 (Updated: 24 September 2026)
+-- Created at: 08 September 2026 (Updated: 14 September 2026)
 
 DROP DATABASE IF EXISTS projectppk;
 CREATE DATABASE projectppk;
@@ -13,8 +13,9 @@ CREATE TABLE unverified_acc (
     unv_registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-CREATE TABLE users (
-    user_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+
+CREATE TABLE users(
+	user_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     username VARCHAR(30) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL UNIQUE,
@@ -31,8 +32,9 @@ CREATE TABLE facilities (
     fac_status ENUM('aktif', 'dalam perbaikan') NOT NULL
 );
 
-CREATE TABLE reservations (
-    rsv_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+
+CREATE TABLE reservations(
+	rsv_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     user_id CHAR(36) NOT NULL,
     fac_id CHAR(36) NOT NULL,
     rsv_date DATE NOT NULL,
@@ -65,8 +67,9 @@ BEGIN
 END //
 DELIMITER ;
 
-CREATE TABLE reports (
-    rep_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
+
+CREATE TABLE reports(
+	rep_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     category ENUM('kerusakan bangunan', 'kerusakan peralatan', 
                    'kelistrikan', 'kebersihan', 'lainnya') NOT NULL,
@@ -75,15 +78,19 @@ CREATE TABLE reports (
     rep_status ENUM('baru', 'diproses', 'selesai', 'ditolak') NOT NULL,
     user_id CHAR(36) NOT NULL,
     fac_id CHAR(36) NOT NULL,
-    resolution_note VARCHAR(1000) NULL,
-    closed_at TIMESTAMP NULL,
+    resolution_note VARCHAR(1000) CHECK(
+		CASE 
+			WHEN rep_status = "selesai" THEN resolution_note IS NOT NULL
+            ELSE TRUE
+		END
+		),
+	closed_at TIMESTAMP,
     
     CONSTRAINT fk_reports_users FOREIGN KEY (user_id) REFERENCES users(user_id),
     CONSTRAINT fk_reports_facilities FOREIGN KEY (fac_id) REFERENCES facilities(fac_id),
     CONSTRAINT chk_resolution_note CHECK (rep_status != 'selesai' OR resolution_note IS NOT NULL)
 );
-
--- Trigger pada tabel reports untuk mengisi kolom closed_at
+-- Trigger pada tabel reports untuk mengisi kolom closed_at (kapan laporan ditutup)
 DELIMITER //
 CREATE TRIGGER reports_closed_at
 BEFORE UPDATE ON reports
