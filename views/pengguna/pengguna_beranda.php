@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CampuSpace</title>
+  <link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
+  <script src="../../public/js/pengguna/sidebar.js"></script>
+</head>
+<body id="pengguna_body">
+    <div id="dashboard_header">
+        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_title">Dashboard Pengguna</span>
+        <button id="logout_btn">LogOut</button>
+    </div>
+
+    <div id="dashboard_layout">
+        <div id="sidebar" class="hidden">
+            <a class="nav_item active" href="pengguna_beranda.html"><span class="nav_icon">🏠</span>Beranda</a>
+            <a class="nav_item" href="../../index.php?page=fasilitas"><span class="nav_icon">🚪</span>Fasilitas</a>
+            <a class="nav_item" href="reservasi_saya.html"><span class="nav_icon">📅</span>Reservasi Saya</a>
+            <a class="nav_item" href="pengguna_laporan.html"><span class="nav_icon">📝</span>Laporan</a>
+        </div>
+
+        <div id="main_content">
+
+        </div>
+
+        
+    </div>
+</body>
+</html>
