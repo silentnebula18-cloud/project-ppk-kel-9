@@ -8,7 +8,8 @@ CREATE TABLE unverified_acc(
 	unv_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
 	unv_username VARCHAR(30) NOT NULL UNIQUE,
     unv_password VARCHAR(255) NOT NULL,
-    unv_email VARCHAR(255) NOT NULL UNIQUE
+    unv_email VARCHAR(255) NOT NULL UNIQUE,
+    unv_registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 
