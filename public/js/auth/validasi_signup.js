@@ -1,7 +1,3 @@
-import users from "../../database_mockup/users.json" with { type: "json" };
-import unverified_accs from "../../database_mockup/unverified_acc.json" with { type: "json" };
-
-
 let username_field = document.getElementById("username")
 let password_field = document.getElementById("password")
 let email_field = document.getElementById("email")
@@ -19,7 +15,7 @@ let show_password_box = document.getElementById("show_password")
 
 let home_button = document.getElementById("header_logo")
 home_button.addEventListener("click", function(){
-    window.location.replace("../views/index.html")
+    window.location.replace("../index.html")
 })
 
 password_field.addEventListener("input", password_check)
@@ -42,17 +38,14 @@ function show_password(){
 }
 
 function username_check(){
-    let username = username_field.value
-    let search_username = search(users, "username", username)
-    let search_username_unverified = search(unverified_accs, "username", username)
-    let exist = search_username[0] || search_username_unverified[0]
-    if (exist){
-        username_alert.style.display = "block"
-    }else{
-        username_alert.style.display = "none"
+    let email = email_field.value
+
+    if (email.trim() === ""){
+        email_alert.style.display = "none"
+        return false
     }
 
-    return !exist
+    return true
 }
 
 function password_check(){
@@ -98,27 +91,10 @@ function email_check(){
         return false
     }
 
-    email_alert.style.display = "none"
-    for (let user of users){
-        if (user["email"] === email){
-            valid_email = false
-            email_alert.style.display = "block"
-            break
-        }
-    }
-    for (let user of unverified_accs){
-        if (user["email"] === email){
-            valid_email = false
-            email_alert.style.display = "block"
-            break
-        }
-    }
-
     return valid_email
 }
 
 async function signup(){
-    console.log(email_check() && password_check() && username_check())
     if (email_check() && password_check() && username_check()){
         signup_button.disabled = true
         let password = password_field.value
@@ -135,14 +111,14 @@ async function signup(){
         try{
             let stringified_info = JSON.stringify(info)
 
-            let response = await fetch("../public/php/validate_signup.php", {method: "POST", body:stringified_info, headers:header})
+            let response = await fetch("../../public/php/validate_signup.php", {method: "POST", body:stringified_info, headers:header})
             
             if (response.ok){
                 let result = await response.json()
 
                 if (result.status == 'success'){
                     reset_field()
-                    console.log('yay')
+                    window.location.replace("../auth/login.html")
                 }else{
                     throw `${result.status} ${result.message}`
                 }
@@ -157,15 +133,6 @@ async function signup(){
             signup_button.disabled = false
         }
     }
-}
-
-function search(obj, key, value){
-    for (let i = 0; i < obj.length; i++){
-        if (obj[i][key] == value){
-            return [true, obj[i]]
-        }
-    }
-    return [false, -1]
 }
 
 function reset_field(){
