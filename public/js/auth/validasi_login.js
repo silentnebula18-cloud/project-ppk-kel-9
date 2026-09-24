@@ -59,8 +59,19 @@ async function on_login_button_click(){
             let result = await response.json()
             console.log(result)
             if (result.status == 'success'){
-                reset_field()
-                window.location.replace("../auth/index.html")
+                let role = result.user.role
+                switch (role){
+                    case "admin":
+                        console.log("a")
+                        break
+                    case "user":
+                        console.log("b")
+                        break
+                    case "petugas":
+                        console.log("c")
+                    default:
+                        window.location.replace("../index.html")
+                }
             }else{
                 let msg = `${result.status}: ${result.message}`
                 show_invalid_dialog(msg)
