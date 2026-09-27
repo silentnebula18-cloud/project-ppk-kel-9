@@ -27,7 +27,7 @@ CREATE TABLE facilities(
     location VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
     fac_desc VARCHAR(1000) NOT NULL,
-    fac_status ENUM("aktif", "dalam perbaikan") NOT NULL
+    fac_status ENUM("Aktif", "Dalam perbaikan", "Nonaktif") NOT NULL
 );
 
 CREATE TABLE reservations(
