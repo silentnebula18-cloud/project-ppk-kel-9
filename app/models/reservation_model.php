@@ -1,5 +1,5 @@
 <?php
-class Reservation {
+class reservation_model {
     private $conn;
     private $table_name = "reservations";
 

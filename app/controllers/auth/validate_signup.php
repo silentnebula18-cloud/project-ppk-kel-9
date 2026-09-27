@@ -1,12 +1,18 @@
 <?php
 header('Content-Type: application/json');
-require_once __DIR__ . '/../../config.php';
+
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
     echo json_encode(response_error(':/'));
     exit;
 }
+
+require_once __DIR__ . '/../../../config/db_connect.php';
+
+// Database Connect
+$dbInstance = new db_connect(); 
+$pdo = $dbInstance->getConnection();
 
 $jsoninput = file_get_contents('php://input');
 $data = json_decode($jsoninput, true);

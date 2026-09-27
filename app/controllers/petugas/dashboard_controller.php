@@ -1,11 +1,11 @@
 <?php
-require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../../config/db_connect.php';
 
-class DashboardController {
+class dashboard_controller {
     private $db;
 
     public function __construct() {
-        $this->db = (new Database())->getConnection();
+        $this->db = (new db_connect())->getConnection();
     }
 
     public function index() {
@@ -43,6 +43,6 @@ class DashboardController {
         $approvedReservations = $stmtApproved->fetchAll(PDO::FETCH_ASSOC);
 
         //Render file view dari folder views
-        require_once __DIR__ . '/../../views/petugas/dashboard.php';
+        require_once __DIR__ . '../../../../views/petugas/dashboard.php';
     }
 }

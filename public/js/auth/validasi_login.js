@@ -39,6 +39,7 @@ function show_password(){
 
 async function on_login_button_click(){
     const header = {"Content-Type": "application/json"}
+    // Kasih tahu php, nanti bentuk data yg aku kirim json
     
     let password = password_field.value
     let username = username_field.value
@@ -53,25 +54,14 @@ async function on_login_button_click(){
         login_button.disabled = true
         let stringified_info = JSON.stringify(info)
 
-        let response = await fetch("../../public/php/validate_login.php", {method: "POST", body:stringified_info, headers:header})
+        let response = await fetch("../../app/controllers/auth/validate_login.php", {method: "POST", body:stringified_info, headers:header})
         
         if (response.ok){
             let result = await response.json()
+
             console.log(result)
             if (result.status == 'success'){
-                let role = result.user.role
-                switch (role){
-                    case "admin":
-                        console.log("a")
-                        break
-                    case "user":
-                        console.log("b")
-                        break
-                    case "petugas":
-                        console.log("c")
-                    default:
-                        window.location.replace("../index.html")
-                }
+                window.location.replace("../../index.php")
             }else{
                 let msg = `${result.status}: ${result.message}`
                 show_invalid_dialog(msg)

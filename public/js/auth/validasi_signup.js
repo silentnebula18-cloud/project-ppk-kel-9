@@ -111,7 +111,7 @@ async function signup(){
         try{
             let stringified_info = JSON.stringify(info)
 
-            let response = await fetch("../../public/php/validate_signup.php", {method: "POST", body:stringified_info, headers:header})
+            let response = await fetch("../../../app/controllers/auth/validate_signup.php", {method: "POST", body:stringified_info, headers:header})
             
             if (response.ok){
                 let result = await response.json()

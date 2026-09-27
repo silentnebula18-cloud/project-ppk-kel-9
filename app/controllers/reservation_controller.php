@@ -1,17 +1,17 @@
 <?php
 require_once __DIR__ . '/../../config/database.php';
-require_once __DIR__ . '/../models/Reservation.php';
+require_once __DIR__ . '/../models/reservation_model.php';
 
-class ReservationController {
+class reservation_controller {
     private $db;
     private $reservationModel;
 
     public function __construct() {
         if (session_status() === PHP_SESSION_NONE) session_start();
 
-        $database = new Database();
+        $database = new db_connect();
         $this->db = $database->getConnection();
-        $this->reservationModel = new Reservation($this->db);
+        $this->reservationModel = new reservation_model($this->db);
     }
 
     // Process Persetujuan (Approve)

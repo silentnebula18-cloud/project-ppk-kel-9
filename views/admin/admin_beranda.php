@@ -1,11 +1,3 @@
-<?php
-require_once __DIR__ . "/../../app/models/account_model.php";
-require_once __DIR__ . "/../../app/models/facility_model.php";
-
-$pendingCount = countPendingAccounts($conn);
-$petugasCount = countUsersByRole($conn, 'petugas');
-$fasilitasCount = countFacilitiesByStatus($conn, 'Aktif');
-?>
 <body id="admin_body">
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
@@ -15,9 +7,9 @@ $fasilitasCount = countFacilitiesByStatus($conn, 'Aktif');
 
     <div id="dashboard_layout">
         <div id="sidebar" class="hidden">
-            <a class="nav_item active" href="admin_beranda.php"><span class="nav_icon">🏠</span>Beranda</a>
-            <a class="nav_item" href="kelola_akun.php"><span class="nav_icon">👤</span>Kelola akun</a>
-            <a class="nav_item" href="kelola_fasilitas.php"><span class="nav_icon">🏢</span>Kelola fasilitas</a>
+            <a class="nav_item active" href="../../index.php?page=beranda"><span class="nav_icon">🏠</span>Beranda</a>
+            <a class="nav_item" href="../../index.php?page=kelola_akun"><span class="nav_icon">👤</span>Kelola akun</a>
+            <a class="nav_item" href="../../index.php?page=kelola_fasilitas"><span class="nav_icon">🏢</span>Kelola fasilitas</a>
         </div>
 
         <div id="main_content">

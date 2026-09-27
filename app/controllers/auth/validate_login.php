@@ -1,6 +1,6 @@
 <?php
 header('Content-Type: application/json');
-require_once __DIR__ . '/../../config.php';
+// SET RESPONSE KE JS, BENTUKNYA JSON
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
@@ -8,16 +8,32 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
+require_once __DIR__ . '/../../../config/db_connect.php';
+
+// Database Connect
+$dbInstance = new db_connect(); 
+$pdo = $dbInstance->getConnection();
+
+
 $jsoninput = file_get_contents('php://input');
 $data = json_decode($jsoninput, true);
+//hasilnya menjadi associative array PHP. 
 
 if ($data){
+    // cek apakah $data ada (ada isinya, bukan null atau kosong atau array kosong atau 0)
     if (key_exists('username', $data) and key_exists('password', $data)){
         $username = $data['username'] ;
         $password = $data['password'] ;
 
         $match_password = validate_password($username, $password, $pdo);
         if ($match_password){
+            session_start();
+
+            $_SESSION["user_id"] = $match_password["user_id"];
+            $_SESSION["username"] = $match_password["username"];
+            $_SESSION["email"] = $match_password["email"];
+            $_SESSION["role"] = $match_password["role"];
+            
             $response = response_success(["user" => $match_password]);
         }else{
             if (check_unverified($username, $password, $pdo)){
@@ -42,6 +58,7 @@ function validate_username($username, $pdo){
     $stmt = $pdo->prepare($sql);
     $stmt->execute([$username]);
     $user = $stmt->fetch();
+    // Mengambil satu baris data pertama hasil query.
 
     if ($user){
         return $user;
@@ -53,6 +70,7 @@ function validate_password($username, $password, $pdo){
     $user = validate_username($username, $pdo);
     if ($user) {
         $match = password_verify($password, $user["password"]);
+        // password_verify() -> fungsi bawaan php
         if ($match){
             return ["user_id"=>$user["user_id"], "username"=>$user["username"], "email"=>$user["email"], "role"=>$user["role"]];
         }
@@ -66,6 +84,7 @@ function check_unverified($username, $password, $pdo){
     $stmt->execute([$username]);
     $unv_user = $stmt->fetch();
 
+    // ditemukan/ ada datanya dan verify
     if ($unv_user && password_verify($password, $unv_user['unv_password'])) {
         return true;
     }

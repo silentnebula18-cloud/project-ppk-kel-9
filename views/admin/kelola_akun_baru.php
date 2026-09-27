@@ -1,5 +1,3 @@
-<?php
-?>
 <body id="admin_body">
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
@@ -9,9 +7,9 @@
 
     <div id="dashboard_layout">
         <div id="sidebar" class="hidden">
-            <a class="nav_item" href="admin_beranda.php"><span class="nav_icon">🏠</span>Beranda</a>
-            <a class="nav_item active" href="kelola_akun.php"><span class="nav_icon">👤</span>Kelola akun</a>
-            <a class="nav_item" href="kelola_fasilitas.php"><span class="nav_icon">🏢</span>Kelola fasilitas</a>
+            <a class="nav_item" href="../../index.php?page=beranda"><span class="nav_icon">🏠</span>Beranda</a>
+            <a class="nav_item active" href="../../index.php?page=kelola_akun"><span class="nav_icon">👤</span>Kelola akun</a>
+            <a class="nav_item active" href="../../index.php?page=kelola_fasilitas"><span class="nav_icon">🏢</span>Kelola fasilitas</a>
         </div>
 
         <div id="main_content">
@@ -20,7 +18,7 @@
             <p style="color:red">Akun gagal dibuat: cek kembali semua field (username/email mungkin sudah dipakai).</p>
             <?php endif; ?>
 
-            <form method="post" action="../../app/controllers/account_controller.php">
+            <form method="post" action="../../index.php">
                 <input type="hidden" name="action" value="create">
 
                 <div class="form_row">

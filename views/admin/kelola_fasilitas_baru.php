@@ -1,19 +1,3 @@
-<?php
-require_once __DIR__ . "/../../app/models/facility_model.php";
-
-$facility = null;
-$isEdit = isset($_GET['id']) && $_GET['id'] !== '';
-
-if ($isEdit) {
-    $facility = getFacilityById($conn, $_GET['id']);
-    if (!$facility) {
-        die("Fasilitas tidak ditemukan.");
-    }
-}
-
-$types = ["ruang kelas", "aula", "laboratorium", "alat", "lapangan"];
-$statuses = ["Aktif", "Dalam Perbaikan", "Nonaktif"];
-?>
 <body id="admin_body">
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
@@ -23,9 +7,9 @@ $statuses = ["Aktif", "Dalam Perbaikan", "Nonaktif"];
 
     <div id="dashboard_layout">
         <div id="sidebar" class="hidden">
-            <a class="nav_item" href="admin_beranda.php"><span class="nav_icon">🏠</span>Beranda</a>
-            <a class="nav_item" href="kelola_akun.php"><span class="nav_icon">👤</span>Kelola akun</a>
-            <a class="nav_item active" href="kelola_fasilitas.php"><span class="nav_icon">🏢</span>Kelola fasilitas</a>
+            <a class="nav_item" href="../../index.php?page=beranda"><span class="nav_icon">🏠</span>Beranda</a>
+            <a class="nav_item" href="../../index.php?page=kelola_akun"><span class="nav_icon">👤</span>Kelola akun</a>
+            <a class="nav_item active" href="../../index.php?page=kelola_fasilitas"><span class="nav_icon">🏢</span>Kelola fasilitas</a>
         </div>
 
         <div id="main_content">
@@ -37,8 +21,8 @@ $statuses = ["Aktif", "Dalam Perbaikan", "Nonaktif"];
             <p style="color:red">Data gagal disimpan: semua field wajib diisi dengan benar.</p>
             <?php endif; ?>
 
-            <form method="post" action="../../app/controllers/facility_controller.php">
-                <input type="hidden" name="action" value="<?= $isEdit ? 'update' : 'create' ?>">
+            <form method="post" action="../../index.php">
+                <input type="hidden" name="action" value="<?= $isEdit ? 'updateFac' : 'createFac' ?>">
                 <?php if ($isEdit): ?>
                 <input type="hidden" name="fac_id" value="<?= htmlspecialchars($facility['fac_id']) ?>">
                 <?php endif; ?>
