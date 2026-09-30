@@ -23,7 +23,7 @@
         <nav>
             <a href="index.php?page=dashboard" class="active">Beranda</a>
             <a href="#">Reservasi</a>
-            <a href="#">Laporan</a>
+            <a href="index.php?page=reports">Laporan</a>
             <a href="#">Fasilitas</a>
             <a href="#">Log Out</a>
         </nav>
@@ -87,7 +87,7 @@
         <section class="panel" id="panel_laporan">
             <div class="panel_header">
                 <h2>Laporan Masuk</h2>
-                <a href="#">Lihat semua</a>
+                <a href="index.php?page=reports">Lihat semua</a>
             </div>
             <div class="panel_body">
                 <?php if (empty($reports)): ?>
