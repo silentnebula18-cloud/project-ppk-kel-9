@@ -5,6 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Petugas - Dashboard</title>
     <link rel="stylesheet" href="../../public/css/petugas/dashboard_style.css">
+    <style>
+        /* CSS Sederhana untuk Modal Penolakan */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
+        .modal-content { background: #fff; margin: 15% auto; padding: 20px; width: 400px; border-radius: 8px; }
+        .alert-error { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+        .alert-success { background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+    </style>
 </head>
 <body id="body">
 
@@ -14,7 +21,7 @@
             <span>Petugas</span>
         </div>
         <nav>
-            <a href="#" class="active">Beranda</a>
+            <a href="index.php?page=dashboard" class="active">Beranda</a>
             <a href="#">Reservasi</a>
             <a href="#">Laporan</a>
             <a href="#">Fasilitas</a>
@@ -23,6 +30,23 @@
     </aside>
 
     <main id="main">
+
+        <!-- Toast Container (Layer Terpisah) -->
+        <div class="toast-container">
+            <?php if (!empty($_SESSION['flash_success'])): ?>
+                <div class="toast toast-success" id="toast-msg">
+                    <span><?= htmlspecialchars($_SESSION['flash_success']); unset($_SESSION['flash_success']); ?></span>
+                    <button class="close-btn" onclick="this.parentElement.remove()">&times;</button>
+                </div>
+            <?php endif; ?>
+
+            <?php if (!empty($_SESSION['flash_error'])): ?>
+                <div class="toast toast-error" id="toast-msg">
+                    <span><?= htmlspecialchars($_SESSION['flash_error']); unset($_SESSION['flash_error']); ?></span>
+                    <button class="close-btn" onclick="this.parentElement.remove()">&times;</button>
+                </div>
+            <?php endif; ?>
+        </div>
 
         <!-- Section 1: Reservasi diproses -->
         <section class="panel" id="panel_proses">
@@ -44,11 +68,14 @@
                                 </div>
                             </div>
                             <div class="actions">
-                                <form action="process_reservation.php" method="POST" style="display:inline;">
+                                <!-- Form Terima (Approve) -->
+                                <form action="index.php?page=reservation&action=approve" method="POST" style="display:inline;">
                                     <input type="hidden" name="rsv_id" value="<?= $r['rsv_id'] ?>">
-                                    <button type="submit" name="action" value="approve" class="btn_ok">Terima</button>
-                                    <button type="submit" name="action" value="reject" class="btn_danger">Tolak</button>
+                                    <button type="submit" class="btn_ok">Terima</button>
                                 </form>
+                                
+                                <!-- Tombol Buka Modal Tolak -->
+                                <button type="button" class="btn_danger" onclick="openRejectModal('<?= $r['rsv_id'] ?>')">Tolak</button>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -56,7 +83,7 @@
             </div>
         </section>
 
-        <!-- Section 2: Laporan -->
+        <!-- Section 2: Laporan Masuk -->
         <section class="panel" id="panel_laporan">
             <div class="panel_header">
                 <h2>Laporan Masuk</h2>
@@ -77,6 +104,7 @@
                                 </div>
                             </div>
                             <div class="actions">
+                                <span class="status <?= strtolower($rp['rep_status']) ?>"><?= htmlspecialchars($rp['rep_status']) ?></span>
                                 <a href="edit_report.php?id=<?= $rp['rep_id'] ?>"><button type="button">Edit</button></a>
                             </div>
                         </div>
@@ -92,7 +120,7 @@
             </div>
             <div class="panel_body">
                 <?php if (empty($approvedReservations)): ?>
-                    <p class="empty">Belum ada reservasi disetujui mendatang.</p>
+                    <p class="empty">Belum ada reservasi disetujui.</p>
                 <?php else: ?>
                     <?php foreach ($approvedReservations as $app): ?>
                         <div class="item">
@@ -104,12 +132,6 @@
                                     <?= date('H:i', strtotime($app['start_time'])) ?>–<?= date('H:i', strtotime($app['end_time'])) ?>
                                 </div>
                             </div>
-                            <div class="actions">
-                                <form action="process_reservation.php" method="POST" style="display:inline;">
-                                    <input type="hidden" name="rsv_id" value="<?= $app['rsv_id'] ?>">
-                                    <button type="submit" name="action" value="cancel" class="btn_danger">Batalkan</button>
-                                </form>
-                            </div>
                         </div>
                     <?php endforeach; ?>
                 <?php endif; ?>
@@ -118,5 +140,32 @@
 
     </main>
 
+    <!-- Modal Penolakan Reservasi -->
+    <div id="rejectModal" class="modal">
+        <div class="modal-content">
+            <h3>Tolak Reservasi</h3>
+            <form action="index.php?page=reservation&action=reject" method="POST">
+                <input type="hidden" name="rsv_id" id="reject_rsv_id">
+                <div style="margin-bottom: 15px;">
+                    <label for="rejection_reason">Alasan Penolakan:</label><br>
+                    <textarea name="rejection_reason" id="rejection_reason" rows="4" style="width: 100%;" required></textarea>
+                </div>
+                <div style="text-align: right;">
+                    <button type="button" onclick="closeRejectModal()">Batal</button>
+                    <button type="submit" class="btn_danger">Kirim Penolakan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openRejectModal(id) {
+            document.getElementById('reject_rsv_id').value = id;
+            document.getElementById('rejectModal').style.display = 'block';
+        }
+        function closeRejectModal() {
+            document.getElementById('rejectModal').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
