@@ -113,14 +113,14 @@
             </div>
         </section>
 
-        <!-- Section 3: Reservasi diterima -->
+        <!-- Section 3: Reservasi diterima/disetujui -->
         <section class="panel" id="panel_diterima">
             <div class="panel_header">
                 <h2>Reservasi Disetujui</h2>
             </div>
             <div class="panel_body">
                 <?php if (empty($approvedReservations)): ?>
-                    <p class="empty">Belum ada reservasi disetujui.</p>
+                    <p class="empty">Belum ada reservasi disetujui mendatang.</p>
                 <?php else: ?>
                     <?php foreach ($approvedReservations as $app): ?>
                         <div class="item">
@@ -131,6 +131,10 @@
                                     <?= date('d M Y', strtotime($app['rsv_date'])) ?> · 
                                     <?= date('H:i', strtotime($app['start_time'])) ?>–<?= date('H:i', strtotime($app['end_time'])) ?>
                                 </div>
+                            </div>
+                            <div class="actions">
+                                <!-- Tombol Buka Modal Batal -->
+                                <button type="button" class="btn_danger" onclick="openCancelModal('<?= $app['rsv_id'] ?>')">Batalkan</button>
                             </div>
                         </div>
                     <?php endforeach; ?>
@@ -158,6 +162,24 @@
         </div>
     </div>
 
+    <!-- Modal Pembatalan Reservasi Disetujui -->
+    <div id="cancelModal" class="modal">
+        <div class="modal-content">
+            <h3>Batalkan Reservasi Disetujui</h3>
+            <form action="index.php?page=reservation&action=cancel" method="POST">
+                <input type="hidden" name="rsv_id" id="cancel_rsv_id">
+                <div style="margin-bottom: 15px;">
+                    <label for="cancel_reason">Alasan Pembatalan:</label><br>
+                    <textarea name="cancel_reason" id="cancel_reason" rows="4" style="width: 100%;" required placeholder="Tuliskan alasan pembatalan..."></textarea>
+                </div>
+                <div style="text-align: right;">
+                    <button type="button" onclick="closeCancelModal()">Kembali</button>
+                    <button type="submit" class="btn_danger">Konfirmasi Batal</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         function openRejectModal(id) {
             document.getElementById('reject_rsv_id').value = id;
@@ -165,6 +187,14 @@
         }
         function closeRejectModal() {
             document.getElementById('rejectModal').style.display = 'none';
+        }
+        function openCancelModal(id) {
+            document.getElementById('cancel_rsv_id').value = id;
+            document.getElementById('cancelModal').style.display = 'block';
+        }
+
+        function closeCancelModal() {
+            document.getElementById('cancelModal').style.display = 'none';
         }
     </script>
 </body>

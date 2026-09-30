@@ -14,6 +14,8 @@ if ($page === 'reservation') {
         $controller->approve();
     } elseif ($action === 'reject') {
         $controller->reject();
+    } elseif ($action === 'cancel') { // Tambahkan routing ini
+        $controller->cancel();
     }
 } else {
     $controller = new DashboardController();
