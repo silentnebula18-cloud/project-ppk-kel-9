@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Petugas</title>
+    <link rel="stylesheet" href="../../public/css/petugas/dashboard_style.css">
+</head>
+<body id="body">
+
+    <aside id="sidebar">
+        <div id="sidebar_logo">
+            <span id="header_logo">★</span>
+            <span>Petugas</span>
+        </div>
+        <nav>
+            <a href="#" class="active">Beranda</a>
+            <a href="#">Reservasi</a>
+            <a href="#">Laporan</a>
+            <a href="#">Fasilitas</a>
+            <a href="#">Log Out</a>
+        </nav>
+    </aside>
+
+    <main id="main">
+
+        <!-- Reservasi diproses -->
+        <section class="panel" id="panel_proses">
+            <div class="panel_header">
+                <h2>Reservasi</h2>
+            </div>
+            <div class="panel_body">
+                <?php /* Contoh untuk PHP:
+                <?php if (empty($pendingReservations)): ?>
+                    <p class="empty">Tidak ada reservasi yang menunggu.</p>
+                <?php else: foreach ($pendingReservations as $r): ?>
+                    <div class="item"> ... </div>
+                <?php endforeach; endif; ?>
+                */ ?>
+
+                <div class="item">
+                    <div>
+                        <div class="item_title">Aula Utama</div>
+                        <div class="item_meta">budi · 12 Okt 2026 · 09:00–12:00</div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn_ok">Terima</button>
+                        <button class="btn_danger">Tolak</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <div>
+                        <div class="item_title">Lapangan Basket</div>
+                        <div class="item_meta">sari · 13 Okt 2026 · 15:00–17:00</div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn_ok">Terima</button>
+                        <button class="btn_danger">Tolak</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <div>
+                        <div class="item_title">Ruang Rapat 2</div>
+                        <div class="item_meta">andi · 14 Okt 2026 · 10:00–11:30</div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn_ok">Terima</button>
+                        <button class="btn_danger">Tolak</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Laporan -->
+        <section class="panel" id="panel_laporan">
+            <div class="panel_header">
+                <h2>Laporan</h2>
+                <a href="#">Lihat semua</a>
+            </div>
+            <div class="panel_body">
+                <div class="item">
+                    <div>
+                        <div class="item_title">AC tidak dingin</div>
+                        <div class="item_meta">Ruang Rapat 2 · rina</div>
+                    </div>
+                    <div class="actions">
+                        <span class="status baru">baru</span>
+                        <button>Edit</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <div>
+                        <div class="item_title">Lampu mati</div>
+                        <div class="item_meta">Aula Utama · dedi</div>
+                    </div>
+                    <div class="actions">
+                        <span class="status">diproses</span>
+                        <button>Edit</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Reservasi diterima -->
+        <section class="panel" id="panel_diterima">
+            <div class="panel_header">
+                <h2>Reservasi</h2>
+            </div>
+            <div class="panel_body">
+                <div class="item">
+                    <div>
+                        <div class="item_title">Aula Utama</div>
+                        <div class="item_meta">tono · 15 Okt 2026 · 08:00–10:00</div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn_danger">Batalkan</button>
+                    </div>
+                </div>
+                <div class="item">
+                    <div>
+                        <div class="item_title">Lapangan Futsal</div>
+                        <div class="item_meta">wati · 16 Okt 2026 · 16:00–18:00</div>
+                    </div>
+                    <div class="actions">
+                        <button class="btn_danger">Batalkan</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+</body>
+</html>
