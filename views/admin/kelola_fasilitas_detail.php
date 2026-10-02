@@ -38,6 +38,13 @@ if (!$facility) {
             <p>Status: <?= htmlspecialchars($facility['fac_status']) ?></p>
             <p>Deskripsi: <?= nl2br(htmlspecialchars($facility['fac_desc'])) ?></p>
 
+            <?php if (($_GET['error'] ?? '') === 'has_history'): ?>
+            <p style="color:var(--danger,red); font-weight:bold;">
+                Fasilitas ini tidak bisa dihapus karena masih mempunyai riwayat reservasi atau laporan.
+                Coba dinonaktifkan saja jika tidak ingin dipakai lagi.
+            </p>
+            <?php endif; ?>
+
             <form id="delete_form" method="post" action="../../app/controllers/facility_controller.php"
                   onsubmit="return confirm('Yakin mau hapus fasilitas ini? Data akan hilang permanen.');">
                 <input type="hidden" name="action" value="delete">

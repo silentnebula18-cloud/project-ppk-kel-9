@@ -11,7 +11,7 @@ if ($isEdit) {
     }
 }
 
-$types = ["ruang kelas", "aula", "laboratorium", "alat", "lapangan"];
+$types = ["Ruang Kelas", "Aula", "Laboratorium", "Alat", "Lapangan"];
 $statuses = ["Aktif", "Dalam Perbaikan", "Nonaktif"];
 ?>
 <body id="admin_body">

@@ -62,7 +62,11 @@ switch ($action) {
     case 'delete':
         $id = $_POST['fac_id'] ?? '';
         if ($id !== '') {
-            deleteFacility($conn, $id);
+            $result = deleteFacility($conn, $id);
+            if ($result === 'has_history') {
+                header("Location: ../../views/admin/kelola_fasilitas_detail.php?id=" . urlencode($id) . "&error=has_history");
+                exit;
+            }
         }
         header("Location: ../../views/admin/kelola_fasilitas.php");
         exit;

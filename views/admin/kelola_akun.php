@@ -28,7 +28,6 @@ $pending = getPendingAccounts($conn);
             <table id="akun_table">
                 <tr>
                     <th>Username</th>
-                    <th>Password</th>
                     <th>Email</th>
                     <th>Role</th>
                     <th>Tanggal daftar</th>
@@ -36,27 +35,21 @@ $pending = getPendingAccounts($conn);
                 </tr>
                 <?php if (empty($pending)): ?>
                 <tr>
-                    <td colspan="6">Tidak ada akun pending.</td>
+                    <td colspan="5">Tidak ada akun pending.</td>
                 </tr>
                 <?php else: ?>
                     <?php foreach ($pending as $acc): ?>
                     <tr>
                         <td><?= htmlspecialchars($acc['unv_username']) ?></td>
-                        <td>••••••••</td>
                         <td><?= htmlspecialchars($acc['unv_email']) ?></td>
-                        <td>Belum ditentukan</td>
+                        <td>Pengguna</td>
                         <td><?= htmlspecialchars($acc['unv_registered_at']) ?></td>
                         <td>
                             <form class="admit_form" method="post" action="../../app/controllers/account_controller.php"
                                   onsubmit="return confirm('Yakin mau admit akun ini?');">
                                 <input type="hidden" name="action" value="admit">
                                 <input type="hidden" name="unv_id" value="<?= htmlspecialchars($acc['unv_id']) ?>">
-                                <select name="role" required>
-                                    <option value=""> Role </option>
-                                    <option value="pengguna">Pengguna</option>
-                                    <option value="petugas">Petugas</option>
-                                    <option value="admin">Admin</option>
-                                </select>
+                                <input type="hidden" name="role" value="pengguna">
                                 <button type="submit">Admit</button>
                             </form>
 

@@ -12,6 +12,19 @@ CREATE TABLE unverified_acc(
     unv_registered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Data contoh akun pending
+INSERT INTO unverified_acc (unv_username, unv_password, unv_email) VALUES
+('jennifer_fylia', '$2y$10$C9vDC1YiNRo8sq7Qcr3BaehltDFzTwjkdnu8wUNBQFIhpehbm6hze', 'jennifer_fylia@example.com'),
+('gigi_hadid', '$2y$10$C9vDC1YiNRo8sq7Qcr3BaehltDFzTwjkdnu8wUNBQFIhpehbm6hze', 'gigi_hadid@example.com'),
+('zayn_malik', '$2y$10$C9vDC1YiNRo8sq7Qcr3BaehltDFzTwjkdnu8wUNBQFIhpehbm6hze', 'zayn_malik@example.com'),
+('justin_bieber', '$2y$10$C9vDC1YiNRo8sq7Qcr3BaehltDFzTwjkdnu8wUNBQFIhpehbm6hze', 'justin_bieber@example.com'),
+('hailey_bieber', '$2y$10$C9vDC1YiNRo8sq7Qcr3BaehltDFzTwjkdnu8wUNBQFIhpehbm6hze', 'hailey_bieber@example.com'),
+('taylor_swift', '$2y$10$C9vDC1YiNRo8sq7Qcr3BaehltDFzTwjkdnu8wUNBQFIhpehbm6hze', 'taylor_swift@example.com'),
+('tom_holland', '$2y$10$C9vDC1YiNRo8sq7Qcr3BaehltDFzTwjkdnu8wUNBQFIhpehbm6hze', 'tom_holland@example.com'),
+('zendaya_coleman', '$2y$10$C9vDC1YiNRo8sq7Qcr3BaehltDFzTwjkdnu8wUNBQFIhpehbm6hze', 'zendaya_coleman@example.com'),
+('margot_robbie', '$2y$10$C9vDC1YiNRo8sq7Qcr3BaehltDFzTwjkdnu8wUNBQFIhpehbm6hze', 'margot_robbie@example.com'),
+('ryan_gosling', '$2y$10$C9vDC1YiNRo8sq7Qcr3BaehltDFzTwjkdnu8wUNBQFIhpehbm6hze', 'ryan_gosling@example.com');
+
 CREATE TABLE users(
 	user_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     username VARCHAR(30) NOT NULL UNIQUE,
@@ -23,12 +36,25 @@ CREATE TABLE users(
 CREATE TABLE facilities(
 	fac_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     fac_name VARCHAR(30) NOT NULL,
-    type ENUM("ruang kelas", "aula", "laboratorium", "alat", "lapangan") NOT NULL,
+    type ENUM("Ruang Kelas", "Aula", "Laboratorium", "Alat", "Lapangan") NOT NULL,
     location VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
     fac_desc VARCHAR(1000) NOT NULL,
     fac_status ENUM("Aktif", "Dalam perbaikan", "Nonaktif") NOT NULL
 );
+
+-- Data contoh fasilitas
+INSERT INTO facilities (fac_name, type, location, capacity, fac_desc, fac_status) VALUES
+('Aula Utama', 'Aula', 'Gedung A Lantai 1', 300, 'Aula untuk seminar dan acara besar', 'Aktif'),
+('Aula Mini', 'Aula', 'Gedung A Lantai 2', 80, 'Aula kecil untuk rapat dan workshop', 'Aktif'),
+('Lab Komputer 1', 'Laboratorium', 'Gedung B Lantai 2', 40, 'Lab dengan 40 unit PC', 'Aktif'),
+('Lab Jaringan', 'Laboratorium', 'Gedung B Lantai 3', 30, 'Lab untuk praktikum jaringan komputer', 'Dalam perbaikan'),
+('Ruang Kelas 101', 'Ruang Kelas', 'Gedung C Lantai 1', 35, 'Ruang kelas reguler dengan proyektor', 'Aktif'),
+('Ruang Kelas 102', 'Ruang Kelas', 'Gedung C Lantai 1', 35, 'Ruang kelas reguler dengan AC', 'Aktif'),
+('Ruang Kelas 201', 'Ruang Kelas', 'Gedung C Lantai 2', 50, 'Ruang kelas besar untuk kuliah umum', 'Nonaktif'),
+('Proyektor Portabel', 'Alat', 'Gudang Sarpras', 5, 'Proyektor yang bisa dipinjam per unit', 'Aktif'),
+('Lapangan Basket', 'Lapangan', 'Area Olahraga Timur', 20, 'Lapangan basket outdoor', 'Aktif'),
+('Lapangan Futsal', 'Lapangan', 'Area Olahraga Barat', 24, 'Lapangan futsal indoor', 'Dalam perbaikan');
 
 CREATE TABLE reservations(
 	rsv_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
