@@ -94,9 +94,63 @@ switch ($_SESSION["role"]) {
             }
         break;
 
-    // case "pengguna":
-    //     require __DIR__ . "/views/pengguna/dashboard.html";
-    //     break;
+    case "pengguna":
+        $action = $_POST['action'] ?? '';
+        switch($action){
+            case 'ajukan_reservasi':
+                require_once __DIR__ . "/app/controllers/pengguna/form_rsv_controller.php";
+                $controller = new form_rsv_controller();
+                $controller->ajukan_reservasi();
+                break;
+            default: 
+                $page = $_GET['page'] ?? '';
+                switch($page){
+                    case 'beranda':
+                        require_once __DIR__ . "/app/controllers/pengguna/pengguna_dashboard_controller.php";
+                        $controller = new pengguna_dashboard_controller();
+                        $controller->index();
+                        break;
+                    case 'detail_fasilitas':
+                        require_once __DIR__ . "/app/controllers/pengguna/pengguna_dashboard_controller.php";
+                        $controller = new pengguna_dashboard_controller();
+                        $controller->detail_fasilitas();
+                        break;
+                    case 'cek_slot_waktu':
+                        require_once __DIR__ . "/app/controllers/pengguna/pengguna_dashboard_controller.php";
+                        $controller = new pengguna_dashboard_controller();
+                        $controller->detail_fasilitas();
+                        break;
+                    case 'form_rsv_2':
+                        require_once __DIR__ . "/app/controllers/pengguna/form_rsv_controller.php";
+                        $controller = new form_rsv_controller();
+                        $controller->form_rsv_2();
+                        break;
+                    case 'cek_slot_waktu_form_rsv_2':
+                        require_once __DIR__ . "/app/controllers/pengguna/form_rsv_controller.php";
+                        $controller = new form_rsv_controller();
+                        $controller->form_rsv_2();
+                        break;
+                    case 'reservasi_saya':
+                        $tab = $_GET['tab'] ?? 'semua';
+
+                        require_once __DIR__ . "/app/controllers/pengguna/reservasi_saya_controller.php";
+                        $controller = new reservasi_saya_controller();
+                        $controller->index($tab);
+                        break;
+                    case 'form_rsv_1':
+                        require_once __DIR__ . "/app/controllers/pengguna/form_rsv_controller.php";
+                        $controller = new form_rsv_controller();
+                        $controller->form_rsv_1();
+                        break;
+                    default:
+                        require_once __DIR__ . "/app/controllers/pengguna/pengguna_dashboard_controller.php";
+                        $controller = new pengguna_dashboard_controller();
+                        $controller->index();
+                        break;    
+                }
+                break;
+            }
+        break;
 
     case "petugas":
         $action = $_GET['action'] ?? '';

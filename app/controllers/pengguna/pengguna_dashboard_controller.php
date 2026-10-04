@@ -1,0 +1,88 @@
+<?php
+require_once __DIR__ . '/../../../config/db_connect.php';
+require_once __DIR__ . "/../../models/facility_model.php";
+require_once __DIR__ . "/../../models/reservation_model.php";
+
+class pengguna_dashboard_controller {
+    private $db;
+    private $facModel;
+    private $rsvModel;
+
+    public function __construct() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
+        $database = new db_connect();
+        $this->db = $database->getConnection();
+        
+        $this->facModel = new facility_model($this->db);
+        $this->rsvModel = new reservation_model($this->db);
+    }
+
+    public function index() {
+        $limit = 5;
+        $page = isset($_GET['haltab']) ? (int)$_GET['haltab'] : 1;
+        $offset = ($page - 1) * $limit;
+
+        $tipe_fac = $_GET['tipe_fac'] ?? '';
+        $lokasi_fac = $_GET['lokasi_fac'] ?? '';
+        $kapasitas_fac = $_GET['kapasitas_fac'] ?? '';
+
+        if ($tipe_fac !== '' || $lokasi_fac !== '' || $kapasitas_fac !== '') {
+
+            $facilities = $this->facModel->getFac_limit_filtered(
+                $limit,
+                $offset,
+                $tipe_fac,
+                $lokasi_fac,
+                $kapasitas_fac
+            );
+
+            $totalData = $this->facModel->countFac_filtered(
+                $tipe_fac,
+                $lokasi_fac,
+                $kapasitas_fac
+            );
+
+        } else {
+
+            $facilities = $this->facModel->getFac_limit($limit, $offset);
+            $totalData = $this->facModel->getTotalFacilities();
+        }
+
+        $totalPages = ceil($totalData / $limit);
+
+        require_once __DIR__ . '/../../../views/pengguna/pengguna_beranda.php';
+    }
+
+    public function detail_fasilitas(){
+        $id = $_GET['id'] ?? '';
+
+        $fac = $this->facModel->getFacilityById($id);
+
+        $tgl_cek_slot_waktu = $_GET['tgl_cek_slot_waktu'] ?? date('Y-m-d');
+
+        $date = new DateTime($tgl_cek_slot_waktu);
+
+        $dayOfWeek = (int) $date->format('w');
+
+        $startOfWeek = clone $date;
+        $startOfWeek->modify("-{$dayOfWeek} days");
+
+        $weekDates = [];
+
+        for ($i = 0; $i < 7; $i++) {
+            $weekDates[] = (clone $startOfWeek)->modify("+{$i} days");
+        }
+        
+        $startDate = $weekDates[0]->format('Y-m-d');
+        $endDate = $weekDates[6]->format('Y-m-d');
+
+        $reservations = $this->rsvModel->getApprovedByFacilityAndDateRange(
+            $id,
+            $startDate,
+            $endDate
+        );
+
+        require_once __DIR__ . '/../../../views/pengguna/detail_fasilitas.php';
+    }
+    
+}

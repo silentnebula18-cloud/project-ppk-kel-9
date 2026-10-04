@@ -52,4 +52,127 @@ class reservation_model {
         $stmt->bindParam(":id", $id);
         return $stmt->execute();
     }
+
+    // Mengambil semua reservasi yang disetujui untuk fasilitas tertentu pada rentang tanggal tertentu
+    public function getApprovedByFacilityAndDateRange($fac_id, $start_date, $end_date) {
+        $query = "SELECT *
+                FROM " . $this->table_name . "
+                WHERE fac_id = :fac_id
+                    AND rsv_date BETWEEN :start_date AND :end_date
+                    AND rsv_status = 'disetujui'
+                ORDER BY rsv_date, start_time";
+
+        $stmt = $this->conn->prepare($query);
+
+        $stmt->bindParam(":fac_id", $fac_id);
+        $stmt->bindParam(":start_date", $start_date);
+        $stmt->bindParam(":end_date", $end_date);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Menambahkan reservasi baru ke database
+    public function create($user_id, $fac_id, $rsv_date, $start_time, $end_time, $purpose) {
+
+        $sql = "INSERT INTO reservations
+                (user_id, fac_id, rsv_date, start_time, end_time, purpose)
+                VALUES (?, ?, ?, ?, ?, ?)";
+
+        $stmt = $this->conn->prepare($sql);
+
+        return $stmt->execute([
+            $user_id,
+            $fac_id,
+            $rsv_date,
+            $start_time,
+            $end_time,
+            $purpose
+        ]);
+    }
+
+    // Memeriksa apakah reservasi yang akan diajukan bertabrakan dengan reservasi yang sudah disetujui
+    // untuk fasilitas yang sama pada tanggal yang sama
+    public function checkOverlapNew($fac_id, $rsv_date, $start_time, $end_time) {
+        $sql = "SELECT COUNT(*) FROM reservations
+                WHERE fac_id = ?
+                AND rsv_date = ? AND rsv_status = 'disetujui'
+                AND start_time < ? AND end_time > ?";
+
+        $stmt = $this->conn->prepare($sql);
+
+        $stmt->execute([
+            $fac_id,
+            $rsv_date,
+            $end_time,
+            $start_time
+        ]);
+
+        return $stmt->fetchColumn() > 0;
+    }
+
+    // Mengambil semua reservasi yang diajukan oleh pengguna tertentu
+    public function getByUser($user_id) {
+        $sql = "SELECT 
+                    r.*,
+                FROM " . $this->table_name . " r
+                JOIN facilities f ON r.fac_id = f.fac_id
+                WHERE r.user_id = ?
+                ORDER BY r.rsv_date DESC, r.start_time DESC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$user_id]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Mengambil detail reservasi berstatus 'proses pengajuan' atau 'disetujui' untuk pengguna tertentu
+    public function getByUser_status_1($user_id, $status) {
+        $sql = "SELECT 
+                    r.rsv_id,
+                    r.rsv_date,
+                    r.start_time,
+                    r.end_time,
+                    r.purpose,
+                    r.rsv_status,
+                    r.created_at,
+                    f.*,
+                FROM " . $this->table_name . " r
+                JOIN facilities f ON r.fac_id = f.fac_id
+                WHERE r.user_id = ?
+                AND r.rsv_status = ?
+                ORDER BY r.created_at DESC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$user_id, $status]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Mengambil detail reservasi berstatus 'ditolak' untuk pengguna tertentu
+    public function getByUser_status_2($user_id) {
+        $sql = "SELECT 
+                    r.rsv_id,
+                    r.rsv_date,
+                    r.start_time,
+                    r.end_time,
+                    r.purpose,
+                    r.rsv_status,
+                    r.created_at,
+                    r.canceled_at,
+                    r.cancel_reason,
+                    f.*,
+                FROM " . $this->table_name . " r
+                JOIN facilities f ON r.fac_id = f.fac_id 
+                WHERE r.user_id = ?
+                AND r.rsv_status = ?
+                AND (SELECT role FROM users WHERE user_id = r.cancelled_by) = 'petugas'
+                ORDER BY r.created_at DESC";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([$user_id, 'ditolak']);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

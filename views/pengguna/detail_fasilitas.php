@@ -1,0 +1,179 @@
+<body id="pengguna_body">
+    <div id="dashboard_header">
+        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_title">Beranda</span>
+        <button id="logout_btn">LogOut</button>
+    </div>
+
+    <div id="dashboard_layout">
+        <div id="sidebar" class="hidden">
+            <a class="nav_item active" href="../../index.php?page=beranda"><span class="nav_icon">🏠</span>Beranda</a>
+            <a class="nav_item" href="../../index.php?page=reservasi_saya"><span class="nav_icon">🚪</span>Reservasi Saya</a>
+            <!-- <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a> -->
+        </div>
+
+        <div class="main_content" id = "hal_detail_fasilitas">
+            <div style= "display: flex; align-items: center">
+            <a class = "back_href" href="../../index.php?page=beranda">⬅️</a>
+            <button id="cek_slot_waktu_btn" onclick="toggleSlotWaktu()">Cek Slot Waktu</button>
+            </div>
+
+            <div id="slot_waktu" class="<?= isset($_GET['tgl_cek_slot_waktu']) ? '' : 'hidden' ?>">
+                <h2> Slot Waktu </h2>
+                <form method="get" action="../../index.php" id="formCekSlotWaktu">
+                    <input type="hidden" name="page" value="cek_slot_waktu">
+                    <input type="hidden" name="id" value="<?= htmlspecialchars($fac['fac_id']); ?>">
+
+                    <span class="form_group">
+                        <label for="tgl_cek_slot_waktu">Pilih Tanggal:</label>
+                        <input type="date" id="tgl_cek_slot_waktu" name="tgl_cek_slot_waktu" required>
+                    </span>
+
+                    <button type="submit">Cek Slot</button>
+                </form>
+
+                <div id="tabel_slot_waktu">
+                    <div id="slot_waktu_table_container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Jam</th>
+
+                                    <?php
+                                    $dayNames = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                                    ?>
+
+                                    <?php foreach ($weekDates as $i => $date): ?>
+                                        <th>
+                                            <?= $dayNames[$i] ?><br>
+                                            <?= $date->format('d/m') ?>
+                                        </th>
+                                    <?php endforeach; ?>
+                                </tr>
+
+                            </thead>
+
+                            <?php
+                            function isSlotOccupied($date, $startTime, $endTime, $reservations) {
+                                foreach ($reservations as $reservation) {
+                                    if (
+                                        $reservation['rsv_date'] === $date &&
+                                        $reservation['start_time'] < $endTime &&
+                                        $reservation['end_time'] > $startTime
+                                    ) {
+                                        return true;
+                                    }
+                                }
+
+                                return false;
+                            }
+                            ?>
+                            
+                            <tbody>
+                                <?php
+                                $startMinutes = 7 * 60;
+                                $endMinutes = 20 * 60;
+
+                                for ($time = $startMinutes; $time < $endMinutes; $time += 30):
+                                    $hourStart = floor($time / 60);
+                                    $minuteStart = $time % 60;
+
+                                    $nextTime = $time + 30;
+                                    $hourEnd = floor($nextTime / 60);
+                                    $minuteEnd = $nextTime % 60;
+
+                                    $startLabel = sprintf("%02d:%02d", $hourStart, $minuteStart);
+                                    $endLabel = sprintf("%02d:%02d", $hourEnd, $minuteEnd);
+                                ?>
+                                <tr>
+                                    <td><?= $startLabel ?> - <?= $endLabel ?></td>
+
+                                    <?php foreach ($weekDates as $date): ?>
+                                        <?php
+                                            $dateString = $date->format('Y-m-d');
+
+                                            $occupied = isSlotOccupied(
+                                                $dateString,
+                                                $startLabel,
+                                                $endLabel,
+                                                $reservations
+                                            );
+                                        ?>
+
+                                        <td
+                                            data-date="<?= $dateString ?>"
+                                            data-start="<?= $startLabel ?>"
+                                            data-end="<?= $endLabel ?>"
+                                            class="<?= $occupied ? 'slot_terisi' : '' ?>"
+                                        >
+                                        </td>
+                                    <?php endforeach; ?>
+                                </tr>
+                                <?php endfor; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="slot_legend">
+                    <span class="slot_legend_item">
+                        <span class="slot_legend_color slot_terisi"></span>
+                        Terisi
+                    </span>
+
+                    <span class="slot_legend_item">
+                        <span class="slot_legend_color"></span>
+                        Tersedia
+                    </span>
+                </div>
+                
+            </div>
+
+            
+            <div id = "detail_fac" style="display: flex; align-items: center; flex-direction: row; gap: 20px">
+                <div id = "detail_fac_txt">
+                    <h2> Detail Fasilitas </h2>
+                    <div> fac_id : <?=$fac['fac_id']?> </div>
+                    <div> Nama Fasilitas : <?=$fac['fac_name']?> </div>
+                    <div> Deskripsi : <?=$fac['fac_desc']?> </div>
+                    <div> Tipe : <?=$fac['type']?> </div>
+                    <div> Lokasi : <?=$fac['location']?> </div>
+                    <div> Status : <?=$fac['fac_status']?> </div>
+                </div>
+            </div>
+
+            <div id="detail_fac_btn" style="margin-top: 20px; display: flex; align-items: center; gap: 20px">
+                 <div id="buat_reservasi">
+                        <?php if ($fac['fac_status'] === 'aktif'): ?>
+                            <a href="../../index.php?page=form_rsv_2&id=<?= urlencode($fac['fac_id']); ?>">
+                                <button type="button">Buat Reservasi</button>
+                            </a>
+                        <?php else: ?>
+                            <p style="color: #b91c1c;">
+                                Fasilitas sedang tidak dapat digunakan untuk reservasi.
+                            </p>
+                        <?php endif; ?>
+                 </div>
+                 <div id="buat_laporan">
+                        <?php if ($fac['fac_status'] === 'aktif'): ?>
+                            <a href="../../index.php?page=form_rep_2&id=<?= urlencode($fac['fac_id']); ?>">
+                                <button type="button">Buat Laporan</button>
+                            </a>
+                        <?php else: ?>
+                            <p style="color: #b91c1c;">
+                                Fasilitas sedang tidak dapat digunakan untuk membuat laporan.
+                            </p>
+                        <?php endif; ?>
+                 </div>
+            </div>
+
+
+
+           
+
+        </div>
+    </div>
+</body>
+</html>
+<link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
+<script src="../../public/js/pengguna/pengguna.js"></script>
