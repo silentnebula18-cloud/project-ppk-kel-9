@@ -15,6 +15,8 @@ $reservasiMenungguCount = countReservationsByStatus($conn, 'proses pengajuan');
 // Data panel
 $statusCounts = getFacilityStatusCounts($conn);
 $topFasilitas = getTopReservedFacilities($conn, 5);
+$buildings = getFacilitiesByBuilding($conn);
+$typeIcons = ['Ruang Kelas' => '🏫', 'Aula' => '🏛️', 'Laboratorium' => '🔬', 'Alat' => '🎥', 'Lapangan' => '⚽'];
 $maxReservasi = !empty($topFasilitas) ? (int) $topFasilitas[0]['total'] : 0;
 
 // Sapaan, tanggal, & maskot sesuai jam
@@ -53,12 +55,19 @@ if ($statusCounts['Dalam perbaikan'] > 0) {
 $todos[] = ['key' => 'cek', 'text' => 'Lihat ringkasan hari ini', 'href' => null];
 
 $statusEmoji = ['Aktif' => '🟢', 'Dalam perbaikan' => '🟡', 'Nonaktif' => '🔴'];
+
+// Ubah status jadi nama class: "Dalam perbaikan" -> "dalam-perbaikan"
+function statusSlug($status)
+{
+    return str_replace(' ', '-', strtolower($status));
+}
 ?>
 <body id="admin_body">
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Dashboard Admin</span>
-        <button id="logout_btn">LogOut</button>
+        <a href="../../app/controllers/logout_controller.php"><button id="logout_btn">LogOut</button></a>
     </div>
 
     <div id="dashboard_layout">
@@ -121,6 +130,56 @@ $statusEmoji = ['Aktif' => '🟢', 'Dalam perbaikan' => '🟡', 'Nonaktif' => '�
                 <?php endforeach; ?>
             </div>
 
+            <div class="panel" id="campus_map">
+                <div class="map_head">
+                    <h4>Denah kampus mini</h4>
+                    <div class="map_legend">
+                        <span><i class="map_dot dot_aktif"></i>Aktif</span>
+                        <span><i class="map_dot dot_dalam-perbaikan"></i>Dalam perbaikan</span>
+                        <span><i class="map_dot dot_nonaktif"></i>Nonaktif</span>
+                    </div>
+                </div>
+                <?php if (empty($buildings)): ?>
+                    <p class="empty_note">Belum ada data fasilitas.</p>
+                <?php else: ?>
+                    <p class="map_hint">Klik sebuah gedung untuk melihat isinya.</p>
+                    <div class="map_body">
+                        <div class="map_grid">
+                            <?php $i = 0; foreach ($buildings as $name => $items): ?>
+                                <button type="button" class="map_tile<?= $i === 0 ? ' active' : '' ?>" data-target="map_b<?= $i ?>">
+                                    <span class="map_tile_name"><?= htmlspecialchars($name) ?></span>
+                                    <span class="map_dots">
+                                        <?php foreach ($items as $it): ?>
+                                            <i class="map_dot dot_<?= statusSlug($it['fac_status']) ?>" title="<?= htmlspecialchars($it['fac_name'] . ' · ' . $it['fac_status']) ?>"></i>
+                                        <?php endforeach; ?>
+                                    </span>
+                                    <span class="map_tile_count"><?= count($items) ?> fasilitas</span>
+                                </button>
+                            <?php $i++; endforeach; ?>
+                        </div>
+
+                        <div class="map_detail_wrap">
+                            <?php $i = 0; foreach ($buildings as $name => $items): ?>
+                                <div class="map_detail" id="map_b<?= $i ?>"<?= $i === 0 ? '' : ' hidden' ?>>
+                                    <h5><?= htmlspecialchars($name) ?></h5>
+                                    <ul>
+                                        <?php foreach ($items as $it): ?>
+                                            <li>
+                                                <span class="map_item_name">
+                                                    <?= $typeIcons[$it['type']] ?? '📍' ?> <?= htmlspecialchars($it['fac_name']) ?>
+                                                    <small><?= htmlspecialchars($it['location']) ?> · <?= (int) $it['capacity'] ?> orang</small>
+                                                </span>
+                                                <span class="status_badge status_<?= statusSlug($it['fac_status']) ?>"><?= ucwords(htmlspecialchars($it['fac_status'])) ?></span>
+                                            </li>
+                                        <?php endforeach; ?>
+                                    </ul>
+                                </div>
+                            <?php $i++; endforeach; ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            </div>
+
             <div id="dashboard_panels">
                 <div class="panel panel_note" id="todo_panel" data-date="<?= date('Y-m-d') ?>">
                     <h4>Tugas hari ini</h4>
@@ -165,6 +224,6 @@ $statusEmoji = ['Aktif' => '🟢', 'Dalam perbaikan' => '🟡', 'Nonaktif' => '�
     </div>
 </body>
 
-<link rel="stylesheet" href="../../public/css/admin/admin_style.css?v=5">
+<link rel="stylesheet" href="../../public/css/admin/admin_style.css?v=<?= filemtime(__DIR__ . '/../../public/css/admin/admin_style.css') ?>">
 <script src="../../public/js/admin/sidebar.js"></script>
-<script src="../../public/js/admin/beranda.js?v=1"></script>
+<script src="../../public/js/admin/beranda.js?v=<?= filemtime(__DIR__ . '/../../public/js/admin/beranda.js') ?>"></script>

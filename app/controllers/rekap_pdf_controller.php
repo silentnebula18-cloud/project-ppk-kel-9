@@ -14,7 +14,7 @@ use Dompdf\Options;
 
 $facilities = getAllFacilities($conn);
 
-// Susun HTML untuk PDF -
+// Susun HTML untuk PDF 
 $tanggal = date('d/m/Y');
 $namaFile = 'rekap_fasilitas_' . date('Y-m-d') . '.pdf';
 
@@ -40,7 +40,6 @@ foreach ($facilities as $i => $f) {
 
     // Warna baris selang-seling
     $bgColor = ($i % 2 === 0) ? '#FFFDFA' : '#F5EFE6';
-
     $tableRows .= "
         <tr style=\"background-color:{$bgColor};\">
             <td style=\"text-align:center;\">{$no}</td>

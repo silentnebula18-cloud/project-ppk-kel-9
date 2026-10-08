@@ -6,8 +6,9 @@ $pending = getPendingAccounts($conn);
 <body id="admin_body">
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Dashboard Admin</span>
-        <button id="logout_btn">LogOut</button>
+        <a href="../../app/controllers/logout_controller.php"><button id="logout_btn">LogOut</button></a>
     </div>
 
     <div id="dashboard_layout">
@@ -68,6 +69,6 @@ $pending = getPendingAccounts($conn);
     </div>
 </body>
 
-<link rel="stylesheet" href="../../public/css/admin/admin_style.css">
+<link rel="stylesheet" href="../../public/css/admin/admin_style.css?v=<?= filemtime(__DIR__ . '/../../public/css/admin/admin_style.css') ?>">
 <script src="../../public/js/admin/sidebar.js"></script>
 <script src="../../public/js/admin/table_actions.js"></script>

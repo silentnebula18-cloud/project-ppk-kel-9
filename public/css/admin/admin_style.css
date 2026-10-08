@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&family=Caveat:wght@600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=IBM+Plex+Sans:wght@400;500;600&display=swap');
 
 :root {
     --ink: #3E2A1E;
@@ -22,7 +22,7 @@
     font-family: 'IBM Plex Sans', Arial, sans-serif;
 }
 
-h1, h2, h3, .card_value, #header_title {
+h1, h2, h3, .card_value, #header_title, #header_brand {
     font-family: 'Fraunces', Georgia, serif;
 }
 
@@ -55,13 +55,28 @@ h1, h2, h3, .card_value, #header_title {
     transform: rotate(20deg);
 }
 
+#header_brand {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.3px;
+}
+
+#header_brand em {
+    font-style: normal;
+    color: var(--gold);
+}
+
 #header_title {
     flex: 1;
-    font-weight: 600;
+    font-weight: 500;
     font-style: normal;
-    font-size: 20px;
-    color: var(--ink);
+    font-size: 15px;
+    color: var(--text-muted);
     letter-spacing: 0.2px;
+    margin-left: 6px;
+    padding-left: 14px;
+    border-left: 1px solid var(--border);
 }
 
 /* ===== Layout & Sidebar ===== */
@@ -628,82 +643,252 @@ a.summary_card:hover {
     }
 }
 
-/* ===== Panel unik: catatan tempel & papan juara ===== */
-.panel_note {
-    position: relative;
-    background-color: #FFF8DC;
-    border-top: none;
-    filter: drop-shadow(0 6px 8px rgba(61, 41, 30, 0.18));
-    transform: rotate(-0.6deg);
-    transition: transform .25s;
+/* ===== Panel Beranda: gaya bersih ===== */
+.panel {
+    border: 1px solid var(--border);
+    border-top: 3px solid var(--gold);
 }
 
-.panel_note:hover {
-    transform: rotate(0);
+.panel h4 {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--ink);
+    margin: 0 0 18px;
 }
 
-.panel_note::before {
-    content: "";
-    position: absolute;
-    top: -12px;
-    left: 50%;
-    width: 96px;
-    height: 26px;
-    margin-left: -48px;
-    background-color: rgba(200, 155, 60, 0.5);
-    transform: rotate(-3deg);
-}
-
-/* Tepi bawah bergerigi seperti struk/kertas sobekan */
-.panel_note::after {
-    content: "";
-    position: absolute;
-    left: 0;
-    right: 0;
-    bottom: -12px;
-    height: 12px;
-    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='12' viewBox='0 0 20 12'%3E%3Cpolygon points='0,0 20,0 10,12' fill='%23FFF8DC'/%3E%3C/svg%3E") repeat-x left top;
-}
-
-.panel_note h4,
-.panel_leaderboard h4 {
-    font-family: 'Caveat', cursive;
-    font-size: 30px;
-    font-weight: 700;
-    margin-bottom: 12px;
-}
-
+/* Tugas hari ini */
 .panel_note .progress_track {
-    background-color: rgba(61, 41, 30, 0.1);
+    height: 6px;
+    background-color: var(--paper);
+}
+
+.panel_note .progress_fill {
+    background-color: var(--gold);
+}
+
+.panel_note .empty_note {
+    margin-top: 8px;
+    font-size: 12px;
 }
 
 .panel_note .todo_list li {
-    border-bottom: 1px dashed rgba(61, 41, 30, 0.25);
+    padding: 12px 8px;
+    margin: 0 -8px;
+    border-bottom: 1px solid var(--paper);
+    border-radius: 6px;
+    transition: background-color .15s;
 }
 
-.panel_leaderboard {
-    background-color: var(--ink);
-    border-top: 3px solid var(--gold);
-    color: var(--surface);
+.panel_note .todo_list li:hover {
+    background-color: #FAF6EE;
 }
 
-.panel_leaderboard h4 {
-    color: var(--gold);
+.panel_note .todo_list li:last-child {
+    border-bottom: none;
 }
 
+/* Fasilitas paling sering direservasi */
 .panel_leaderboard .top_bar {
-    background-color: rgba(255, 255, 255, 0.14);
+    background-color: var(--paper);
 }
 
 .panel_leaderboard .top_row strong {
-    color: var(--gold);
+    color: var(--ink);
 }
 
-@media (prefers-reduced-motion: reduce) {
-    .panel_note {
-        animation: none;
-        transition: none;
+/* ===== Denah kampus mini ===== */
+#campus_map {
+    margin-top: 24px;
+}
+
+#campus_map + #dashboard_panels {
+    margin-top: 24px;
+}
+
+.map_head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.map_head h4 {
+    margin-bottom: 6px;
+}
+
+.map_hint {
+    margin: 0 0 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.map_legend {
+    display: flex;
+    gap: 16px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.map_legend span {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.map_dot {
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+.dot_aktif { background-color: var(--success); }
+.dot_dalam-perbaikan { background-color: var(--gold); }
+.dot_nonaktif { background-color: var(--danger); }
+
+.map_body {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 24px;
+}
+
+.map_grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 16px;
+    align-content: start;
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px dashed var(--border);
+    background-color: var(--paper);
+    background-image: radial-gradient(rgba(62, 42, 30, 0.14) 1px, transparent 1px);
+    background-size: 16px 16px;
+}
+
+.map_tile {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+    text-align: left;
+    padding: 14px;
+    background-color: var(--surface);
+    color: var(--ink);
+    font-weight: 400;
+    border: 1px solid var(--border);
+    border-bottom: 4px solid var(--border);
+    border-radius: 6px;
+    transition: transform .15s, box-shadow .15s, border-color .15s, background-color .15s;
+}
+
+.map_tile:hover {
+    background-color: #FFF8EA;
+    transform: translateY(-3px);
+}
+
+.map_tile.active {
+    border-color: var(--gold);
+    border-bottom-color: var(--gold);
+    box-shadow: 0 6px 14px rgba(62, 42, 30, 0.14);
+}
+
+.map_tile_name {
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+.map_dots {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.map_tile_count {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.map_detail[hidden] {
+    display: none;
+}
+
+.map_detail h5 {
+    margin: 0 0 12px;
+    font-family: 'Fraunces', Georgia, serif;
+    font-size: 17px;
+    color: var(--ink);
+}
+
+.map_detail ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.map_detail li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--paper);
+    font-size: 14px;
+}
+
+.map_item_name small {
+    display: block;
+    margin-top: 2px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+@media (max-width: 900px) {
+    .map_body {
+        grid-template-columns: 1fr;
     }
+}
+
+/* ===== Sentuhan dekoratif halus ===== */
+#main_content {
+    background-image: radial-gradient(rgba(62, 42, 30, 0.07) 1px, transparent 1px);
+    background-size: 22px 22px;
+}
+
+#dashboard_header {
+    box-shadow: 0 3px 0 var(--gold);
+    position: relative;
+    z-index: 2;
+}
+
+.card_value::after {
+    content: "";
+    display: block;
+    width: 28px;
+    height: 3px;
+    margin: 10px auto 0;
+    border-radius: 2px;
+    background-color: var(--gold);
+}
+
+.summary_card.card_alert .card_value::after {
+    background-color: var(--danger);
+}
+
+.summary_card.card_alert::before {
+    content: "Perlu tindakan";
+    position: absolute;
+    top: 14px;
+    right: 0;
+    padding: 3px 9px;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    color: #fff;
+    background-color: var(--danger);
+    border-radius: 3px 0 0 3px;
 }
 
 /* Tombol rekap di bawah tabel fasilitas */

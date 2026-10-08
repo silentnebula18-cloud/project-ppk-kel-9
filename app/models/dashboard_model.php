@@ -1,8 +1,8 @@
 <?php
-// Model khusus data ringkasan untuk Beranda Admin
+// Model khusus data ringkasan untuk Beranda Admin (read-only, cuma SELECT)
 require_once __DIR__ . "/../../config/db_connect.php";
 
-// Hitung laporan kerusakan berdasarkan status 
+// Hitung laporan kerusakan berdasarkan status (mis. 'baru')
 function countReportsByStatus($conn, $status)
 {
     $stmt = mysqli_prepare($conn, "SELECT COUNT(*) as total FROM reports WHERE rep_status = ?");
@@ -66,5 +66,29 @@ function getTopReservedFacilities($conn, $limit = 5)
         }
     }
     return $rows;
+}
+
+/**
+ * Semua fasilitas dikelompokkan per gedung/area, untuk denah di Beranda.
+ * "Gedung A Lantai 2" dan "Gedung A Lantai 1" masuk ke kelompok "Gedung A".
+ * @return array ['Gedung A' => [ [fac_name, type, location, capacity, fac_status], ... ], ...]
+ */
+function getFacilitiesByBuilding($conn)
+{
+    $result = mysqli_query($conn, "SELECT fac_name, type, location, capacity, fac_status
+                                   FROM facilities
+                                   ORDER BY location ASC, fac_name ASC");
+    $groups = [];
+    if ($result) {
+        while ($row = mysqli_fetch_assoc($result)) {
+            $building = trim(preg_replace('/\s+Lantai\s+\d+\s*$/i', '', $row['location']));
+            if ($building === '') {
+                $building = 'Lainnya';
+            }
+            $groups[$building][] = $row;
+        }
+    }
+    ksort($groups);
+    return $groups;
 }
 ?>

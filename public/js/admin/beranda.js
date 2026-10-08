@@ -54,7 +54,20 @@
         });
     }
 
-    // 4. Checklist tugas hari ini (tersimpan per hari di browser)
+    // 4. Denah kampus mini: klik gedung untuk melihat isinya
+    var tiles = document.querySelectorAll('.map_tile');
+    var details = document.querySelectorAll('.map_detail');
+    tiles.forEach(function (tile) {
+        tile.addEventListener('click', function () {
+            tiles.forEach(function (t) { t.classList.remove('active'); });
+            details.forEach(function (d) { d.hidden = true; });
+            tile.classList.add('active');
+            var target = document.getElementById(tile.getAttribute('data-target'));
+            if (target) target.hidden = false;
+        });
+    });
+
+    // 5. Checklist tugas hari ini (tersimpan per hari di browser)
     var panel = document.getElementById('todo_panel');
     if (!panel) return;
     var boxes = panel.querySelectorAll('input[type="checkbox"]');
