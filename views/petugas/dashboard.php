@@ -39,7 +39,7 @@
     <aside id="sidebar">
         <div id="sidebar_logo">
             <span id="header_logo">★</span>
-            <span>Petugas</span>
+            <span>CampuSpace</span>
         </div>
         <nav>
             <a href="index.php?page=dashboard" class="active">Beranda</a>
