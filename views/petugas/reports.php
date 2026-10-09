@@ -113,8 +113,8 @@
 
                 <!-- Textbox Resolusi -->
                 <div class="form-group">
-                    <label for="edit_resolution">Textbox resolusi</label>
-                    <textarea name="resolution" id="edit_resolution" rows="4" placeholder="Tuliskan resolusi/penanganan laporan..."></textarea>
+                    <label for="edit_resolution_note">Textbox resolusi</label>
+                    <textarea name="resolution_note" id="edit_resolution_note" rows="4" placeholder="Tuliskan resolusi/penanganan laporan..."></textarea>
                 </div>
 
                 <div style="text-align: right; gap: 10px; display: flex; justify-content: flex-end;">
@@ -130,7 +130,7 @@
             document.getElementById('edit_rep_id').value = report.rep_id;
             document.getElementById('edit_rep_status').value = report.rep_status;
             document.getElementById('edit_fac_id').value = report.fac_id;
-            document.getElementById('edit_resolution').value = report.resolution || '';
+            document.getElementById('edit_resolution_note').value = report.resolution_note || '';
             
             document.getElementById('editReportModal').style.display = 'block';
         }

@@ -20,16 +20,16 @@ class Report {
     }
 
     // Update status, fasilitas, dan resolusi
-    public function updateReport($id, $status, $fac_id, $resolution) {
+    public function updateReport($id, $status, $fac_id, $resolution_note) {
         $query = "UPDATE " . $this->table_name . " 
                   SET rep_status = :status, 
                       fac_id = :fac_id, 
-                      resolution = :resolution 
+                      resolution_note = :resolution_note 
                   WHERE rep_id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":status", $status);
         $stmt->bindParam(":fac_id", $fac_id);
-        $stmt->bindParam(":resolution", $resolution);
+        $stmt->bindParam(":resolution_note", $resolution_note);
         $stmt->bindParam(":id", $id);
         return $stmt->execute();
     }

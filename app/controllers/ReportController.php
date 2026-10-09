@@ -18,7 +18,7 @@ class ReportController {
         $reports = $this->reportModel->getAll();
 
         // Ambil daftar fasilitas untuk dropdown modal
-        $queryFac = "SELECT fac_id, fac_name FROM facilities WHERE fac_status = 'aktif'";
+        $queryFac = "SELECT fac_id, fac_name FROM facilities WHERE fac_status = 'Aktif'";
         $stmtFac = $this->db->prepare($queryFac);
         $stmtFac->execute();
         $facilities = $stmtFac->fetchAll(PDO::FETCH_ASSOC);
