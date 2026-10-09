@@ -1,95 +1,95 @@
+<?php
+if (!function_exists('e')) {
+    function e($v) { return htmlspecialchars((string) $v, ENT_QUOTES, 'UTF-8'); }
+}
+if (!function_exists('statusSlug')) {
+    function statusSlug($status) { return str_replace(' ', '-', strtolower(trim((string) $status))); }
+}
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Petugas - Daftar Laporan</title>
-    <link rel="stylesheet" href="../../public/css/petugas/dashboard_style.css">
-    <style>
-        .report-card {
-            display: flex;
-            align-items: center;
-            border: 3px solid #000;
-            background: #0165FC;
-            padding: 15px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            gap: 20px;
-        }
-        .report-thumb {
-            width: 80px;
-            height: 80px;
-            background: #fff3a0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border: 1px solid #ccc;
-            font-weight: bold;
-        }
-        .report-info { flex: 1; }
-        .report-info p { margin: 4px 0; font-size: 14px; }
-        
-        /* Modal Popup */
-        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); }
-        .modal-content { background: #7393B3; margin: 10% auto; padding: 25px; width: 450px; border-radius: 8px; border: 2px solid #333; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
-        .form-group select, .form-group textarea { width: 100%; padding: 8px; box-sizing: border-box; }
-    </style>
+    <link rel="stylesheet" href="../../public/css/petugas/dashboard_style.css?v=<?= @filemtime(__DIR__ . '/../../public/css/petugas/dashboard_style.css') ?: 1 ?>">
 </head>
-<body>
+<body id="petugas_body">
 
-    <aside id="sidebar">
-    <div id="sidebar_logo">
-        <span id="header_logo">★</span>
-        <span>Petugas</span>
+    <div class="toast_container">
+        <?php if (!empty($_SESSION['flash_success'])): ?>
+            <div class="toast toast_success" role="status">
+                <span><?= e($_SESSION['flash_success']); unset($_SESSION['flash_success']); ?></span>
+                <button type="button" class="close_btn" aria-label="Tutup" onclick="this.parentElement.remove()">&times;</button>
+            </div>
+        <?php endif; ?>
+        <?php if (!empty($_SESSION['flash_error'])): ?>
+            <div class="toast toast_error" role="alert">
+                <span><?= e($_SESSION['flash_error']); unset($_SESSION['flash_error']); ?></span>
+                <button type="button" class="close_btn" aria-label="Tutup" onclick="this.parentElement.remove()">&times;</button>
+            </div>
+        <?php endif; ?>
     </div>
-    <nav>
-        <a href="index.php?page=dashboard">Beranda</a>
-        <a href="index.php?page=reports" class="active">Laporan</a>
-        <a href="index.php?page=facilities">Fasilitas</a>
-    </nav>
-</aside>
 
-    <main id="main">
-        <div class="report-list">
-            <?php if (empty($reports)): ?>
-                <p>Belum ada laporan masuk.</p>
-            <?php else: ?>
-                <?php foreach ($reports as $index => $rp): ?>
-                    <div class="report-card">
-                        <div class="report-title">Laporan <?= $index + 1 ?></div>
-                        <div class="report-thumb">
-                            <?php if (!empty($rp['photo'])): ?>
-                                <img src="../../public/uploads/<?= htmlspecialchars($rp['photo']) ?>" alt="Foto">
-                            <?php else: ?>
-                                Foto
-                            <?php endif; ?>
-                        </div>
-                        <div class="report-info">
-                            <p><strong>Kategori:</strong> <?= htmlspecialchars(ucwords($rp['category'])) ?></p>
-                            <p><strong>Status:</strong> <?= htmlspecialchars(ucfirst($rp['rep_status'])) ?></p>
-                            <p><strong>Fasilitas:</strong> <?= htmlspecialchars($rp['fac_name'] ?? 'Tidak Terkait') ?></p>
-                        </div>
-                        <div>
-                            <button type="button" class="btn-edit"
-                                    onclick='openEditModal(<?= json_encode($rp, JSON_HEX_APOS | JSON_HEX_QUOT) ?>)'>Edit</button>
-                        </div>
-                    </div>
-                <?php endforeach; ?>
-            <?php endif; ?>
-        </div>
-    </main>
+    <div id="dashboard_header">
+        <button type="button" id="header_logo" aria-label="Tampilkan atau sembunyikan menu" onclick="toggleSidebar()">★</button>
+        <span id="header_brand">Campu<em>Space</em></span>
+        <span id="header_title">Dashboard Petugas</span>
+        <a href="../../app/controllers/logout_controller.php"><button type="button" id="logout_btn">Keluar</button></a>
+    </div>
 
-    <!-- Pop Up ketika Laporan diubah -->
-    <div id="editReportModal" class="modal">
-        <div class="modal-content">
-            <h3 style="text-align: center; margin-top:0;">Pop up ketika Laporan diubah</h3>
+    <div id="dashboard_layout">
+        <nav id="sidebar" aria-label="Menu utama">
+            <a class="nav_item" href="index.php?page=dashboard"><span class="nav_icon">🏠</span>Beranda</a>
+            <a class="nav_item active" href="index.php?page=reports"><span class="nav_icon">🛠️</span>Laporan</a>
+            <a class="nav_item" href="index.php?page=facilities"><span class="nav_icon">🏢</span>Fasilitas</a>
+        </nav>
+
+        <main id="main_content">
+            <div class="page_head">
+                <h3>Daftar laporan</h3>
+                <p>Tinjau laporan kerusakan dan perbarui statusnya.</p>
+            </div>
+
+            <div class="report_list">
+                <?php if (empty($reports)): ?>
+                    <p class="empty_note">Belum ada laporan masuk.</p>
+                <?php else: ?>
+                    <?php foreach ($reports as $index => $rp): ?>
+                        <?php $slug = statusSlug($rp['rep_status']); ?>
+                        <div class="report_card rep_<?= e($slug) ?>">
+                            <div class="report_thumb">
+                                <?php if (!empty($rp['photo'])): ?>
+                                    <img src="../../public/uploads/<?= e($rp['photo']) ?>" alt="Foto laporan <?= $index + 1 ?>">
+                                <?php else: ?>
+                                    Tanpa foto
+                                <?php endif; ?>
+                            </div>
+                            <div class="report_info">
+                                <h4 class="report_title">Laporan <?= $index + 1 ?></h4>
+                                <p><strong>Kategori:</strong> <?= e(ucwords($rp['category'])) ?></p>
+                                <p><strong>Fasilitas:</strong> <?= e($rp['fac_name'] ?? 'Tidak terkait') ?></p>
+                                <p><strong>Status:</strong> <span class="status_badge status_<?= e($slug) ?>"><?= e(ucfirst($rp['rep_status'])) ?></span></p>
+                            </div>
+                            <div class="actions">
+                                <button type="button" class="js-edit"
+                                        data-report="<?= e(json_encode($rp, JSON_UNESCAPED_UNICODE)) ?>">Edit</button>
+                            </div>
+                        </div>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal ubah laporan -->
+    <div id="editReportModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="editTitle">
+        <div class="modal_content modal_edit">
+            <h3 id="editTitle">Ubah laporan</h3>
             <form action="index.php?page=reports&action=update" method="POST">
                 <input type="hidden" name="rep_id" id="edit_rep_id">
 
-                <!-- Dropdown Status -->
-                <div class="form-group">
+                <div class="form_group">
                     <label for="edit_rep_status">Status</label>
                     <select name="rep_status" id="edit_rep_status" required>
                         <option value="baru">Baru</option>
@@ -99,43 +99,50 @@
                     </select>
                 </div>
 
-                <!-- Dropdown Fasilitas -->
-                <div class="form-group">
+                <div class="form_group">
                     <label for="edit_fac_id">Fasilitas</label>
                     <select name="fac_id" id="edit_fac_id" required>
                         <?php foreach ($facilities as $fac): ?>
-                            <option value="<?= $fac['fac_id'] ?>"><?= htmlspecialchars($fac['fac_name']) ?></option>
+                            <option value="<?= e($fac['fac_id']) ?>"><?= e($fac['fac_name']) ?></option>
                         <?php endforeach; ?>
                     </select>
                 </div>
 
-                <!-- Textbox Resolusi -->
-                <div class="form-group">
-                    <label for="edit_resolution_note">Textbox resolusi</label>
-                    <textarea name="resolution_note" id="edit_resolution_note" rows="4" placeholder="Tuliskan resolusi/penanganan laporan..."></textarea>
+                <div class="form_group">
+                    <label for="edit_resolution_note">Catatan penanganan</label>
+                    <textarea name="resolution_note" id="edit_resolution_note" rows="4" placeholder="Tuliskan resolusi atau penanganan laporan..."></textarea>
                 </div>
 
-                <div style="text-align: right; gap: 10px; display: flex; justify-content: flex-end;">
-                    <button type="button" onclick="closeEditModal()">Batal</button>
-                    <button type="submit" class="btn_ok">Simpan Perubahan</button>
+                <div class="modal_actions">
+                    <button type="button" class="btn_secondary js-close">Batal</button>
+                    <button type="submit" class="btn_ok">Simpan perubahan</button>
                 </div>
             </form>
         </div>
     </div>
 
     <script>
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('hidden'); }
+
         function openEditModal(report) {
             document.getElementById('edit_rep_id').value = report.rep_id;
             document.getElementById('edit_rep_status').value = report.rep_status;
             document.getElementById('edit_fac_id').value = report.fac_id;
             document.getElementById('edit_resolution_note').value = report.resolution_note || '';
-            
-            document.getElementById('editReportModal').style.display = 'block';
+            const modal = document.getElementById('editReportModal');
+            modal.style.display = 'block';
+            document.getElementById('edit_rep_status').focus();
         }
+        function closeEditModal() { document.getElementById('editReportModal').style.display = 'none'; }
 
-        function closeEditModal() {
-            document.getElementById('editReportModal').style.display = 'none';
-        }
+        document.addEventListener('click', e => {
+            const edit = e.target.closest('.js-edit');
+            if (edit) openEditModal(JSON.parse(edit.dataset.report));
+            if (e.target.closest('.js-close') || e.target.classList.contains('modal')) closeEditModal();
+        });
+        document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEditModal(); });
+
+        document.querySelectorAll('.toast').forEach(t => setTimeout(() => t.remove(), 5000));
     </script>
 </body>
 </html>
