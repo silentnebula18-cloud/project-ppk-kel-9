@@ -130,10 +130,14 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--brand); outline
 .btn_danger { color: var(--danger); border-color: var(--danger); }
 
 .status {
-    display: inline-block;
-    padding: 2px 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 3px 10px;
     border-radius: 999px;
     font-size: 11px;
+    line-height: 1;
+    vertical-align: middle;
     border: 1px solid var(--warn);
     color: var(--warn);
 }
