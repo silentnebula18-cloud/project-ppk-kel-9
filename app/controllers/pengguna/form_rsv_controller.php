@@ -89,6 +89,16 @@ class form_rsv_controller {
         $start_time = $_POST['start_time'] ?? '';
         $end_time = $_POST['end_time'] ?? '';
         $purpose = trim($_POST['purpose'] ?? '');
+        $from = $_POST['from'] ?? '';
+
+        // Tentukan halaman asal
+        if ($from === 'detail_fasilitas') {
+            $redirect = "../../index.php?page=beranda";
+        } elseif ($from === 'form_rsv_1') {
+            $redirect = "../../index.php?page=reservasi_saya";
+        } else {
+            $redirect = "../../index.php?page=reservasi_saya";
+        }
 
         // 1. Data wajib harus lengkap
         if (
@@ -99,18 +109,24 @@ class form_rsv_controller {
             $end_time === '' ||
             $purpose === ''
         ) {
-            die("Data reservasi belum lengkap.");
+            $_SESSION['notice'] = "Data reservasi belum lengkap.";
+            header("Location: " . $redirect);
+            exit;
         }
 
         // 2. Fasilitas harus aktif
         $fac = $this->facModel->getFacilityById($fac_id);
 
         if (!$fac) {
-            die("Fasilitas tidak ditemukan.");
+            $_SESSION['notice'] = "Fasilitas tidak ditemukan.";
+            header("Location: " . $redirect);
+            exit;
         }
 
         if ($fac['fac_status'] !== 'aktif') {
-            die("Fasilitas sedang tidak dapat digunakan untuk reservasi.");
+            $_SESSION['notice'] = "Fasilitas sedang tidak dapat digunakan untuk reservasi.";
+            header("Location: " . $redirect);
+            exit;
         }
 
         // 3. Waktu mulai harus >= 48 jam dari sekarang
@@ -122,17 +138,23 @@ class form_rsv_controller {
         $minimumDateTime->modify('+48 hours');
 
         if ($selectedStart < $minimumDateTime) {
-            die("Reservasi harus diajukan minimal 48 jam sebelum waktu mulai.");
+            $_SESSION['notice'] = "Reservasi harus diajukan minimal 48 jam sebelum waktu mulai.";
+            header("Location: " . $redirect);
+            exit;
         }
 
         // 4. Jam harus berada dalam 07:00 - 20:00
         if ($start_time < '07:00' || $end_time > '20:00') {
-            die("Waktu reservasi harus berada antara 07:00 dan 20:00.");
+            $_SESSION['notice'] = "Waktu reservasi harus berada antara 07:00 dan 20:00.";
+            header("Location: " . $redirect);
+            exit;
         }
 
         // 5. Jam mulai harus sebelum jam selesai
         if ($start_time >= $end_time) {
-            die("Jam mulai harus lebih awal daripada jam selesai.");
+            $_SESSION['notice'] = "Jam mulai harus lebih awal daripada jam selesai.";
+            header("Location: " . $redirect);
+            exit;
         }
 
         // 6. Durasi harus kelipatan 30 menit
@@ -142,7 +164,9 @@ class form_rsv_controller {
         $durationMinutes = ($end->getTimestamp() - $start->getTimestamp()) / 60;
 
         if ($durationMinutes <= 0 || $durationMinutes % 30 !== 0) {
-            die("Durasi reservasi harus dalam kelipatan 30 menit.");
+            $_SESSION['notice'] = "Durasi reservasi harus dalam kelipatan 30 menit.";
+            header("Location: " . $redirect);
+            exit;
         }
 
         // 7. Cek bentrok dengan reservasi yang sudah disetujui
@@ -152,17 +176,30 @@ class form_rsv_controller {
             $start_time,
             $end_time
         )) {
-            die("Waktu yang dipilih bertabrakan dengan reservasi yang sudah disetujui.");
+            $_SESSION['notice'] = "Waktu yang dipilih bertabrakan dengan reservasi yang sudah disetujui.";
+            header("Location: " . $redirect);
+            exit;
         }
 
         // 8. Simpan reservasi
-        $success = $this->rsvModel->create($user_id, $fac_id, $rsv_date, $start_time, $end_time, $purpose);
+        $success = $this->rsvModel->create(
+            $user_id,
+            $fac_id,
+            $rsv_date,
+            $start_time,
+            $end_time,
+            $purpose
+        );
 
         if (!$success) {
-            die("Gagal mengajukan reservasi.");
+            $_SESSION['notice'] = "Gagal mengajukan reservasi.";
+            header("Location: " . $redirect);
+            exit;
         }
 
-        header("Location: ../../index.php?page=reservasi_saya");
+        // Berhasil
+        $_SESSION['notice'] = "Reservasi berhasil diajukan.";
+        header("Location: " . $redirect);
         exit;
     }
 

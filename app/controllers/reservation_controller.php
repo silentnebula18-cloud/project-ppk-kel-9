@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../../config/db_connect.php';
 require_once __DIR__ . '/../models/reservation_model.php';
 
 class reservation_controller {

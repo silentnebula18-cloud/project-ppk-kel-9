@@ -298,4 +298,19 @@ class facility_model{
 
         return $stmt->fetchColumn();
     }
+
+    // halaman: reservasi_saya
+    // Ambil detail fasilitas berdasarkan fac_id, tanpa mengambil fac_id, fac_name, dan location
+    // untuk Pop Up detail reservasi
+    public function getDetailFasilitas_rsv_saya($fac_id) {
+        $query = "SELECT type, capacity, fac_desc, fac_status
+                  FROM facilities
+                  WHERE fac_id = :fac_id";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':fac_id', $fac_id, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

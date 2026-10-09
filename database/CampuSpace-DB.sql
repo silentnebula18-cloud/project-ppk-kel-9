@@ -1,5 +1,7 @@
 -- File: Proyek PPK Kel. 9 DB
 
+SET GLOBAL event_scheduler = ON;
+
 DROP DATABASE IF EXISTS projectppk;
 CREATE DATABASE projectppk;
 USE projectppk;
@@ -37,7 +39,7 @@ CREATE TABLE reservations (
     rsv_date DATE NOT NULL,
     start_time TIME NOT NULL CHECK (start_time >= '07:00:00'),
     end_time TIME NOT NULL CHECK (end_time <= '20:00:00'),
-    rsv_status ENUM('proses pengajuan', 'disetujui', 'ditolak', 'dibatalkan') NOT NULL,
+    rsv_status ENUM('proses pengajuan', 'disetujui', 'ditolak', 'dibatalkan', 'kadaluarsa') NOT NULL DEFAULT 'proses pengajuan',
     purpose VARCHAR(300) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     cancelled_at TIMESTAMP NULL,
@@ -108,6 +110,14 @@ BEGIN
 END //
 DELIMITER ;
 
+-- Event untuk reservasi yang masih berstatus 'proses pengajuan' tetapi start_time sudah mulai atau lewat
+CREATE EVENT IF NOT EXISTS expire_pending_reservations
+ON SCHEDULE EVERY 1 MINUTE
+DO
+    UPDATE reservations
+    SET rsv_status = 'kadaluarsa'
+    WHERE rsv_status = 'proses pengajuan'
+      AND TIMESTAMP(rsv_date, start_time) <= NOW();
 
 -- =================================================================
 -- INSERT DATA DUMMY
@@ -163,69 +173,130 @@ INSERT INTO facilities (fac_name, type, location, capacity, fac_desc, fac_status
 ('Lab Budidaya Perairan', 'laboratorium', 'Fakultas Perikanan dan Ilmu Kelautan (FPIK)', 40, 'Laboratorium akuakultur dengan sistem filtrasi air otomatis.', 'aktif');
 
 -- 4. TABEL reservations
--- 7 Data: 4 Oktober 2026 - 10 Oktober 2026
--- Semua reservasi menggunakan fasilitas yang sama dan berstatus disetujui
--- created_at disesuaikan agar pengajuan masuk >= 48 jam sebelum waktu mulai
+-- 4. TABEL reservations
+-- Menampilkan sampel reservasi umum + reservasi khusus budi_santoso untuk semua rsv_status (masing-masing 2 data)
 
 INSERT INTO reservations 
-(user_id, fac_id, rsv_date, start_time, end_time, rsv_status, purpose, created_at,
- cancelled_at, cancelled_by, cancel_reason) 
+(user_id, fac_id, rsv_date, start_time, end_time, rsv_status, purpose, created_at, cancelled_at, cancelled_by, cancel_reason) 
 VALUES
-(
-    (SELECT user_id FROM users WHERE username = 'budi_santoso'),
-    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Komputer Pemrograman'),
-    '2026-10-04', '08:00:00', '10:00:00', 'disetujui',
-    'Praktikum Tambahan Pemrograman',
-    '2026-10-01 07:30:00',
-    NULL, NULL, NULL
-),
+-- =================================================================
+-- DATA SAMPEL AWAL (Siti Aminah & Rizky Pratama)
+-- =================================================================
 (
     (SELECT user_id FROM users WHERE username = 'siti_aminah'),
     (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Komputer Pemrograman'),
     '2026-10-05', '10:00:00', '12:00:00', 'disetujui',
     'Latihan Pemrograman Kelompok',
-    '2026-10-02 09:00:00',
-    NULL, NULL, NULL
+    '2026-10-02 09:00:00', NULL, NULL, NULL
 ),
 (
     (SELECT user_id FROM users WHERE username = 'rizky_pratama'),
     (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Komputer Pemrograman'),
     '2026-10-06', '13:00:00', '15:00:00', 'disetujui',
     'Persiapan Kompetisi Pemrograman',
-    '2026-10-04 10:00:00',
-    NULL, NULL, NULL
+    '2026-10-04 10:00:00', NULL, NULL, NULL
 ),
+
+-- =================================================================
+-- RESERVASI BUDI SANTOSO (2x STATUS: DISETUJUI)
+-- =================================================================
 (
     (SELECT user_id FROM users WHERE username = 'budi_santoso'),
     (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Komputer Pemrograman'),
     '2026-10-07', '08:00:00', '11:00:00', 'disetujui',
     'Praktikum Tambahan Basis Data',
-    '2026-10-05 07:30:00',
-    NULL, NULL, NULL
-),
-(
-    (SELECT user_id FROM users WHERE username = 'siti_aminah'),
-    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Komputer Pemrograman'),
-    '2026-10-08', '13:00:00', '15:00:00', 'disetujui',
-    'Pengerjaan Proyek Kelompok',
-    '2026-10-06 12:00:00',
-    NULL, NULL, NULL
-),
-(
-    (SELECT user_id FROM users WHERE username = 'rizky_pratama'),
-    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Komputer Pemrograman'),
-    '2026-10-09', '15:00:00', '17:00:00', 'disetujui',
-    'Latihan Algoritma dan Struktur Data',
-    '2026-10-07 14:00:00',
-    NULL, NULL, NULL
+    '2026-10-05 07:30:00', NULL, NULL, NULL
 ),
 (
     (SELECT user_id FROM users WHERE username = 'budi_santoso'),
-    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Komputer Pemrograman'),
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Hall Utama FEB'),
     '2026-10-10', '09:00:00', '12:00:00', 'disetujui',
     'Simulasi Ujian Praktikum',
-    '2026-10-08 08:00:00',
-    NULL, NULL, NULL
+    '2026-10-08 08:00:00', NULL, NULL, NULL
+),
+
+-- =================================================================
+-- RESERVASI BUDI SANTOSO (2x STATUS: PROSES PENGAJUAN)
+-- =================================================================
+(
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'),
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Ruang Kuliah Gedung A'),
+    '2026-10-12', '08:00:00', '10:00:00', 'proses pengajuan',
+    'Diskusi Kelompok Tugas Akhir',
+    '2026-10-04 09:00:00', NULL, NULL, NULL
+),
+(
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'),
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Kimia Organik'),
+    '2026-10-15', '13:00:00', '15:00:00', 'proses pengajuan',
+    'Penelitian Mandiri',
+    '2026-10-04 10:00:00', NULL, NULL, NULL
+),
+
+-- =================================================================
+-- RESERVASI BUDI SANTOSO (2x STATUS: DITOLAK - Ditolak oleh Petugas)
+-- =================================================================
+(
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'),
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Studio Diskusi Publik'),
+    '2026-10-02', '09:00:00', '11:00:00', 'ditolak',
+    'Kajian Rutin Organisasi',
+    '2026-09-28 08:00:00',
+    '2026-09-29 10:00:00',
+    (SELECT user_id FROM users WHERE username = 'petugas_sarpras'),
+    'Fasilitas sedang dalam perbaikan berkala'
+),
+(
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'),
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Auditorium Pascasarjana'),
+    '2026-10-03', '13:00:00', '16:00:00', 'ditolak',
+    'Seminar Internal Mahasiswa',
+    '2026-09-29 11:00:00',
+    '2026-09-30 14:00:00',
+    (SELECT user_id FROM users WHERE username = 'petugas_sarpras'),
+    'Ruangan telah dipesan untuk agenda fakultas'
+),
+
+-- =================================================================
+-- RESERVASI BUDI SANTOSO (2x STATUS: DIBATALKAN - Dibatalkan Mandiri oleh User)
+-- =================================================================
+(
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'),
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lapangan Basket Vokasi'),
+    '2026-10-01', '15:00:00', '17:00:00', 'dibatalkan',
+    'Latihan UKM Basket',
+    '2026-09-25 10:00:00',
+    '2026-09-28 12:00:00',
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'),
+    'Jadwal bertabrakan dengan kuliah pengganti'
+),
+(
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'),
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Ruang Sidang Peradilan'),
+    '2026-10-03', '08:00:00', '10:00:00', 'dibatalkan',
+    'Simulasi Debat Hukum',
+    '2026-09-27 09:00:00',
+    '2026-09-29 15:00:00',
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'),
+    'Anggota kelompok berhalangan hadir'
+),
+
+-- =================================================================
+-- RESERVASI BUDI SANTOSO (2x STATUS: KADALUARSA)
+-- =================================================================
+(
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'),
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Komputer Pemrograman'),
+    '2026-09-20', '08:00:00', '10:00:00', 'kadaluarsa',
+    'Belajar Bersama Koding',
+    '2026-09-18 07:00:00', NULL, NULL, NULL
+),
+(
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'),
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Mikroskop Binokuler Advanced'),
+    '2026-09-25', '10:00:00', '12:00:00', 'kadaluarsa',
+    'Praktikum Mandiri Biologi',
+    '2026-09-22 09:00:00', NULL, NULL, NULL
 );
 
 

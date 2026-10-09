@@ -133,19 +133,20 @@
             <div id = "detail_fac" style="display: flex; align-items: center; flex-direction: row; gap: 20px">
                 <div id = "detail_fac_txt">
                     <h2> Detail Fasilitas </h2>
-                    <div> fac_id : <?=$fac['fac_id']?> </div>
-                    <div> Nama Fasilitas : <?=$fac['fac_name']?> </div>
-                    <div> Deskripsi : <?=$fac['fac_desc']?> </div>
-                    <div> Tipe : <?=$fac['type']?> </div>
-                    <div> Lokasi : <?=$fac['location']?> </div>
-                    <div> Status : <?=$fac['fac_status']?> </div>
+                    <div> fac_id : <?=htmlspecialchars($fac['fac_id']);?> </div>
+                    <div> Nama : <?=htmlspecialchars($fac['fac_name']);?> </div>
+                    <div> Deskripsi : <?=htmlspecialchars($fac['fac_desc']);?> </div>
+                    <div> Tipe : <?=htmlspecialchars($fac['type']);?> </div>
+                    <div> Lokasi : <?=htmlspecialchars($fac['location']);?> </div>
+                    <div> Kapasitas : <?=htmlspecialchars($fac['capacity']);?> </div>
+                    <div> Status : <?=htmlspecialchars($fac['fac_status']);?> </div>
                 </div>
             </div>
 
             <div id="detail_fac_btn" style="margin-top: 20px; display: flex; align-items: center; gap: 20px">
                  <div id="buat_reservasi">
                         <?php if ($fac['fac_status'] === 'aktif'): ?>
-                            <a href="../../index.php?page=form_rsv_2&id=<?= urlencode($fac['fac_id']); ?>">
+                            <a href="../../index.php?page=form_rsv_2&id=<?= urlencode($fac['fac_id']); ?>&from=detail_fasilitas">
                                 <button type="button">Buat Reservasi</button>
                             </a>
                         <?php else: ?>
@@ -156,7 +157,7 @@
                  </div>
                  <div id="buat_laporan">
                         <?php if ($fac['fac_status'] === 'aktif'): ?>
-                            <a href="../../index.php?page=form_rep_2&id=<?= urlencode($fac['fac_id']); ?>">
+                            <a href="../../index.php?page=form_rep_2&id=<?= urlencode($fac['fac_id']); ?>&from=detail_fasilitas">
                                 <button type="button">Buat Laporan</button>
                             </a>
                         <?php else: ?>

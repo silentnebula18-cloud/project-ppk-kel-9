@@ -6,6 +6,14 @@
         <button id="logout_btn">LogOut</button>
     </div>
 
+    <?php if (isset($_SESSION['notice'])): ?>
+        <div class="notice">
+            <?= htmlspecialchars($_SESSION['notice']); ?>
+        </div>
+
+        <?php unset($_SESSION['notice']); ?>
+    <?php endif; ?>
+
     <div id="dashboard_layout">
         <div id="sidebar" class="hidden">
             <a class="nav_item active" href="../../index.php?page=beranda"><span class="nav_icon">🏠</span>Beranda</a>

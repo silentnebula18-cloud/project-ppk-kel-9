@@ -131,17 +131,42 @@ switch ($_SESSION["role"]) {
                         $controller->form_rsv_2();
                         break;
                     case 'reservasi_saya':
-                        $tab = $_GET['tab'] ?? 'semua';
+                        $rsv_saya_fltr_status = $_GET['rsv_saya_fltr_status'] ?? 'semua';
+                        require_once __DIR__ . "/app/controllers/pengguna/reservasi_saya_controller.php";
+                        $controller = new reservasi_saya_controller();
+                        $controller->index($rsv_saya_fltr_status);
+                        break;
+                    case 'detail_reservasi':
+                        $rsv_id = $_GET['rsv_id'] ?? '';
+                        $fac_id = $_GET['fac_id'] ?? '';
+                        $status = $_GET['status'] ?? '';
+
+                        if ($rsv_id === '' || $fac_id === '' || $status === '') {
+                            die("Data reservasi tidak lengkap.");
+                        }
 
                         require_once __DIR__ . "/app/controllers/pengguna/reservasi_saya_controller.php";
                         $controller = new reservasi_saya_controller();
-                        $controller->index($tab);
+                        $controller->detailReservasi($rsv_id, $fac_id, $status);
+                        break;
+                    case 'batalkan_reservasi':
+                        $rsv_id = $_GET['rsv_id'] ?? '';
+
+                        if ($rsv_id === '') {
+                            die("ID reservasi tidak ditemukan.");
+                        }
+
+                        require_once __DIR__ . "/app/controllers/pengguna/reservasi_saya_controller.php";
+                        $controller = new reservasi_saya_controller();
+                        $controller->batalkanReservasi($rsv_id);
                         break;
                     case 'form_rsv_1':
                         require_once __DIR__ . "/app/controllers/pengguna/form_rsv_controller.php";
                         $controller = new form_rsv_controller();
                         $controller->form_rsv_1();
                         break;
+                    case 'form_rep_2':
+                        
                     default:
                         require_once __DIR__ . "/app/controllers/pengguna/pengguna_dashboard_controller.php";
                         $controller = new pengguna_dashboard_controller();

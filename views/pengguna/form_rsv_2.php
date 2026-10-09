@@ -6,22 +6,36 @@
 
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
-        <span id="header_title">Ajukan Reservasi</span>
+        <?php if ($_GET['from'] === 'form_rsv_1') : ?>
+            <span id="header_title">Reservasi Saya</span>
+        <?php elseif ($_GET['from'] === 'detail_fasilitas') : ?>
+            <span id="header_title">Beranda</span>
+        <?php endif; ?>
         <button id="logout_btn">LogOut</button>
     </div>
 
     <div id="dashboard_layout">
 
         <div id="sidebar" class="hidden">
-            <a class="nav_item active" href="../../index.php?page=beranda"><span class="nav_icon">🏠</span>Beranda</a>
-            <a class="nav_item" href="../../index.php?page=reservasi_saya"><span class="nav_icon">🚪</span>Reservasi Saya</a>
+            <?php if ($_GET['from'] === 'form_rsv_1') : ?>
+                <a class="nav_item" href="../../index.php?page=beranda"><span class="nav_icon">🏠</span>Beranda</a>
+                <a class="nav_item active" href="../../index.php?page=reservasi_saya"><span class="nav_icon">🚪</span>Reservasi Saya</a>
+            <?php elseif ($_GET['from'] === 'detail_fasilitas') : ?>
+                <a class="nav_item active" href="../../index.php?page=beranda"><span class="nav_icon">🏠</span>Beranda</a>
+                <a class="nav_item" href="../../index.php?page=reservasi_saya"><span class="nav_icon">🚪</span>Reservasi Saya</a>
+            <?php endif; ?>
             <!-- <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a> -->
         </div>
 
         <div class="main_content">
 
            <div style= "display: flex; align-items: center">
-            <a class = "back_href" href="../../index.php?page=beranda">⬅️</a>
+            <?php if ($_GET['from'] === 'form_rsv_1') : ?>
+                <a class = "back_href" href="../../index.php?page=form_rsv_1">⬅️</a>
+            <?php elseif ($_GET['from'] === 'detail_fasilitas') : ?>
+                <a class = "back_href" href="../../index.php?page=detail_fasilitas&id=<?= urlencode($fac['fac_id']); ?>">⬅️</a>
+            <?php endif; ?>
+            
             <button id="cek_slot_waktu_btn" onclick="toggleSlotWaktu()">Cek Slot Waktu</button>
             </div>
 
@@ -138,12 +152,13 @@
 
             <div id = "detail_fac">
                 <h2> Detail Fasilitas </h2>
-                <div> fac_id : <?=$fac['fac_id']?> </div>
-                <div> Nama : <?=$fac['fac_name']?> </div>
-                <div> Tipe : <?=$fac['type']?> </div>
-                <div> Kapasitas : <?=$fac['capacity']?> </div>
-                <div> Lokasi : <?=$fac['location']?> </div>
-                <div> Status : <?=$fac['fac_status']?> </div>
+                <div> fac_id : <?=htmlspecialchars($fac['fac_id']);?> </div>
+                <div> Nama : <?=htmlspecialchars($fac['fac_name']);?> </div>
+                <div> Deskripsi : <?=htmlspecialchars($fac['fac_desc']);?> </div>
+                <div> Tipe : <?=htmlspecialchars($fac['type']);?> </div>
+                <div> Lokasi : <?=htmlspecialchars($fac['location']);?> </div>
+                <div> Kapasitas : <?=htmlspecialchars($fac['capacity']);?> </div>
+                <div> Status : <?=htmlspecialchars($fac['fac_status']);?> </div>
             </div>
 
             <div id = "form_rsv_entry">
@@ -153,6 +168,7 @@
 
                     <input type="hidden" name="action" value="ajukan_reservasi">
                     <input type="hidden" name="fac_id" value="<?= htmlspecialchars($fac['fac_id']); ?>">
+                    <input type="hidden" name="from" value="<?= htmlspecialchars($_GET['from'] ?? ''); ?>">
 
                     <div>
                         <label for="rsv_date">Tanggal:</label>

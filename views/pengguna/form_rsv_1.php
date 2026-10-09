@@ -2,7 +2,7 @@
 
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
-        <span id="header_title">Buat Reservasi</span>
+        <span id="header_title">Reservasi Saya</span>
         <button id="logout_btn">LogOut</button>
     </div>
 
@@ -141,7 +141,7 @@
                                 <td><?= htmlspecialchars($f['capacity']); ?></td>
 
                                 <td>
-                                    <a href="../../index.php?page=form_rsv_2&id=<?= urlencode($f['fac_id']); ?>" class="btn">
+                                    <a href="../../index.php?page=form_rsv_2&id=<?= urlencode($f['fac_id']); ?>&from=form_rsv_1" class="btn">
                                         Pilih
                                     </a>
                                 </td>
