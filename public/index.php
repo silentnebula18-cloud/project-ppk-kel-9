@@ -10,6 +10,7 @@ $_SESSION['role'] = 'petugas';
 require_once __DIR__ . '/../app/controllers/DashboardController.php';
 require_once __DIR__ . '/../app/controllers/ReservationController.php';
 require_once __DIR__ . '/../app/controllers/ReportController.php';
+require_once __DIR__ . '/../app/controllers/FacilityController.php';
 
 $page = $_GET['page'] ?? 'dashboard';
 $action = $_GET['action'] ?? 'index';
@@ -30,6 +31,10 @@ if ($page === 'reservation') {
     } else {
         $controller->index();
     }
+} elseif ($page === 'facilities') { // ROUTE FASILITAS
+    $controller = new FacilityController();
+    if ($action === 'update_status') $controller->updateStatus();
+    else $controller->index();
 } else {
     $controller = new DashboardController();
     $controller->index();

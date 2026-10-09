@@ -9,8 +9,8 @@
         .report-card {
             display: flex;
             align-items: center;
-            border: 2px solid #333;
-            background: #00008B;
+            border: 3px solid #000;
+            background: #0165FC;
             padding: 15px;
             margin-bottom: 15px;
             border-radius: 8px;
@@ -46,10 +46,8 @@
     </div>
     <nav>
         <a href="index.php?page=dashboard">Beranda</a>
-        <a href="#">Reservasi</a>
         <a href="index.php?page=reports" class="active">Laporan</a>
-        <a href="#">Fasilitas</a>
-        <a href="#">Log Out</a>
+        <a href="index.php?page=facilities">Fasilitas</a>
     </nav>
 </aside>
 

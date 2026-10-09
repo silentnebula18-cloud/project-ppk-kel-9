@@ -22,10 +22,8 @@
         </div>
         <nav>
             <a href="index.php?page=dashboard" class="active">Beranda</a>
-            <a href="#">Reservasi</a>
             <a href="index.php?page=reports">Laporan</a>
-            <a href="#">Fasilitas</a>
-            <a href="#">Log Out</a>
+            <a href="index.php?page=facilities">Fasilitas</a>
         </nav>
     </aside>
 
