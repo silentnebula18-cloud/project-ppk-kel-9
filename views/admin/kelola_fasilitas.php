@@ -7,7 +7,7 @@ $facilities = getAllFacilities($conn);
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
         <span id="header_title">Dashboard Admin</span>
-        <button id="logout_btn">LogOut</button>
+        <button id="logout_btn" onclick="logout()">LogOut</button>
     </div>
 
     <div id="dashboard_layout">

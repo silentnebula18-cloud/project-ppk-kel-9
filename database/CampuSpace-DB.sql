@@ -118,3 +118,24 @@ INSERT INTO facilities (fac_name, type, location, capacity, fac_desc, fac_status
 ('Lab Kimia Organik', 'laboratorium', 'Fakultas Sains dan Matematika (FSM)', 35, 'Laboratorium dengan peralatan isolasi bahan kimia dan lemari asam.', 'aktif'),
 ('Lapangan Basket Vokasi', 'lapangan', 'Sekolah Vokasi & Sekolah Pascasarjana', 150, 'Lapangan olahraga outdoor untuk mahasiswa dan kegiatan kampus.', 'aktif'),
 ('Auditorium Pascasarjana', 'aula', 'Sekolah Vokasi & Sekolah Pascasarjana', 200, 'Aula ber-AC dengan sistem suara modern untuk sidang terbuka.', 'dalam perbaikan');
+
+INSERT INTO unverified_acc (unv_username, unv_password, unv_email) VALUES
+('mhs_dimas', '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'dimas.prasetyo@students.undip.ac.id'),
+('mhs_siti',  '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'siti.nurhaliza@students.undip.ac.id'),
+('mhs_kevin', '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'kevin.aditya@students.undip.ac.id'),
+('mhs_nadia', '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'nadia.safitri@students.undip.ac.id');
+
+INSERT INTO users (username, password, email, role) VALUES
+-- Role: Admin
+('admin_utama',  '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'admin.sarpras@undip.ac.id', 'admin'),
+('admin_bapsi',  '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'admin.bapsi@undip.ac.id', 'admin'),
+
+-- Role: Petugas Fasilitas / Verifikator
+('petugas_ft',    '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'petugas.ft@undip.ac.id', 'petugas'),
+('petugas_feb',   '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'petugas.feb@undip.ac.id', 'petugas'),
+('petugas_vokasi','$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'petugas.vokasi@undip.ac.id', 'petugas'),
+
+-- Role: Pengguna (Mahasiswa / Tendik)
+('budi_santoso',  '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'budi.santoso@students.undip.ac.id', 'pengguna'),
+('anisa_rahma',  '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'anisa.rahma@students.undip.ac.id', 'pengguna'),
+('reza_firmansyah','$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'reza.firmansyah@students.undip.ac.id', 'pengguna');

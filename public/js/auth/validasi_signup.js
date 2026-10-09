@@ -15,7 +15,7 @@ let show_password_box = document.getElementById("show_password")
 
 let home_button = document.getElementById("header_logo")
 home_button.addEventListener("click", function(){
-    window.location.replace("../index.html")
+    window.location.replace("../../index.php")
 })
 
 password_field.addEventListener("input", password_check)
@@ -37,10 +37,11 @@ function show_password(){
     }
 }
 
+// TODO
 function username_check(){
-    let email = email_field.value
+    let username = username_field.value
 
-    if (email.trim() === ""){
+    if (username.trim() === ""){
         email_alert.style.display = "none"
         return false
     }
@@ -81,17 +82,25 @@ function password_check(){
     return len_valid && sym_valid && num_valid
 }
 
+//TODO
 //buat test email: /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
 function email_check(){
     let email = email_field.value
-    let valid_email = true
 
     if (email.trim() === ""){
         email_alert.style.display = "none"
         return false
     }
 
-    return valid_email
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        email_alert.style.display = "block"
+        email_alert.innerHTML = "Email tidak sesuai. Contoh: user@example.com"
+        return false
+    }else{
+        email_alert.style.display = "none"
+        return true
+
+    }
 }
 
 async function signup(){

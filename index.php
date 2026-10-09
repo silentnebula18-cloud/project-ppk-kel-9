@@ -8,5 +8,8 @@
         $controller->fasilitas();
     } elseif (isset($_GET['page']) && $_GET['page'] === 'detail_fasilitas') {
         $controller->getFacilityDetail();
+    } else {
+        header("Location: views/index.html");
+        exit;
     }
 ?>

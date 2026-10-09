@@ -7,7 +7,7 @@ $pending = getPendingAccounts($conn);
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
         <span id="header_title">Dashboard Admin</span>
-        <button id="logout_btn">LogOut</button>
+        <button id="logout_btn" onclick="logout()">LogOut</button>
     </div>
 
     <div id="dashboard_layout">
@@ -27,8 +27,6 @@ $pending = getPendingAccounts($conn);
 
             <table id="akun_table">
                 <tr>
-                    <th>Username</th>
-                    <th>Password</th>
                     <th>Email</th>
                     <th>Role</th>
                     <th>Tanggal daftar</th>
@@ -41,8 +39,6 @@ $pending = getPendingAccounts($conn);
                 <?php else: ?>
                     <?php foreach ($pending as $acc): ?>
                     <tr>
-                        <td><?= htmlspecialchars($acc['unv_username']) ?></td>
-                        <td>••••••••</td>
                         <td><?= htmlspecialchars($acc['unv_email']) ?></td>
                         <td>Belum ditentukan</td>
                         <td><?= htmlspecialchars($acc['unv_registered_at']) ?></td>

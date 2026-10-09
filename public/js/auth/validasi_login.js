@@ -10,7 +10,7 @@ let show_password_box = document.getElementById("show_password")
 
 let home_button = document.getElementById("header_logo")
 home_button.addEventListener("click", function(){
-    window.location.replace("../index.html")
+    window.location.replace("../../index.php")
 })
 
 show_password_box.addEventListener("change", show_password)
@@ -62,15 +62,19 @@ async function on_login_button_click(){
                 let role = result.user.role
                 switch (role){
                     case "admin":
-                        console.log("a")
+                        // console.log("a")
+                        window.location.replace("../../views/admin/admin_beranda.php")
                         break
-                    case "user":
-                        console.log("b")
+                    case "pengguna":
+                        window.location.replace("../../views/pengguna/pengguna_beranda.php")
                         break
                     case "petugas":
-                        console.log("c")
+                        window.location.replace("../../public/php/petugas_index.php")
+                        break
                     default:
-                        window.location.replace("../index.html")
+                        console.log("aaaa")
+                        window.location.replace("../../index.php")
+                        break
                 }
             }else{
                 let msg = `${result.status}: ${result.message}`

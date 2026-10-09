@@ -17,7 +17,7 @@ if ($data){
         $username = $data['username'] ;
         $password = $data['password'] ;
 
-        if (validate_password($password) and validate_username($username, $pdo) and validate_email($email, $pdo)){
+        if (validate_username($username, $pdo)  and validate_email($email, $pdo) and validate_password($password)){
             update_database($pdo, $email, $username, $password);
             $response = response_success();
         }else{

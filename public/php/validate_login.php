@@ -18,6 +18,10 @@ if ($data){
 
         $match_password = validate_password($username, $password, $pdo);
         if ($match_password){
+            session_start();
+            $_SESSION['user_id'] = $match_password['user_id'];
+            $_SESSION['username'] = $match_password['username'];
+            $_SESSION['role'] = $match_password['role'];
             $response = response_success(["user" => $match_password]);
         }else{
             if (check_unverified($username, $password, $pdo)){
