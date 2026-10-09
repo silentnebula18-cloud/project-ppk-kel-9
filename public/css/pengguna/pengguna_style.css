@@ -338,14 +338,25 @@ table a {
     border-radius: 6px;
 }
 
-/* notice message */
+/* Notice message */
 .notice {
     margin: 15px 30px;
     padding: 12px 16px;
     border-radius: 8px;
+}
+
+/* Notice berhasil */
+.notice.success {
     background-color: #e8f5e9;
     color: #2e7d32;
     border: 1px solid #a5d6a7;
+}
+
+/* Notice gagal */
+.notice.error {
+    background-color: #ffebee;
+    color: #c62828;
+    border: 1px solid #ef9a9a;
 }
 
 /*---------- DETAIL RESERVASI ---------------*/

@@ -2,7 +2,7 @@
     
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
-        <span id="header_title">Detail Reservasi</span>
+        <span id="header_title">Reservasi Saya</span>
         <button id="logout_btn">LogOut</button>
     </div>
 
@@ -10,7 +10,7 @@
         <div id="sidebar" class="hidden">
             <a class="nav_item" href="../../index.php?page=beranda"><span class="nav_icon">🏠</span>Beranda</a>
             <a class="nav_item active" href="../../index.php?page=reservasi_saya"><span class="nav_icon">🚪</span>Reservasi Saya</a>
-            <!-- <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a> -->
+            <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a>
         </div>
 
         <div class="main_content" style="display: flex; flex-direction: column; gap: 20px;">

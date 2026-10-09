@@ -1,0 +1,151 @@
+
+<?php
+
+require_once __DIR__ . '/../../../config/db_connect.php';
+require_once __DIR__ . "/../../models/facility_model.php";
+require_once __DIR__ . "/../../models/report_model.php";
+
+class laporan_saya_controller {
+    private $db;
+    private $facModel;
+    private $repModel;
+
+    public function __construct() {
+        if (session_status() === PHP_SESSION_NONE) {
+            session_start();
+        }
+
+        $database = new db_connect();
+        $this->db = $database->getConnection();
+
+        $this->facModel = new facility_model($this->db);
+        $this->repModel = new report_model($this->db);
+    }
+
+    public function index() {
+
+        // Ambil user yang sedang login
+        $user_id = $_SESSION['user_id'] ?? '';
+
+        if ($user_id === '') {
+            header("Location: ../../index.php");
+            exit;
+        }
+
+        // Pengaturan pagination
+        $limit = 5;
+
+        $page = isset($_GET['haltab'])
+            ? max(1, (int) $_GET['haltab'])
+            : 1;
+
+        // Ambil filter
+        $category = $_GET['category'] ?? '';
+        $status = $_GET['status'] ?? '';
+
+        // Validasi filter kategori
+        $kategoriValid = [
+            'kerusakan bangunan',
+            'kerusakan peralatan',
+            'kelistrikan',
+            'kebersihan',
+            'lainnya'
+        ];
+
+        if (!in_array($category, $kategoriValid, true)) {
+            $category = '';
+        }
+
+        // Validasi filter status
+        $statusValid = [
+            'baru',
+            'diproses',
+            'selesai',
+            'ditolak'
+        ];
+
+        if (!in_array($status, $statusValid, true)) {
+            $status = '';
+        }
+
+        // Hitung jumlah data sesuai filter
+        $totalData = $this->repModel->countByUser_filtered(
+            $user_id,
+            $category,
+            $status
+        );
+
+        $totalPages = (int) ceil($totalData / $limit);
+
+        // Jika tidak ada data, tetap gunakan halaman 1
+        if ($totalPages === 0) {
+            $page = 1;
+        } else {
+            $page = min($page, $totalPages);
+        }
+
+        $offset = ($page - 1) * $limit;
+
+        // Ambil data laporan
+        $reports = $this->repModel->getByUser_filtered(
+            $user_id,
+            $category,
+            $status,
+            $limit,
+            $offset
+        );
+
+        require_once __DIR__ . '/../../../views/pengguna/laporan_saya.php';
+    }
+
+    public function detailLaporan() {
+        $user_id = $_SESSION['user_id'] ?? '';
+
+        if ($user_id === '') {
+            header("Location: ../../index.php");
+            exit;
+        }
+
+        $rep_id = $_GET['rep_id'] ?? '';
+
+        if ($rep_id === '') {
+            $_SESSION['notice'] = "Laporan tidak ditemukan.";
+            header("Location: ../../index.php?page=laporan_saya");
+            exit;
+        }
+
+        // Ambil detail laporan milik pengguna yang login
+        $laporan = $this->repModel->getDetailById($rep_id, $user_id);
+
+        if (!$laporan) {
+            $_SESSION['notice'] = "Laporan tidak ditemukan.";
+            header("Location: ../../index.php?page=laporan_saya");
+            exit;
+        }
+
+        // Ambil detail fasilitas melalui facility_model
+        $fasilitas = $this->facModel->getFacilityById($laporan['fac_id']);
+
+        if (!$fasilitas) {
+            $_SESSION['notice'] = "Data fasilitas tidak ditemukan.";
+            header("Location: ../../index.php?page=laporan_saya");
+            exit;
+        }
+
+        // Cari foto berdasarkan rep_id dan ekstensi file
+        $folderFoto = __DIR__ . '/../../../storage/report_img';
+        $foto = null;
+
+        foreach (['jpg', 'png', 'webp'] as $ext) {
+            $namaFile = $rep_id . '.' . $ext;
+            $pathFoto = $folderFoto . '/' . $namaFile;
+
+            if (is_file($pathFoto)) {
+                $foto = 'storage/report_img/' . $namaFile;
+                break;
+            }
+        }
+
+        require_once __DIR__ . '/../../../views/pengguna/detail_laporan.php';
+    }
+}

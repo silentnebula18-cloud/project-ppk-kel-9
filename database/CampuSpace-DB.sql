@@ -83,7 +83,6 @@ CREATE TABLE reports (
     category ENUM('kerusakan bangunan', 'kerusakan peralatan', 
                    'kelistrikan', 'kebersihan', 'lainnya') NOT NULL,
     rep_desc VARCHAR(1000) NOT NULL,
-    rep_photo VARCHAR(300) NOT NULL,
     rep_status ENUM('baru', 'diproses', 'selesai', 'ditolak') NOT NULL,
     user_id CHAR(36) NOT NULL,
     fac_id CHAR(36) NOT NULL,
@@ -298,6 +297,275 @@ VALUES
     'Praktikum Mandiri Biologi',
     '2026-09-22 09:00:00', NULL, NULL, NULL
 );
+
+-- =================================================================
+-- INSERT DATA DUMMY TABEL REPORTS (Pengguna: budi_santoso)
+-- =================================================================
+
+INSERT INTO reports 
+(reported_at, category, rep_desc, rep_status, user_id, fac_id, resolution_note) 
+VALUES
+
+-- -----------------------------------------------------------------
+-- 1. KATEGORI: kerusakan bangunan (6 Data)
+-- -----------------------------------------------------------------
+(
+    '2026-10-01 08:30:00', 'kerusakan bangunan', 
+    'Atap plafon bocor saat hujan deras dan menetes ke meja praktikum.', 
+    'baru', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Ruang Kuliah Gedung A'), 
+    NULL
+),
+(
+    '2026-10-02 09:15:00', 'kerusakan bangunan', 
+    'Engsel pintu masuk utama rusak dan sulit ditutup rapat.', 
+    'diproses', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Hall Utama FEB'), 
+    NULL
+),
+(
+    '2026-10-03 10:00:00', 'kerusakan bangunan', 
+    'Keramik lantai dekat pintu masuk pecah dan membahayakan pengguna.', 
+    'selesai', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Komputer Pemrograman'), 
+    'Perbaikan keramik lantai telah selesai diganti dengan unit baru.'
+),
+(
+    '2026-10-04 11:30:00', 'kerusakan bangunan', 
+    'Gagang jendela kaca retak dan hampir terlepas.', 
+    'ditolak', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Ruang Teater Bahasa'), 
+    NULL
+),
+(
+    '2026-10-05 13:20:00', 'kerusakan bangunan', 
+    'Dinding bagian belakang retak rambut dan cat mengelupas parah.', 
+    'baru', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Gedung Pusat Budaya'), 
+    NULL
+),
+(
+    '2026-10-06 14:00:00', 'kerusakan bangunan', 
+    'Pintu kamar mandi fasilitas tidak bisa dikunci dari dalam.', 
+    'diproses', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lapangan Tennis Kampus'), 
+    NULL
+),
+
+-- -----------------------------------------------------------------
+-- 2. KATEGORI: kerusakan peralatan (6 Data)
+-- -----------------------------------------------------------------
+(
+    '2026-10-01 10:00:00', 'kerusakan peralatan', 
+    'Lensa objek mikroskop berjamur dan gambar tidak fokus.', 
+    'selesai', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Mikroskop Binokuler Advanced'), 
+    'Lensa telah dibersihkan dan dilakukan kalibrasi ulang oleh teknisi.'
+),
+(
+    '2026-10-02 11:45:00', 'kerusakan peralatan', 
+    'Proyektor mati mendadak setelah digunakan selama 15 menit.', 
+    'ditolak', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Ruang Kuliah Gedung A'), 
+    NULL
+),
+(
+    '2026-10-03 14:10:00', 'kerusakan peralatan', 
+    'Kamera DSLR tidak merespons tombol shutter dan indikator error.', 
+    'baru', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Kamera DSLR Cinema Rig'), 
+    NULL
+),
+(
+    '2026-10-04 15:30:00', 'kerusakan peralatan', 
+    'Sound system mengalami buzzing keras saat tombol power dinyalakan.', 
+    'diproses', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Sound System Portable 1000W'), 
+    NULL
+),
+(
+    '2026-10-05 16:00:00', 'kerusakan peralatan', 
+    'Komputer PC nomor 12 tidak bisa melakukan booting ke OS.', 
+    'selesai', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Komputer Pemrograman'), 
+    'Pemasangan ulang OS dan pembaruan drive SSD selesai dilakukan.'
+),
+(
+    '2026-10-06 09:00:00', 'kerusakan peralatan', 
+    'Meja gambar portabel tidak bisa diatur kemiringannya.', 
+    'ditolak', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Studio Gambar Arsitektur'), 
+    NULL
+),
+
+-- -----------------------------------------------------------------
+-- 3. KATEGORI: kelistrikan (6 Data)
+-- -----------------------------------------------------------------
+(
+    '2026-10-01 13:00:00', 'kelistrikan', 
+    'Stop kontak di barisan depan longgar dan mengeluarkan percikan api.', 
+    'baru', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Kimia Organik'), 
+    NULL
+),
+(
+    '2026-10-02 14:20:00', 'kelistrikan', 
+    'Lampu TL ruangan berkedip-kedip terus menerus dan mengganggu fokus.', 
+    'diproses', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Studio Diskusi Publik'), 
+    NULL
+),
+(
+    '2026-10-03 15:50:00', 'kelistrikan', 
+    'MCB listrik sering turun jika seluruh komputer dan AC dinyalakan.', 
+    'selesai', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Multimedia FISIP'), 
+    'Daya daya MCB telah diperbesar dan beban fase listrik telah diseimbangkan.'
+),
+(
+    '2026-10-04 08:10:00', 'kelistrikan', 
+    'AC ruangan tidak terasa dingin dan indikator kelistrikan berkedip.', 
+    'ditolak', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Auditorium Pascasarjana'), 
+    NULL
+),
+(
+    '2026-10-05 10:30:00', 'kelistrikan', 
+    'Kabel ekstensi tanam lantai tidak teraliri arus listrik.', 
+    'baru', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Amfiteater FH'), 
+    NULL
+),
+(
+    '2026-10-06 11:15:00', 'kelistrikan', 
+    'Penggerak motor teleskop tidak menyala saat dihubungkan ke listrik.', 
+    'diproses', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Teleskop Astronomi Motor'), 
+    NULL
+),
+
+-- -----------------------------------------------------------------
+-- 4. KATEGORI: kebersihan (6 Data)
+-- -----------------------------------------------------------------
+(
+    '2026-10-01 07:45:00', 'kebersihan', 
+    'Sisa sampah sisa kegiatan semalam belum dibersihkan dari area hall.', 
+    'selesai', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Hall Utama FEB'), 
+    'Pembersihan total telah dilaksanakan oleh petugas kebersihan piket.'
+),
+(
+    '2026-10-02 08:30:00', 'kebersihan', 
+    'Lantai ruangan sangat berdebu dan terdapat sisa makanan di sudut meja.', 
+    'ditolak', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Ruang Sidang Peradilan'), 
+    NULL
+),
+(
+    '2026-10-03 09:10:00', 'kebersihan', 
+    'Kaca jendela luar berdebu tebal dan menghalangi pencahayaan alami.', 
+    'baru', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Fisika Modern'), 
+    NULL
+),
+(
+    '2026-10-04 10:40:00', 'kebersihan', 
+    'Area tribun lapangan bertebaran sampah plastik tempat minum.', 
+    'diproses', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lapangan Basket Vokasi'), 
+    NULL
+),
+(
+    '2026-10-05 11:50:00', 'kebersihan', 
+    'Bau tidak sedap dari saluran pembuangan air di sudut ruangan.', 
+    'selesai', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Budidaya Perairan'), 
+    'Saluran telah dibersihkan dan disemprotkan cairan disinfektan.'
+),
+(
+    '2026-10-06 13:00:00', 'kebersihan', 
+    'Papan tulis sangat kotor oleh bekas spidol permanen.', 
+    'ditolak', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Ruang Kuliah Gedung A'), 
+    NULL
+),
+
+-- -----------------------------------------------------------------
+-- 5. KATEGORI: lainnya (6 Data)
+-- -----------------------------------------------------------------
+(
+    '2026-10-01 11:20:00', 'lainnya', 
+    'Jadwal pemakaian lab tidak sesuai dengan jadwal yang tertempel di depan pintu.', 
+    'baru', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lab Kewirausahaan'), 
+    NULL
+),
+(
+    '2026-10-02 12:00:00', 'lainnya', 
+    'Kunci ruangan tidak ditemukan di kotak penyimpanan sarpras.', 
+    'diproses', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Gedung Serbaguna FEB'), 
+    NULL
+),
+(
+    '2026-10-03 13:40:00', 'lainnya', 
+    'Tumbuhan liar dan rumput terlalu tinggi menghalangi jalan masuk.', 
+    'selesai', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Greenhouse Pengujian Seed'), 
+    'Area jalan masuk sudah dirapikan dan pemotongan rumput telah selesai.'
+),
+(
+    '2026-10-04 14:15:00', 'lainnya', 
+    'Sistem drainase lapangan tersumbat dedaunan kering setelah hujan.', 
+    'ditolak', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Lapangan Agrostologi'), 
+    NULL
+),
+(
+    '2026-10-05 15:10:00', 'lainnya', 
+    'Pagar pembatas area penangkaran mengalami kerusakan kawat.', 
+    'selesai', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Kandang Ternak Percontohan'), 
+    'Kawat pembatas yang rusak telah diperbaiki dan diperkuat kembali.'
+),
+(
+    '2026-10-06 16:30:00', 'lainnya', 
+    'Spanduk kegiatan lama belum dicopot dari dinding bagian luar gedung.', 
+    'baru', 
+    (SELECT user_id FROM users WHERE username = 'budi_santoso'), 
+    (SELECT fac_id FROM facilities WHERE fac_name = 'Gedung Olahraga FT'), 
+    NULL
+);
+
 
 
 

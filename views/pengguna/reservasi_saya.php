@@ -6,18 +6,34 @@
     </div>
 
     <?php if (isset($_SESSION['notice'])): ?>
-        <div class="notice">
-            <?= htmlspecialchars($_SESSION['notice']); ?>
-        </div>
+        <?php
+            $notice = $_SESSION['notice'];
+            unset($_SESSION['notice']);
 
-        <?php unset($_SESSION['notice']); ?>
+            // Format array baru; string lama tetap ditangani sebagai error.
+            if (is_array($notice)) {
+                $noticeType = $notice['type'] ?? 'error';
+                $noticeMessage = $notice['message'] ?? '';
+            } else {
+                $noticeType = 'error';
+                $noticeMessage = $notice;
+            }
+
+            if (!in_array($noticeType, ['success', 'error'], true)) {
+                $noticeType = 'error';
+            }
+        ?>
+
+        <div class="notice <?= htmlspecialchars($noticeType); ?>">
+            <?= htmlspecialchars($noticeMessage); ?>
+        </div>
     <?php endif; ?>
 
     <div id="dashboard_layout">
         <div id="sidebar" class="hidden">
             <a class="nav_item" href="../../index.php?page=beranda"><span class="nav_icon">🏠</span>Beranda</a>
             <a class="nav_item active" href="../../index.php?page=reservasi_saya"><span class="nav_icon">🚪</span>Reservasi Saya</a>
-            <!-- <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a> -->
+            <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a>
         </div>
 
         <div class="main_content" id = "hal_detail_fasilitas">

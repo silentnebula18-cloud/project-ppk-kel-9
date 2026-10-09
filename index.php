@@ -102,6 +102,11 @@ switch ($_SESSION["role"]) {
                 $controller = new form_rsv_controller();
                 $controller->ajukan_reservasi();
                 break;
+            case 'ajukan_laporan':
+                require_once __DIR__ . "/app/controllers/pengguna/form_rep_controller.php";
+                $controller = new form_rep_controller();
+                $controller->ajukan_laporan();
+                break;
             default: 
                 $page = $_GET['page'] ?? '';
                 switch($page){
@@ -166,7 +171,25 @@ switch ($_SESSION["role"]) {
                         $controller->form_rsv_1();
                         break;
                     case 'form_rep_2':
-                        
+                        require_once __DIR__ . "/app/controllers/pengguna/form_rep_controller.php";
+                        $controller = new form_rep_controller();
+                        $controller->form_rep_2();
+                        break;
+                    case 'form_rep_1':
+                        require_once __DIR__ . "/app/controllers/pengguna/form_rep_controller.php";
+                        $controller = new form_rep_controller();
+                        $controller->form_rep_1();
+                        break;
+                    case 'laporan_saya':
+                        require_once __DIR__ . "/app/controllers/pengguna/laporan_saya_controller.php";
+                        $controller = new laporan_saya_controller();
+                        $controller->index();
+                        break;
+                    case 'detail_laporan':
+                        require_once __DIR__ . "/app/controllers/pengguna/laporan_saya_controller.php";
+                        $controller = new laporan_saya_controller();
+                        $controller->detailLaporan();
+                        break;
                     default:
                         require_once __DIR__ . "/app/controllers/pengguna/pengguna_dashboard_controller.php";
                         $controller = new pengguna_dashboard_controller();

@@ -109,7 +109,10 @@ class form_rsv_controller {
             $end_time === '' ||
             $purpose === ''
         ) {
-            $_SESSION['notice'] = "Data reservasi belum lengkap.";
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Data reservasi belum lengkap.'
+            ];
             header("Location: " . $redirect);
             exit;
         }
@@ -118,41 +121,54 @@ class form_rsv_controller {
         $fac = $this->facModel->getFacilityById($fac_id);
 
         if (!$fac) {
-            $_SESSION['notice'] = "Fasilitas tidak ditemukan.";
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Fasilitas tidak ditemukan.'
+            ];
             header("Location: " . $redirect);
             exit;
         }
 
         if ($fac['fac_status'] !== 'aktif') {
-            $_SESSION['notice'] = "Fasilitas sedang tidak dapat digunakan untuk reservasi.";
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Fasilitas sedang tidak dapat digunakan untuk reservasi.'
+            ];
             header("Location: " . $redirect);
             exit;
         }
 
         // 3. Waktu mulai harus >= 48 jam dari sekarang
-        $selectedStart = new DateTime(
-            $rsv_date . ' ' . $start_time
-        );
+        $selectedStart = new DateTime($rsv_date . ' ' . $start_time);
 
         $minimumDateTime = new DateTime();
         $minimumDateTime->modify('+48 hours');
 
         if ($selectedStart < $minimumDateTime) {
-            $_SESSION['notice'] = "Reservasi harus diajukan minimal 48 jam sebelum waktu mulai.";
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Reservasi harus diajukan minimal 48 jam sebelum waktu mulai.'
+            ];
             header("Location: " . $redirect);
             exit;
         }
 
         // 4. Jam harus berada dalam 07:00 - 20:00
         if ($start_time < '07:00' || $end_time > '20:00') {
-            $_SESSION['notice'] = "Waktu reservasi harus berada antara 07:00 dan 20:00.";
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Waktu reservasi harus berada antara 07:00 dan 20:00.'
+            ];
             header("Location: " . $redirect);
             exit;
         }
 
         // 5. Jam mulai harus sebelum jam selesai
         if ($start_time >= $end_time) {
-            $_SESSION['notice'] = "Jam mulai harus lebih awal daripada jam selesai.";
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Jam mulai harus lebih awal daripada jam selesai.'
+            ];
             header("Location: " . $redirect);
             exit;
         }
@@ -161,10 +177,14 @@ class form_rsv_controller {
         $start = new DateTime($rsv_date . ' ' . $start_time);
         $end = new DateTime($rsv_date . ' ' . $end_time);
 
-        $durationMinutes = ($end->getTimestamp() - $start->getTimestamp()) / 60;
+        $durationMinutes =
+            ($end->getTimestamp() - $start->getTimestamp()) / 60;
 
         if ($durationMinutes <= 0 || $durationMinutes % 30 !== 0) {
-            $_SESSION['notice'] = "Durasi reservasi harus dalam kelipatan 30 menit.";
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Durasi reservasi harus dalam kelipatan 30 menit.'
+            ];
             header("Location: " . $redirect);
             exit;
         }
@@ -176,7 +196,10 @@ class form_rsv_controller {
             $start_time,
             $end_time
         )) {
-            $_SESSION['notice'] = "Waktu yang dipilih bertabrakan dengan reservasi yang sudah disetujui.";
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Waktu yang dipilih bertabrakan dengan reservasi yang sudah disetujui.'
+            ];
             header("Location: " . $redirect);
             exit;
         }
@@ -192,22 +215,31 @@ class form_rsv_controller {
         );
 
         if (!$success) {
-            $_SESSION['notice'] = "Gagal mengajukan reservasi.";
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Gagal mengajukan reservasi.'
+            ];
             header("Location: " . $redirect);
             exit;
         }
 
         // Berhasil
-        $_SESSION['notice'] = "Reservasi berhasil diajukan.";
+        $_SESSION['notice'] = [
+            'type' => 'success',
+            'message' => 'Reservasi berhasil diajukan.'
+        ];
+
         header("Location: " . $redirect);
         exit;
-    }
+    } 
 
     public function form_rsv_1() {
 
         $limit = 5;
 
         $page = isset($_GET['haltab']) ? (int)$_GET['haltab'] : 1;
+        $page = max(1, $page);
+
         $offset = ($page - 1) * $limit;
 
         $tipe_fac = $_GET['tipe_fac'] ?? '';
@@ -228,7 +260,7 @@ class form_rsv_controller {
             $kapasitas_fac
         );
 
-        $totalPages = ceil($totalData / $limit);
+        $totalPages = (int) ceil($totalData / $limit);
 
         require_once __DIR__ . '/../../../views/pengguna/form_rsv_1.php';
     }
