@@ -11,6 +11,27 @@
         .modal-content { background: #fff; margin: 15% auto; padding: 20px; width: 400px; border-radius: 8px; }
         .alert-error { background: #f8d7da; color: #721c24; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
         .alert-success { background: #d4edda; color: #155724; padding: 10px; border-radius: 5px; margin-bottom: 15px; }
+
+        /* Styling Badge Status Fasilitas */
+        .badge-fac-status {
+            display: inline-block;
+            font-size: 11px;
+            font-weight: bold;
+            padding: 2px 8px;
+            border-radius: 4px;
+            margin-left: 8px;
+            vertical-align: middle;
+        }
+        .badge-fac-perbaikan {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+        }
+        .badge-fac-nonaktif {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
     </style>
 </head>
 <body id="body">
@@ -58,7 +79,17 @@
                     <?php foreach ($pendingReservations as $r): ?>
                         <div class="item">
                             <div>
-                                <div class="item_title"><?= htmlspecialchars($r['fac_name']) ?></div>
+                                <div class="item_title">
+                                    <?= htmlspecialchars($r['fac_name']) ?>
+
+                                    <!-- INDIKATOR STATUS FASILITAS -->
+                                    <?php $facStatus = $r['fac_status'] ?? ''; ?>
+                                    <?php if ($facStatus === 'Dalam perbaikan'): ?>
+                                        <span class="badge-fac-status badge-fac-perbaikan">⚠️ Dalam Perbaikan</span>
+                                    <?php elseif ($facStatus === 'Nonaktif'): ?>
+                                        <span class="badge-fac-status badge-fac-nonaktif">🚫 Nonaktif</span>
+                                    <?php endif; ?>
+                                </div>
                                 <div class="item_meta">
                                     <?= htmlspecialchars($r['username']) ?> · 
                                     <?= date('d M Y', strtotime($r['rsv_date'])) ?> · 
@@ -123,7 +154,17 @@
                     <?php foreach ($approvedReservations as $app): ?>
                         <div class="item">
                             <div>
-                                <div class="item_title"><?= htmlspecialchars($app['fac_name']) ?></div>
+                                <div class="item_title">
+                                    <?= htmlspecialchars($app['fac_name']) ?>
+
+                                    <!-- INDIKATOR STATUS FASILITAS -->
+                                    <?php $appFacStatus = $app['fac_status'] ?? ''; ?>
+                                    <?php if ($appFacStatus === 'Dalam perbaikan'): ?>
+                                        <span class="badge-fac-status badge-fac-perbaikan">⚠️ Dalam Perbaikan</span>
+                                    <?php elseif ($appFacStatus === 'Nonaktif'): ?>
+                                        <span class="badge-fac-status badge-fac-nonaktif">🚫 Nonaktif</span>
+                                    <?php endif; ?>
+                                </div>
                                 <div class="item_meta">
                                     <?= htmlspecialchars($app['username']) ?> · 
                                     <?= date('d M Y', strtotime($app['rsv_date'])) ?> · 
@@ -190,7 +231,6 @@
             document.getElementById('cancel_rsv_id').value = id;
             document.getElementById('cancelModal').style.display = 'block';
         }
-
         function closeCancelModal() {
             document.getElementById('cancelModal').style.display = 'none';
         }

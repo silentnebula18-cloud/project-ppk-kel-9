@@ -5,13 +5,14 @@ class DashboardController {
     private $db;
 
     public function __construct() {
+        if (session_status() === PHP_SESSION_NONE) session_start();
         $this->db = (new Database())->getConnection();
     }
 
     public function index() {
-        // 1. Fetch Reservasi Diproses ('proses pengajuan')
+        // 1. Fetch Reservasi Diproses ('proses pengajuan') - Ditambahkan f.fac_status
         $queryPending = "SELECT r.rsv_id, r.rsv_date, r.start_time, r.end_time, 
-                                u.username, f.fac_name 
+                                u.username, f.fac_name, f.fac_status 
                          FROM reservations r 
                          JOIN users u ON r.user_id = u.user_id 
                          JOIN facilities f ON r.fac_id = f.fac_id 
@@ -33,9 +34,9 @@ class DashboardController {
         $stmtReports->execute();
         $reports = $stmtReports->fetchAll(PDO::FETCH_ASSOC);
 
-        // 3. Fetch Reservasi Diterima ('disetujui' dan tanggal >= hari ini)
+        // 3. Fetch Reservasi Diterima ('disetujui' dan tanggal >= hari ini) - Ditambahkan f.fac_status
         $queryApproved = "SELECT r.rsv_id, r.rsv_date, r.start_time, r.end_time, 
-                                 u.username, f.fac_name 
+                                 u.username, f.fac_name, f.fac_status 
                           FROM reservations r 
                           JOIN users u ON r.user_id = u.user_id 
                           JOIN facilities f ON r.fac_id = f.fac_id 
