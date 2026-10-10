@@ -29,6 +29,7 @@ CREATE TABLE facilities (
     location VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
     fac_desc VARCHAR(1000) NOT NULL,
+    fac_photo VARCHAR(300) NULL, -- path foto, contoh: storage/fac_img/<fac_id>.webp
     fac_status ENUM('aktif', 'nonaktif', 'dalam perbaikan') NOT NULL
 );
 
@@ -117,3 +118,4 @@ DO
     SET rsv_status = 'kadaluarsa'
     WHERE rsv_status = 'proses pengajuan'
       AND TIMESTAMP(rsv_date, start_time) <= NOW();
+      

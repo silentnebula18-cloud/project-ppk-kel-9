@@ -127,19 +127,8 @@ class laporan_saya_controller {
             exit;
         }
 
-        // Cari foto berdasarkan rep_id dan ekstensi file
-        $folderFoto = __DIR__ . '/../../../storage/report_img';
-        $foto = null;
-
-        foreach (['jpg', 'png', 'webp'] as $ext) {
-            $namaFile = $rep_id . '.' . $ext;
-            $pathFoto = $folderFoto . '/' . $namaFile;
-
-            if (is_file($pathFoto)) {
-                $foto = 'storage/report_img/' . $namaFile;
-                break;
-            }
-        }
+        // Path foto berdasarkan rep_id
+        $foto = 'storage/report_img/' . $rep_id . ".webp";
 
         require_once __DIR__ . '/../../../views/pengguna/detail_laporan.php';
     }

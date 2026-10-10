@@ -37,10 +37,11 @@
                 <div class="content_title">Buat Laporan</div>
             </div>
 
+            <!-- DETAIL FASILITAS -->
             <div id="detail_fac">
                 <div id="detail_fac_img">
-                    <!-- JANGAN LUPA, PATH FOTO -->
                     <img
+                        src="<?= htmlspecialchars($fac['fac_photo']); ?>"
                         alt="Foto <?= htmlspecialchars($fac['fac_name']); ?>"
                     >
                 </div>
@@ -80,6 +81,7 @@
                             <option value="kebersihan">Kebersihan</option>
                             <option value="lainnya">Lainnya</option>
                         </select>
+                        <small class="form_error" id="category_error"></small>
                     </div>
 
                     <!-- Deskripsi Laporan -->
@@ -92,17 +94,26 @@
                             rows="4"
                             required
                         ></textarea>
+                        <small class="form_error" id="rep_desc_error"></small>
                     </div>
 
                     <!-- Foto Laporan -->
                     <div class="form_group">
                         <label for="rep_img">Foto Laporan</label>
-                        <input type="file"
+                        <input
+                            type="file"
                             id="rep_img"
                             name="rep_img"
-                            accept="image/jpeg,image/png,image/webp">
-                        <small>Unggah satu foto berformat JPG, PNG, atau WEBP. Maksimal 2 MB.</small>
+                            accept="image/jpeg,image/png,image/webp"
+                        >
+                        <small class="form_hint">
+                            Unggah satu foto berformat JPG, PNG, atau WEBP.
+                            Maksimal 5 MB.
+                        </small>
+                        <small class="form_error" id="rep_img_error"></small>
                     </div>
+
+                    <p class="form_hint" id="compression_status" role="status"></p>
 
                     <button type="submit">Kirim Laporan</button>
 

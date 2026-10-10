@@ -28,8 +28,8 @@
             <!-- DETAIL FASILITAS -->    
             <div id="detail_fac">
                 <div id="detail_fac_img">
-                    <!-- JANGAN LUPA, PATH FOTO -->
                     <img
+                        src="<?= htmlspecialchars($fasilitas['fac_photo']); ?>"
                         alt="Foto <?= htmlspecialchars($fasilitas['fac_name']); ?>"
                     >
                 </div>

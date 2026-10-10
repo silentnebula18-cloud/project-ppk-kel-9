@@ -205,14 +205,18 @@ class form_rsv_controller {
         }
 
         // 8. Simpan reservasi
-        $success = $this->rsvModel->create(
+        try{
+            $success = $this->rsvModel->create(
             $user_id,
             $fac_id,
             $rsv_date,
             $start_time,
             $end_time,
             $purpose
-        );
+            );
+        } catch (PDOException $e) {
+            $success = false;
+        }
 
         if (!$success) {
             $_SESSION['notice'] = [

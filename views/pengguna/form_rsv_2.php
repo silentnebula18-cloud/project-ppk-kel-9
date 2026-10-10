@@ -155,10 +155,11 @@
                 
             </div>
 
+            <!-- DETAIL FASILITAS -->
             <div id="detail_fac">
                 <div id="detail_fac_img">
-                    <!-- JANGAN LUPA, PATH FOTO -->
                     <img
+                        src="<?= htmlspecialchars($fac['fac_photo']); ?>"
                         alt="Foto <?= htmlspecialchars($fac['fac_name']); ?>"
                     >
                 </div>
