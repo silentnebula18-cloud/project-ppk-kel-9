@@ -1,11 +1,14 @@
 <?php
+
+require_once _DIR_ . '/../../app/helpers/validate_session.php';
+check_session_valid('admin');
 require_once __DIR__ . "/../../app/models/account_model.php";
 
 $pending = getPendingAccounts($conn);
 ?>
 <body id="admin_body">
     <div id="dashboard_header">
-        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <button id="header_logo" type="button" onclick="toggleSidebar()" aria-label="Buka atau tutup menu"><span></span><span></span><span></span></button>
         <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Dashboard Admin</span>
         <a href="../../app/controllers/logout_controller.php"><button id="logout_btn">LogOut</button></a>

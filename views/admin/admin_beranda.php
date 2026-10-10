@@ -1,4 +1,8 @@
 <?php
+
+require_once _DIR_ . '/../../app/helpers/validate_session.php';
+check_session_valid('admin');
+
 require_once __DIR__ . "/../../app/models/account_model.php";
 require_once __DIR__ . "/../../app/models/facility_model.php";
 require_once __DIR__ . "/../../app/models/dashboard_model.php";
@@ -19,7 +23,7 @@ $buildings = getFacilitiesByBuilding($conn);
 $typeIcons = ['Ruang Kelas' => '🏫', 'Aula' => '🏛️', 'Laboratorium' => '🔬', 'Alat' => '🎥', 'Lapangan' => '⚽'];
 $maxReservasi = !empty($topFasilitas) ? (int) $topFasilitas[0]['total'] : 0;
 
-// Sapaan, tanggal, & maskot sesuai jam
+// Sapaan, tanggal & maskot sesuai jam
 $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 $bulan = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 $jam = (int) date('G');
@@ -52,7 +56,6 @@ if ($reservasiMenungguCount > 0) {
 if ($statusCounts['Dalam perbaikan'] > 0) {
     $todos[] = ['key' => 'perbaikan', 'text' => "Pantau {$statusCounts['Dalam perbaikan']} fasilitas dalam perbaikan", 'href' => 'kelola_fasilitas.php'];
 }
-$todos[] = ['key' => 'cek', 'text' => 'Lihat ringkasan hari ini', 'href' => null];
 
 $statusEmoji = ['Aktif' => '🟢', 'Dalam perbaikan' => '🟡', 'Nonaktif' => '🔴'];
 
@@ -64,7 +67,7 @@ function statusSlug($status)
 ?>
 <body id="admin_body">
     <div id="dashboard_header">
-        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <button id="header_logo" type="button" onclick="toggleSidebar()" aria-label="Buka atau tutup menu"><span></span><span></span><span></span></button>
         <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Dashboard Admin</span>
         <a href="../../app/controllers/logout_controller.php"><button id="logout_btn">LogOut</button></a>

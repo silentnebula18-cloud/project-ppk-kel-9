@@ -23,7 +23,6 @@ function getPendingAccounts($conn)
 
 /**
  * Admit 1 akun pending: pindahin dari unverified_acc ke users dgn role yg dipilih admin, lalu hapus dari unverified_acc. 
- * Dan dibungkus dgn transaction biar gak ada data nyangkut kalau salah satu query gagal
  * @return bool berhasil/tidak
  */
 function admitAccount($conn, $unv_id, $role)
@@ -63,9 +62,8 @@ function admitAccount($conn, $unv_id, $role)
 }
 
 /**
- * Admin bikin akun langsung ke tabel `users` (skip proses verifikasi).
- * Password di-hash di sini karena ini input baru dari form admin.
- * @return bool|string true kalau berhasil, string pesan error kalau gagal
+ * Admin bikin akun langsung ke tabel `users` (skip proses verifikasi). Password di-hash disini karena ini input baru dari form admin.
+ * @return bool|string true jika berhasil, string pesan error jika gagal
  */
 function createAccountDirect($conn, $username, $password, $email, $role)
 {

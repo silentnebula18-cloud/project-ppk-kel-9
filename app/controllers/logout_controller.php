@@ -1,4 +1,5 @@
 <?php
+
 // Logout: hapus sesi lalu arahkan kembali ke halaman login
 session_start();
 
@@ -10,8 +11,6 @@ if (ini_get("session.use_cookies")) {
 }
 
 session_destroy();
-
-// Sesuaikan dengan lokasi halaman login di proyek tim
 $loginPage = "../../views/auth/login.html";
 
 header("Location: " . $loginPage);

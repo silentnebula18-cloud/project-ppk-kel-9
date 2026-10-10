@@ -1,5 +1,5 @@
 <?php
-// Model khusus data ringkasan untuk Beranda Admin (read-only, cuma SELECT)
+// Model khusus data ringkasan untuk Beranda Admin 
 require_once __DIR__ . "/../../config/db_connect.php";
 
 // Hitung laporan kerusakan berdasarkan status (mis. 'baru')
@@ -45,7 +45,7 @@ function getFacilityStatusCounts($conn)
 }
 
 /**
- * Fasilitas yang paling sering direservasi (hanya yang pernah direservasi)
+ * Fasilitas yang paling sering direservasi (hanya yg pernah direservasi)
  * @return array tiap elemen: ['fac_name' => ..., 'total' => ...]
  */
 function getTopReservedFacilities($conn, $limit = 5)

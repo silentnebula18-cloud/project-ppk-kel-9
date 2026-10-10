@@ -1,11 +1,15 @@
 ﻿<?php
+
+require_once _DIR_ . '/../../app/helpers/validate_session.php';
+check_session_valid('admin');
 require_once __DIR__ . "/../../app/models/facility_model.php";
 
 $facilities = getAllFacilities($conn);
+$rekapLokasi = getRekapPerLokasi($facilities);
 ?>
 <body id="admin_body">
     <div id="dashboard_header">
-        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <button id="header_logo" type="button" onclick="toggleSidebar()" aria-label="Buka atau tutup menu"><span></span><span></span><span></span></button>
         <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Dashboard Admin</span>
         <a href="../../app/controllers/logout_controller.php"><button id="logout_btn">LogOut</button></a>
@@ -32,8 +36,8 @@ $facilities = getAllFacilities($conn);
                     <th>Nama</th>
                     <th>Tipe & Lokasi</th>
                     <th>Status</th>
-                    <th>Frekuensi Reservasi</th>
-                    <th>Frekuensi Kerusakan</th>
+                    <th>Okupansi (Reservasi/bulan)</th>
+                    <th>Frekuensi Kerusakan (Laporan/bulan)</th>
                 </tr>
                 <?php if (empty($facilities)): ?>
                 <tr>
@@ -49,12 +53,40 @@ $facilities = getAllFacilities($conn);
                         <td><?= ucwords(htmlspecialchars($fac['type'])) ?> - <?= htmlspecialchars($fac['location']) ?></td>
                         <?php $statusSlug = strtolower(str_replace(' ', '-', $fac['fac_status'])); ?>
                         <td><span class="status_badge status_<?= $statusSlug ?>"><?= ucwords(htmlspecialchars($fac['fac_status'])) ?></span></td>
-                        <td><?= (int) $fac['rsv_count'] ?></td>
-                        <td><?= (int) $fac['report_count'] ?></td>
+                        <td><?= formatRataBulan($fac['rsv_avg']) ?></td>
+                        <td><?= formatRataBulan($fac['report_avg']) ?></td>
                     </tr>
                     <?php endforeach; ?>
                 <?php endif; ?>
             </table>
+
+            <h3 class="sub_heading">Rekap per Lokasi</h3>
+            <table id="lokasi_table">
+                <tr>
+                    <th>Lokasi</th>
+                    <th>Jumlah Fasilitas</th>
+                    <th>Okupansi (Reservasi/bulan)</th>
+                    <th>Frekuensi Kerusakan (Laporan/bulan)</th>
+                </tr>
+                <?php if (empty($rekapLokasi)): ?>
+                <tr>
+                    <td colspan="4">Belum ada data fasilitas.</td>
+                </tr>
+                <?php else: ?>
+                    <?php foreach ($rekapLokasi as $lok): ?>
+                    <tr>
+                        <td><?= htmlspecialchars($lok['location']) ?></td>
+                        <td><?= (int) $lok['fac_count'] ?></td>
+                        <td><?= formatRataBulan($lok['rsv_avg']) ?></td>
+                        <td><?= formatRataBulan($lok['report_avg']) ?></td>
+                    </tr>
+                    <?php endforeach; ?>
+                <?php endif; ?>
+            </table>
+
+            <p class="empty_note" style="margin-top:10px;">
+                Angka okupansi dan kerusakan adalah rata-rata per bulan, dihitung sejak data reservasi atau laporan pertama tercatat (minimal 1 bulan).
+            </p>
 
             <div class="rekap_actions">
                 <a href="../../app/controllers/rekap_controller.php"><button>Rekap CSV</button></a>

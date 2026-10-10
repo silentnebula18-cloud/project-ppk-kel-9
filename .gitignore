@@ -3,3 +3,8 @@
 /node_modules/
 .vscode/
 /vendor/
+
+# foto fasilitas hasil upload/seed (<fac_id>.webp) dibuat ulang di tiap komputer;
+# hanya foto contoh berawalan "Contoh-" yang ikut di-commit
+/storage/fac_img/*
+!/storage/fac_img/[Cc]ontoh-*

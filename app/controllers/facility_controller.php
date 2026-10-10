@@ -1,5 +1,10 @@
 <?php
+
+require_once _DIR_ . '/../../app/helpers/validate_session.php';
+check_session_valid('admin');
+
 require_once __DIR__ . "/../models/facility_model.php";
+require_once __DIR__ . "/../helpers/upload_helper.php";
 $action = $_POST['action'] ?? '';
 
 switch ($action) {
@@ -15,7 +20,21 @@ switch ($action) {
             exit;
         }
 
-        createFacility($conn, $name, $type, $location, $capacity, $desc);
+        // ID dibuat di sini supaya foto bisa langsung diberi nama <fac_id>.webp
+        $id = buatUuid();
+        $foto = simpanFotoWebp($_FILES['fac_photo'] ?? null, 'fac_img', $id);
+        if ($foto['status'] === 'error') {
+            header("Location: ../../views/admin/kelola_fasilitas_baru.php?error=foto&msg=" . urlencode($foto['pesan']));
+            exit;
+        }
+
+        $photoPath = $foto['status'] === 'ok' ? $foto['path'] : null;
+
+        if (!createFacility($conn, $id, $name, $type, $location, $capacity, $desc, $photoPath)) {
+            hapusFoto($id . '.webp', 'fac_img');
+            header("Location: ../../views/admin/kelola_fasilitas_baru.php?error=1");
+            exit;
+        }
         header("Location: ../../views/admin/kelola_fasilitas.php");
         exit;
 
@@ -33,7 +52,16 @@ switch ($action) {
             exit;
         }
 
-        updateFacility($conn, $id, $name, $type, $location, $capacity, $desc, $status);
+        // Kalau ada foto baru, file <fac_id>.webp otomatis tertimpa (foto lama hilang sendiri)
+        $foto = simpanFotoWebp($_FILES['fac_photo'] ?? null, 'fac_img', $id);
+        if ($foto['status'] === 'error') {
+            header("Location: ../../views/admin/kelola_fasilitas_baru.php?id=" . urlencode($id) . "&error=foto&msg=" . urlencode($foto['pesan']));
+            exit;
+        }
+
+        $photoPath = $foto['status'] === 'ok' ? $foto['path'] : null;
+
+        updateFacility($conn, $id, $name, $type, $location, $capacity, $desc, $status, $photoPath);
         header("Location: ../../views/admin/kelola_fasilitas_detail.php?id=" . urlencode($id));
         exit;
 
@@ -62,10 +90,15 @@ switch ($action) {
     case 'delete':
         $id = $_POST['fac_id'] ?? '';
         if ($id !== '') {
+            $lama = getFacilityById($conn, $id);
             $result = deleteFacility($conn, $id);
             if ($result === 'has_history') {
                 header("Location: ../../views/admin/kelola_fasilitas_detail.php?id=" . urlencode($id) . "&error=has_history");
                 exit;
+            }
+            // Fasilitas berhasil dihapus & file fotonya dihapus juga
+            if ($result === true && $lama && !empty($lama['fac_photo'])) {
+                hapusFoto(basename($lama['fac_photo']), 'fac_img');
             }
         }
         header("Location: ../../views/admin/kelola_fasilitas.php");

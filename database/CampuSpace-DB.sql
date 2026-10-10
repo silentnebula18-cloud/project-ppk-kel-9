@@ -40,7 +40,8 @@ CREATE TABLE facilities(
     location VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
     fac_desc VARCHAR(1000) NOT NULL,
-    fac_status ENUM("Aktif", "Dalam perbaikan", "Nonaktif") NOT NULL
+    fac_photo VARCHAR(300) NULL, -- path foto, contoh: storage/fac_img/<fac_id>.webp
+    fac_status ENUM("Aktif", "Dalam Perbaikan", "Nonaktif") NOT NULL
 );
 
 -- Data contoh fasilitas
@@ -48,13 +49,13 @@ INSERT INTO facilities (fac_name, type, location, capacity, fac_desc, fac_status
 ('Aula Utama', 'Aula', 'Gedung A Lantai 1', 300, 'Aula untuk seminar dan acara besar', 'Aktif'),
 ('Aula Mini', 'Aula', 'Gedung A Lantai 2', 80, 'Aula kecil untuk rapat dan workshop', 'Aktif'),
 ('Lab Komputer 1', 'Laboratorium', 'Gedung B Lantai 2', 40, 'Lab dengan 40 unit PC', 'Aktif'),
-('Lab Jaringan', 'Laboratorium', 'Gedung B Lantai 3', 30, 'Lab untuk praktikum jaringan komputer', 'Dalam perbaikan'),
+('Lab Jaringan', 'Laboratorium', 'Gedung B Lantai 3', 30, 'Lab untuk praktikum jaringan komputer', 'Dalam Perbaikan'),
 ('Ruang Kelas 101', 'Ruang Kelas', 'Gedung C Lantai 1', 35, 'Ruang kelas reguler dengan proyektor', 'Aktif'),
 ('Ruang Kelas 102', 'Ruang Kelas', 'Gedung C Lantai 1', 35, 'Ruang kelas reguler dengan AC', 'Aktif'),
 ('Ruang Kelas 201', 'Ruang Kelas', 'Gedung C Lantai 2', 50, 'Ruang kelas besar untuk kuliah umum', 'Nonaktif'),
 ('Proyektor Portabel', 'Alat', 'Gudang Sarpras', 5, 'Proyektor yang bisa dipinjam per unit', 'Aktif'),
 ('Lapangan Basket', 'Lapangan', 'Area Olahraga Timur', 20, 'Lapangan basket outdoor', 'Aktif'),
-('Lapangan Futsal', 'Lapangan', 'Area Olahraga Barat', 24, 'Lapangan futsal indoor', 'Dalam perbaikan');
+('Lapangan Futsal', 'Lapangan', 'Area Olahraga Barat', 24, 'Lapangan futsal indoor', 'Dalam Perbaikan');
 
 CREATE TABLE reservations(
 	rsv_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
