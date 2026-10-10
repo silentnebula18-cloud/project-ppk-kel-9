@@ -174,7 +174,6 @@ class form_rep_controller {
             exit;
         }
 
-        // 7. Validasi ukuran hasil kompresi: maksimal 2 MB
         $maxSize = 2 * 1024 * 1024;
 
         if ($file['size'] <= 0 || $file['size'] > $maxSize) {
@@ -186,7 +185,6 @@ class form_rep_controller {
             exit;
         }
 
-        // 8. Pastikan file berasal dari upload HTTP
         if (!is_uploaded_file($file['tmp_name'])) {
             $_SESSION['notice'] = [
                 'type' => 'error',
@@ -196,20 +194,18 @@ class form_rep_controller {
             exit;
         }
 
-        // 9. Validasi isi file: hanya WEBP
         $finfo = new finfo(FILEINFO_MIME_TYPE);
-            $mimeType = $finfo->file($file['tmp_name']);
+        $mimeType = $finfo->file($file['tmp_name']);
 
-            if ($mimeType !== 'image/webp') {
-                $_SESSION['notice'] = [
-                    'type' => 'error',
-                    'message' => 'Foto tidak valid. Silakan unggah foto JPG, PNG, atau WEBP.'
-                ];
-                header("Location: " . $redirect);
-                exit;
-            }
+        if ($mimeType !== 'image/webp') {
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Foto tidak valid. Format harus WEBP.'
+            ];
+            header("Location: " . $redirect);
+            exit;
+        }
 
-        // 10. Buat UUID laporan
         try {
             $data = random_bytes(16);
         } catch (Throwable $e) {
@@ -235,8 +231,7 @@ class form_rep_controller {
             substr($hex, 20, 12)
         );
 
-        // 11. Pastikan folder penyimpanan tersedia
-        $folder = __DIR__ . '/../../../storage/report_img';
+        $folder = __DIR__ . '/../../../storage/reports_img';
 
         if (
             !is_dir($folder) &&
@@ -251,7 +246,6 @@ class form_rep_controller {
             exit;
         }
 
-        // 12. Simpan foto dengan nama UUID laporan
         $filePath = $folder . '/' . $rep_id . '.webp';
 
         if (!move_uploaded_file($file['tmp_name'], $filePath)) {

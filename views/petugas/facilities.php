@@ -61,8 +61,10 @@ if (!function_exists('statusSlug')) {
                     <?php foreach ($facilities as $fac): ?>
                         <?php
                             $status = $fac['fac_status'];
-                            $isNonaktif = ($status === 'Nonaktif');
-                            $cardClass = $isNonaktif ? ' is_nonaktif' : ($status === 'Dalam perbaikan' ? ' is_perbaikan' : '');
+                            $isNonaktif = (strcasecmp($status, 'Nonaktif') === 0);
+                            $isPerbaikan = (strcasecmp($status, 'Dalam perbaikan') === 0);
+                            $isAktif = (strcasecmp($status, 'Aktif') === 0);
+                            $cardClass = $isNonaktif ? ' is_nonaktif' : ($isPerbaikan ? ' is_perbaikan' : '');
                         ?>
                         <div class="facility_card<?= $cardClass ?>">
                             <h4 class="facility_title"><?= e($fac['fac_name']) ?></h4>
@@ -74,8 +76,8 @@ if (!function_exists('statusSlug')) {
                                 <form action="index.php?page=facilities&action=update_status" method="POST">
                                     <input type="hidden" name="fac_id" value="<?= e($fac['fac_id']) ?>">
                                     <select name="fac_status" aria-label="Status <?= e($fac['fac_name']) ?>" onchange="this.form.submit()">
-                                        <option value="Aktif" <?= $status === 'Aktif' ? 'selected' : '' ?>>Aktif</option>
-                                        <option value="Dalam perbaikan" <?= $status === 'Dalam perbaikan' ? 'selected' : '' ?>>Dalam perbaikan</option>
+                                        <option value="Aktif" <?= $isAktif ? 'selected' : '' ?>>Aktif</option>
+                                        <option value="Dalam perbaikan" <?= $isPerbaikan ? 'selected' : '' ?>>Dalam perbaikan</option>
                                     </select>
                                 </form>
                             <?php endif; ?>

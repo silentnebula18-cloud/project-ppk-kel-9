@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Jakarta');
 function check_session_valid($expected_role) {
     if (session_status() === PHP_SESSION_NONE) {
         session_start();

@@ -10,7 +10,6 @@ class pengguna_beranda_controller {
     private $rsvModel;
 
     public function __construct() {
-        check_session_valid('pengguna');
         $database = new db_connect();
         $this->db = $database->getConnection();
         
@@ -19,9 +18,6 @@ class pengguna_beranda_controller {
     }
 
     public function index() {
-        check_session_valid('pengguna');
-
-        // Pengaturan pagination
         $limit = 5;
         $page = max(1, (int) ($_GET['haltab'] ?? 1));
 
@@ -29,7 +25,6 @@ class pengguna_beranda_controller {
         $lokasi_fac = $_GET['lokasi_fac'] ?? '';
         $kapasitas_fac = $_GET['kapasitas_fac'] ?? '';
 
-        // Hitung total data dan halaman
         if ($tipe_fac !== '' || $lokasi_fac !== '' || $kapasitas_fac !== '') {
             $totalData = $this->facModel->countFac_filtered(
                 $tipe_fac,
@@ -42,7 +37,6 @@ class pengguna_beranda_controller {
 
         $totalPages = (int) ceil($totalData / $limit);
 
-        // Jika belum ada data, tetap gunakan halaman 1
         if ($totalPages === 0) {
             $page = 1;
         } else {
@@ -51,7 +45,6 @@ class pengguna_beranda_controller {
 
         $offset = ($page - 1) * $limit;
 
-        // Ambil fasilitas untuk halaman saat ini
         if ($tipe_fac !== '' || $lokasi_fac !== '' || $kapasitas_fac !== '') {
             $facilities = $this->facModel->getFac_limit_filtered(
                 $limit,
@@ -97,5 +90,4 @@ class pengguna_beranda_controller {
         );
         require_once __DIR__ . '/../../../views/pengguna/detail_fasilitas.php';
     }
-    
 }

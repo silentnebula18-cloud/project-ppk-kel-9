@@ -15,6 +15,17 @@ if ($isEdit) {
 }
 
 $types = ["Ruang Kelas", "Aula", "Laboratorium", "Alat", "Lapangan"];
+$locations = [
+    "Fakultas Hukum (FH)",
+    "Fakultas Ekonomika dan Bisnis (FEB)",
+    "Fakultas Teknik (FT)",
+    "Fakultas Kedokteran (FK)",
+    "Fakultas Peternakan dan Pertanian (FPP)",
+    "Fakultas Ilmu Budaya (FIB)",
+    "Fakultas Ilmu Sosial dan Ilmu Politik (FISIP)",
+    "Fakultas Sains dan Matematika (FSM)",
+    "Sekolah Vokasi & Sekolah Pascasarjana"
+];
 $statuses = ["Aktif", "Dalam Perbaikan", "Nonaktif"];
 ?>
 <body id="admin_body">
@@ -22,7 +33,7 @@ $statuses = ["Aktif", "Dalam Perbaikan", "Nonaktif"];
         <button id="header_logo" type="button" onclick="toggleSidebar()" aria-label="Buka atau tutup menu"><span></span><span></span><span></span></button>
         <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Dashboard Admin</span>
-        <a href="../../app/controllers/logout_controller.php"><button id="logout_btn">LogOut</button></a>
+        <a href="../../app/controllers/logout_controller.php"><button id="logout_btn">Keluar</button></a>
     </div>
 
     <div id="dashboard_layout">
@@ -69,8 +80,14 @@ $statuses = ["Aktif", "Dalam Perbaikan", "Nonaktif"];
 
                 <div class="form_row">
                     <label>Lokasi:</label>
-                    <input type="text" name="location" required
-                           value="<?= htmlspecialchars($facility['location'] ?? '') ?>">
+                    <select name="location" required>
+                        <option value="" disabled <?= empty($facility['location']) ? 'selected' : '' ?> hidden>-- Pilih Lokasi --</option>
+                        <?php foreach ($locations as $loc): ?>
+                        <option value="<?= $loc ?>" <?= (isset($facility['location']) && $facility['location'] === $loc) ? 'selected' : '' ?>>
+                            <?= $loc ?>
+                        </option>
+                        <?php endforeach; ?>
+                    </select>
                 </div>
 
                 <div class="form_row">

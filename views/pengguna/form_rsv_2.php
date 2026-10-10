@@ -16,7 +16,7 @@ check_session_valid('pengguna');
         <?php elseif ($_GET['from'] === 'detail_fasilitas') : ?>
             <span id="header_title">Beranda</span>
         <?php endif; ?>
-        <button id="logout_btn">LogOut</button>
+        <button id="logout_btn">Keluar</button>
     </div>
 
     <div id="dashboard_layout">

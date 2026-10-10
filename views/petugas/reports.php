@@ -113,7 +113,7 @@ if (!function_exists('statusSlug')) {
 
                 <div class="form_group">
                     <label for="edit_resolution_note">Catatan penanganan</label>
-                    <textarea name="resolution_note" id="edit_resolution_note" rows="4" placeholder="Tuliskan resolusi atau penanganan laporan..."></textarea>
+                    <textarea name="resolution_note" id="edit_resolution_note" rows="4" placeholder="Tuliskan resolusi atau penanganan laporan..." required></textarea>
                 </div>
 
                 <div class="modal_actions">

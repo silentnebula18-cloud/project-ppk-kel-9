@@ -1,5 +1,9 @@
-document.addEventListener("DOMContentLoaded", function () {
+function initFormRep2() {
     const form = document.getElementById("form_rep_2");
+    if (!form) {
+        return;
+    }
+
     const category = document.getElementById("category");
     const description = document.getElementById("rep_desc");
     const image = document.getElementById("rep_img");
@@ -8,10 +12,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const descriptionError = document.getElementById("rep_desc_error");
     const imageError = document.getElementById("rep_img_error");
     const compressionStatus = document.getElementById("compression_status");
-
-    if (!form) {
-        return;
-    }
+    const submitBtn = form.querySelector('button[type="submit"]');
 
     const MAX_ORIGINAL_SIZE = 5 * 1024 * 1024;
     const MAX_COMPRESSED_SIZE = 2 * 1024 * 1024;
@@ -25,6 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
     let compressedFile = null;
     let originalFile = null;
     let isProcessing = false;
+    let compressPromise = null;
 
     function showError(element, message) {
         if (element) {
@@ -43,67 +45,61 @@ document.addEventListener("DOMContentLoaded", function () {
         showError(compressionStatus, "");
     }
 
-    image.addEventListener("change", function () {
-        compressedFile = null;
-        originalFile = null;
+    if (category) {
+        category.addEventListener("change", function () {
+            clearError(categoryError);
+        });
+    }
 
-        clearError(imageError);
-        showError(compressionStatus, "");
-
-        const file = image.files[0];
-
-        if (!file) {
-            return;
-        }
-
-        if (!allowedTypes.includes(file.type)) {
-            showError(
-                imageError,
-                "Foto harus berformat JPG, PNG, atau WEBP."
-            );
-            image.value = "";
-            return;
-        }
-
-        if (file.size > MAX_ORIGINAL_SIZE) {
-            showError(
-                imageError,
-                "Ukuran foto sebelum kompresi maksimal 5 MB."
-            );
-            image.value = "";
-        }
-    });
-
-    category.addEventListener("change", function () {
-        clearError(categoryError);
-    });
-
-    description.addEventListener("input", function () {
-        clearError(descriptionError);
-    });
+    if (description) {
+        description.addEventListener("input", function () {
+            clearError(descriptionError);
+        });
+    }
 
     function compressToWebp(file) {
         return new Promise(function (resolve, reject) {
+            if (!file) {
+                reject(new Error("Foto laporan tidak ditemukan."));
+                return;
+            }
+
             const img = new Image();
             const objectUrl = URL.createObjectURL(file);
 
             img.onload = function () {
                 URL.revokeObjectURL(objectUrl);
 
-                const canvas = document.createElement("canvas");
-                canvas.width = img.naturalWidth;
-                canvas.height = img.naturalHeight;
+                let width = img.naturalWidth || img.width;
+                let height = img.naturalHeight || img.height;
 
-                const context = canvas.getContext("2d");
-
-                if (!context) {
-                    reject(
-                        new Error("Browser tidak mendukung pemrosesan foto.")
-                    );
+                if (!width || !height) {
+                    reject(new Error("Dimensi foto tidak valid."));
                     return;
                 }
 
-                context.drawImage(img, 0, 0);
+                const maxDimension = 1920;
+                if (width > maxDimension || height > maxDimension) {
+                    if (width > height) {
+                        height = Math.round((height * maxDimension) / width);
+                        width = maxDimension;
+                    } else {
+                        width = Math.round((width * maxDimension) / height);
+                        height = maxDimension;
+                    }
+                }
+
+                const canvas = document.createElement("canvas");
+                canvas.width = width;
+                canvas.height = height;
+
+                const ctx = canvas.getContext("2d");
+                if (!ctx) {
+                    reject(new Error("Browser tidak mendukung pemrosesan foto."));
+                    return;
+                }
+
+                ctx.drawImage(img, 0, 0, width, height);
 
                 canvas.toBlob(
                     function (blob) {
@@ -112,9 +108,15 @@ document.addEventListener("DOMContentLoaded", function () {
                             return;
                         }
 
+                        if (blob.type !== "image/webp") {
+                            reject(new Error("Browser tidak mendukung konversi ke WEBP."));
+                            return;
+                        }
+
+                        const baseName = (file.name || "report").replace(/\.[^/.]+$/, "");
                         const webpFile = new File(
                             [blob],
-                            "report.webp",
+                            baseName + ".webp",
                             {
                                 type: "image/webp",
                                 lastModified: Date.now()
@@ -137,6 +139,87 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
+    async function processSelectedImage() {
+        compressedFile = null;
+        originalFile = null;
+        compressPromise = null;
+
+        clearError(imageError);
+        showError(compressionStatus, "");
+
+        const file = image.files && image.files[0];
+        if (!file) {
+            return;
+        }
+
+        if (!allowedTypes.includes(file.type)) {
+            showError(
+                imageError,
+                "Foto harus berformat JPG, PNG, atau WEBP."
+            );
+            image.value = "";
+            return;
+        }
+
+        if (file.size > MAX_ORIGINAL_SIZE) {
+            showError(
+                imageError,
+                "Ukuran foto sebelum kompresi maksimal 5 MB."
+            );
+            image.value = "";
+            return;
+        }
+
+        originalFile = file;
+        showError(compressionStatus, "Sedang memproses foto ke format WEBP...");
+
+        compressPromise = compressToWebp(file)
+            .then(function (result) {
+                if (originalFile !== file) {
+                    return null;
+                }
+
+                if (result.size > MAX_COMPRESSED_SIZE) {
+                    compressedFile = null;
+                    showError(
+                        imageError,
+                        "Hasil kompresi melebihi 2 MB. Silakan pilih foto lain."
+                    );
+                    showError(compressionStatus, "");
+                    image.value = "";
+                    return null;
+                }
+
+                compressedFile = result;
+
+                try {
+                    const dataTransfer = new DataTransfer();
+                    dataTransfer.items.add(result);
+                    image.files = dataTransfer.files;
+                } catch (e) {
+                }
+
+                showError(compressionStatus, "Foto berhasil diproses ke format WEBP.");
+                return result;
+            })
+            .catch(function (error) {
+                if (originalFile === file) {
+                    compressedFile = null;
+                    showError(
+                        imageError,
+                        error.message || "Foto gagal diproses. Silakan coba lagi."
+                    );
+                    showError(compressionStatus, "");
+                    image.value = "";
+                }
+                return null;
+            });
+    }
+
+    if (image) {
+        image.addEventListener("change", processSelectedImage);
+    }
+
     form.addEventListener("submit", async function (event) {
         event.preventDefault();
 
@@ -146,14 +229,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
         clearAllErrors();
 
-        // 1. Validasi kategori
         if (!category.value) {
             showError(categoryError, "Silakan pilih kategori laporan.");
             category.focus();
             return;
         }
 
-        // 2. Validasi deskripsi
         const desc = description.value.trim();
 
         if (desc === "") {
@@ -174,110 +255,101 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        // 3. Foto wajib dipilih
-        const file = image.files[0];
+        const file = image.files && image.files[0];
 
-        if (!file) {
+        if (!file && !compressedFile) {
             showError(imageError, "Foto laporan wajib diunggah.");
             image.focus();
             return;
         }
 
-        // 4. Validasi format foto
-        if (!allowedTypes.includes(file.type)) {
-            showError(
-                imageError,
-                "Foto harus berformat JPG, PNG, atau WEBP."
-            );
-            image.focus();
-            return;
-        }
-
-        // 5. Validasi ukuran foto asli
-        if (file.size > MAX_ORIGINAL_SIZE) {
-            showError(
-                imageError,
-                "Ukuran foto sebelum kompresi maksimal 5 MB."
-            );
-            image.focus();
-            return;
-        }
-
-        // 6. Jika file yang sama sudah dikompres, kirim tanpa kompresi ulang
-        if (compressedFile && originalFile === file) {
-            if (compressedFile.size > MAX_COMPRESSED_SIZE) {
-                showError(
-                    imageError,
-                    "Hasil kompresi melebihi 2 MB. Silakan pilih foto lain."
-                );
-                image.focus();
-                return;
-            }
-
-            const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(compressedFile);
-            image.files = dataTransfer.files;
-
-            form.submit();
-            return;
-        }
-
-        // 7. Kompresi foto menjadi WEBP
         isProcessing = true;
-        image.disabled = true;
-
-        showError(compressionStatus, "Sedang memproses foto...");
+        if (submitBtn) {
+            submitBtn.disabled = true;
+        }
 
         try {
-            const result = await compressToWebp(file);
+            let targetFile = compressedFile;
 
-            // Pastikan pengguna tidak mengganti foto saat kompresi berlangsung
-            if (image.files[0] !== file) {
+            if (!targetFile && compressPromise) {
+                showError(compressionStatus, "Sedang memproses foto ke format WEBP...");
+                targetFile = await compressPromise;
+            }
+
+            if (!targetFile && file) {
+                if (!allowedTypes.includes(file.type)) {
+                    showError(
+                        imageError,
+                        "Foto harus berformat JPG, PNG, atau WEBP."
+                    );
+                    image.focus();
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                    }
+                    isProcessing = false;
+                    return;
+                }
+
+                if (file.size > MAX_ORIGINAL_SIZE) {
+                    showError(
+                        imageError,
+                        "Ukuran foto sebelum kompresi maksimal 5 MB."
+                    );
+                    image.focus();
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                    }
+                    isProcessing = false;
+                    return;
+                }
+
+                showError(compressionStatus, "Sedang memproses foto ke format WEBP...");
+                targetFile = await compressToWebp(file);
+            }
+
+            if (!targetFile) {
+                showError(imageError, "Foto laporan wajib diunggah.");
+                image.focus();
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                }
+                isProcessing = false;
                 return;
             }
 
-            // 8. Validasi ukuran hasil kompresi
-            if (result.size > MAX_COMPRESSED_SIZE) {
-                compressedFile = null;
-                originalFile = null;
-
+            if (targetFile.size > MAX_COMPRESSED_SIZE) {
                 showError(
                     imageError,
                     "Hasil kompresi melebihi 2 MB. Silakan pilih foto lain."
                 );
-
-                image.value = "";
                 image.focus();
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                }
+                isProcessing = false;
                 return;
             }
 
-            compressedFile = result;
-            originalFile = file;
-
-            // 9. Ganti file input dengan hasil WEBP
             const dataTransfer = new DataTransfer();
-            dataTransfer.items.add(compressedFile);
+            dataTransfer.items.add(targetFile);
             image.files = dataTransfer.files;
 
-            showError(compressionStatus, "Foto berhasil diproses.");
-
-            // Aktifkan kembali input agar file ikut terkirim
-            image.disabled = false;
-
-            // Kirim form ke PHP dengan file WEBP
-            form.submit();
-        
+            HTMLFormElement.prototype.submit.call(form);
         } catch (error) {
-            compressedFile = null;
-            originalFile = null;
-
             showError(
                 imageError,
                 error.message || "Foto gagal diproses. Silakan coba lagi."
             );
-        } finally {
+            if (submitBtn) {
+                submitBtn.disabled = false;
+            }
             isProcessing = false;
-            image.disabled = false;
         }
     });
-});
+}
+
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initFormRep2);
+} else {
+    initFormRep2();
+}

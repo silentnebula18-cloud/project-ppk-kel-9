@@ -11,8 +11,9 @@ header('Content-Type: text/csv; charset=utf-8');
 header('Content-Disposition: attachment; filename=rekap_fasilitas_' . date('Y-m-d') . '.csv');
 
 $output = fopen('php://output', 'w');
+fprintf($output, chr(0xEF) . chr(0xBB) . chr(0xBF));
 
-fputcsv($output, ['Nama Fasilitas', 'Tipe', 'Lokasi', 'Status', 'Okupansi (Reservasi/bulan)', 'Frekuensi Kerusakan (Laporan/bulan)']);
+fputcsv($output, ['Nama Fasilitas', 'Tipe', 'Lokasi', 'Status', 'Okupansi (Reservasi/bulan)', 'Frekuensi Kerusakan (Laporan/bulan)'], ',', '"', "\\");
 
 foreach ($facilities as $f) {
     fputcsv($output, [
@@ -22,14 +23,14 @@ foreach ($facilities as $f) {
         $f['fac_status'],
         formatRataBulan($f['rsv_avg']),
         formatRataBulan($f['report_avg']),
-    ]);
+    ], ',', '"', "\\");
 }
 
-fputcsv($output, []);
-fputcsv($output, ['Rekap per Lokasi']);
-fputcsv($output, ['Lokasi', 'Jumlah Fasilitas', 'Okupansi (Reservasi/bulan)', 'Frekuensi Kerusakan (Laporan/bulan)']);
+fputcsv($output, [], ',', '"', "\\");
+fputcsv($output, ['Rekap per Lokasi'], ',', '"', "\\");
+fputcsv($output, ['Lokasi', 'Jumlah Fasilitas', 'Okupansi (Reservasi/bulan)', 'Frekuensi Kerusakan (Laporan/bulan)'], ',', '"', "\\");
 foreach (getRekapPerLokasi($facilities) as $lok) {
-    fputcsv($output, [$lok['location'], $lok['fac_count'], formatRataBulan($lok['rsv_avg']), formatRataBulan($lok['report_avg'])]);
+    fputcsv($output, [$lok['location'], $lok['fac_count'], formatRataBulan($lok['rsv_avg']), formatRataBulan($lok['report_avg'])], ',', '"', "\\");
 }
 
 fclose($output);

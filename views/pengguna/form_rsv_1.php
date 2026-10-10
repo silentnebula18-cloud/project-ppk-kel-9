@@ -11,7 +11,7 @@ check_session_valid('pengguna');
         <button id="header_logo" type="button" onclick="toggleSidebar()" aria-label="Buka atau tutup menu"><span></span><span></span><span></span></button>
         <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Reservasi Saya</span>
-        <button id="logout_btn">LogOut</button>
+        <button id="logout_btn">Keluar</button>
     </div>
 
     <div id="dashboard_layout">

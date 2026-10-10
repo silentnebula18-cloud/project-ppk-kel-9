@@ -12,10 +12,10 @@ if (!function_exists('statusSlug')) {
 }
 if (!function_exists('facilityBadge')) {
     function facilityBadge($status) {
-        if ($status === 'Dalam perbaikan') {
+        if (strcasecmp((string)$status, 'Dalam perbaikan') === 0) {
             return '<span class="fac_badge fac_dalam-perbaikan">⚠️ Dalam perbaikan</span>';
         }
-        if ($status === 'Nonaktif') {
+        if (strcasecmp((string)$status, 'Nonaktif') === 0) {
             return '<span class="fac_badge fac_nonaktif">🚫 Nonaktif</span>';
         }
         return '';
@@ -167,7 +167,7 @@ $approvedCount = count($approvedReservations ?? []);
                                 <p class="empty_note">Belum ada reservasi disetujui mendatang.</p>
                             <?php else: ?>
                                 <?php foreach ($approvedReservations as $app): ?>
-                                    <?php $needsAttention = in_array($app['fac_status'] ?? '', ['Nonaktif', 'Dalam perbaikan'], true); ?>
+                                    <?php $needsAttention = in_array(strtolower($app['fac_status'] ?? ''), ['nonaktif', 'dalam perbaikan'], true); ?>
                                     <div class="item<?= $needsAttention ? ' item_alert' : '' ?>">
                                         <div>
                                             <div class="item_title">

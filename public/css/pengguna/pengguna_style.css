@@ -107,14 +107,16 @@ body#pengguna_body {
     border-left: 1px solid var(--border);
 }
 
-#logout_btn {
+#logout_btn,
+#login_btn {
     background-color: transparent;
     color: var(--ink);
     border: 1px solid var(--border);
     font-weight: 500;
 }
 
-#logout_btn:hover {
+#logout_btn:hover,
+#login_btn:hover {
     background-color: var(--paper);
 }
 

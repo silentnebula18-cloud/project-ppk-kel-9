@@ -15,8 +15,8 @@ class Facility {
     }
 
     public function updateStatus($fac_id, $status) {
-        $allowed = ['Aktif', 'Dalam perbaikan'];
-        if (!in_array($status, $allowed)) {
+        $allowed = ['Aktif', 'Dalam perbaikan', 'Dalam Perbaikan', 'aktif', 'dalam perbaikan'];
+        if (!in_array($status, $allowed, true)) {
             return false;
         }
 

@@ -1,6 +1,9 @@
 <?php
-require_once __DIR__ . '/../../app/helpers/validate_session.php';
-check_session_valid('pengguna');
+date_default_timezone_set('Asia/Jakarta');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$isLoggedIn = !empty($_SESSION['user_id']) && ($_SESSION['role'] ?? '') === 'pengguna';
 ?>
 <head>
     <link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
@@ -10,14 +13,22 @@ check_session_valid('pengguna');
         <button id="header_logo" type="button" onclick="toggleSidebar()" aria-label="Buka atau tutup menu"><span></span><span></span><span></span></button>
         <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Beranda</span>
-        <button id="logout_btn">LogOut</button>
+        <?php if ($isLoggedIn): ?>
+            <button id="logout_btn">Keluar</button>
+        <?php else: ?>
+            <button id="login_btn" type="button" onclick="window.location.href='../../views/auth/login.html'">Log In</button>
+        <?php endif; ?>
     </div>
 
     <div id="dashboard_layout">
         <div id="sidebar" class="hidden">
             <a class="nav_item active" href="../../index.php?page=beranda"><span class="nav_icon">🏠</span>Beranda</a>
-            <a class="nav_item" href="../../index.php?page=reservasi_saya"><span class="nav_icon">🚪</span>Reservasi Saya</a>
-            <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a>
+            <?php if ($isLoggedIn): ?>
+                <a class="nav_item" href="../../index.php?page=reservasi_saya"><span class="nav_icon">🚪</span>Reservasi Saya</a>
+                <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a>
+            <?php else: ?>
+                <a class="nav_item" href="../../views/auth/login.html"><span class="nav_icon">🔑</span>Log In</a>
+            <?php endif; ?>
         </div>
 
         <div class="main_content" id="hal_detail_fasilitas">
@@ -165,9 +176,15 @@ check_session_valid('pengguna');
             <div id="detail_fac_btn">
                  <div id="buat_reservasi">
                         <?php if (strtolower($fac['fac_status'] ?? '') === 'aktif'): ?>
-                            <a href="../../index.php?page=form_rsv_2&id=<?= urlencode($fac['fac_id']); ?>&from=detail_fasilitas">
-                                <button type="button">Ajukan Reservasi</button>
-                            </a>
+                            <?php if ($isLoggedIn): ?>
+                                <a href="../../index.php?page=form_rsv_2&id=<?= urlencode($fac['fac_id']); ?>&from=detail_fasilitas">
+                                    <button type="button">Ajukan Reservasi</button>
+                                </a>
+                            <?php else: ?>
+                                <a href="../../views/auth/login.html">
+                                    <button type="button">Ajukan Reservasi</button>
+                                </a>
+                            <?php endif; ?>
                         <?php else: ?>
                             <p>
                                 Fasilitas sedang tidak dapat digunakan untuk reservasi.
@@ -176,9 +193,15 @@ check_session_valid('pengguna');
                  </div>
                  <div id="buat_laporan">
                         <?php if (strtolower($fac['fac_status'] ?? '') === 'aktif'): ?>
-                            <a href="../../index.php?page=form_rep_2&id=<?= urlencode($fac['fac_id']); ?>&from=detail_fasilitas">
-                                <button type="button">Buat Laporan</button>
-                            </a>
+                            <?php if ($isLoggedIn): ?>
+                                <a href="../../index.php?page=form_rep_2&id=<?= urlencode($fac['fac_id']); ?>&from=detail_fasilitas">
+                                    <button type="button">Buat Laporan</button>
+                                </a>
+                            <?php else: ?>
+                                <a href="../../views/auth/login.html">
+                                    <button type="button">Buat Laporan</button>
+                                </a>
+                            <?php endif; ?>
                         <?php else: ?>
                             <p>
                                 Fasilitas sedang tidak dapat digunakan untuk membuat laporan.

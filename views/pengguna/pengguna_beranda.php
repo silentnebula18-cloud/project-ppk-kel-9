@@ -1,6 +1,8 @@
 <?php
-require_once __DIR__ . '/../../app/helpers/validate_session.php';
-check_session_valid('pengguna');
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+$isLoggedIn = !empty($_SESSION['user_id']) && ($_SESSION['role'] ?? '') === 'pengguna';
 ?>
 <head>
     <link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
@@ -11,14 +13,22 @@ check_session_valid('pengguna');
         <button id="header_logo" type="button" onclick="toggleSidebar()" aria-label="Buka atau tutup menu"><span></span><span></span><span></span></button>
         <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Beranda</span>
-        <button id="logout_btn">LogOut</button>
+        <?php if ($isLoggedIn): ?>
+            <button id="logout_btn">Keluar</button>
+        <?php else: ?>
+            <button id="login_btn" type="button" onclick="window.location.href='../../views/auth/login.html'">Log In</button>
+        <?php endif; ?>
     </div>
 
     <div id="dashboard_layout">
         <div id="sidebar" class="hidden">
             <a class="nav_item active" href="../../index.php?page=beranda"><span class="nav_icon">🏠</span>Beranda</a>
-            <a class="nav_item" href="../../index.php?page=reservasi_saya"><span class="nav_icon">🚪</span>Reservasi Saya</a>
-            <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a>
+            <?php if ($isLoggedIn): ?>
+                <a class="nav_item" href="../../index.php?page=reservasi_saya"><span class="nav_icon">🚪</span>Reservasi Saya</a>
+                <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a>
+            <?php else: ?>
+                <a class="nav_item" href="../../views/auth/login.html"><span class="nav_icon">🔑</span>Log In</a>
+            <?php endif; ?>
         </div>
 
         <div class="main_content">

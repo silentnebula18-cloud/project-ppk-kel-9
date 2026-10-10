@@ -1,10 +1,10 @@
 <?php
 header('Content-Type: application/json');
-require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../config/db_connect.php';
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     http_response_code(405);
-    echo json_encode(response_error(':/'));
+    echo json_encode(response_error('method is not post'));
     exit;
 }
 
@@ -21,12 +21,12 @@ if ($data){
             update_database($pdo, $email, $username, $password);
             $response = response_success();
         }else{
-            $response = response_error(":/");
+            $response = response_error("invalid validation");
         }
 
 
     }else{
-        $response = response_error(":/");
+        $response = response_error("invalid keys");
     }
 
 } else {

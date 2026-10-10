@@ -16,16 +16,11 @@ function getAllFacilities($conn)
                 (SELECT COUNT(*) FROM reports rp WHERE rp.fac_id = f.fac_id) as report_total
             FROM facilities f
             ORDER BY f.fac_name ASC";
-    $result = mysqli_query($conn, $sql);
-
-    if (!$result) {
-        die("Query gagal: " . mysqli_error($conn));
-    }
-
+    $stmt = $conn->query($sql);
     $bulan = getJumlahBulanData($conn);
 
     $facilities = [];
-    while ($row = mysqli_fetch_assoc($result)) {
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         $row['periode_bulan'] = $bulan;
         $row['rsv_avg'] = round($row['rsv_total'] / $bulan, 1);
         $row['report_avg'] = round($row['report_total'] / $bulan, 1);
@@ -42,8 +37,8 @@ function getJumlahBulanData($conn)
                     COALESCE((SELECT MIN(DATE(reported_at)) FROM reports), CURDATE())
                 ),
                 CURDATE()) + 1) AS bulan";
-    $result = mysqli_query($conn, $sql);
-    $row = $result ? mysqli_fetch_assoc($result) : null;
+    $stmt = $conn->query($sql);
+    $row = $stmt ? $stmt->fetch(PDO::FETCH_ASSOC) : null;
 
     return max(1, (int) ($row['bulan'] ?? 1));
 }
@@ -55,56 +50,40 @@ function formatRataBulan($nilai)
 
 function getFacilityById($conn, $id)
 {
-    $stmt = mysqli_prepare($conn, "SELECT * FROM facilities WHERE fac_id = ?");
-    mysqli_stmt_bind_param($stmt, "s", $id);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $facility = mysqli_fetch_assoc($result);
-    mysqli_stmt_close($stmt);
+    $stmt = $conn->prepare("SELECT * FROM facilities WHERE fac_id = ?");
+    $stmt->execute([$id]);
+    $facility = $stmt->fetch(PDO::FETCH_ASSOC);
 
     return $facility ?: null;
 }
 
 function createFacility($conn, $id, $name, $type, $location, $capacity, $desc, $photo = null)
 {
-    $stmt = mysqli_prepare(
-        $conn,
+    $stmt = $conn->prepare(
         "INSERT INTO facilities (fac_id, fac_name, type, location, capacity, fac_desc, fac_photo, fac_status)
          VALUES (?, ?, ?, ?, ?, ?, ?, 'Aktif')"
     );
-    mysqli_stmt_bind_param($stmt, "ssssiss", $id, $name, $type, $location, $capacity, $desc, $photo);
-    $ok = mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
-
-    return $ok;
+    return $stmt->execute([$id, $name, $type, $location, $capacity, $desc, $photo]);
 }
 
 function updateFacility($conn, $id, $name, $type, $location, $capacity, $desc, $status, $photo = null)
 {
-    $stmt = mysqli_prepare(
-        $conn,
+    $stmt = $conn->prepare(
         "UPDATE facilities
          SET fac_name = ?, type = ?, location = ?, capacity = ?, fac_desc = ?, fac_status = ?,
              fac_photo = COALESCE(?, fac_photo)
          WHERE fac_id = ?"
     );
-    mysqli_stmt_bind_param($stmt, "sssissss", $name, $type, $location, $capacity, $desc, $status, $photo, $id);
-    $ok = mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
-
-    return $ok;
+    return $stmt->execute([$name, $type, $location, $capacity, $desc, $status, $photo, $id]);
 }
 
 function deleteFacility($conn, $id)
 {
     try {
-        $stmt = mysqli_prepare($conn, "DELETE FROM facilities WHERE fac_id = ?");
-        mysqli_stmt_bind_param($stmt, "s", $id);
-        $ok = mysqli_stmt_execute($stmt);
-        mysqli_stmt_close($stmt);
-        return $ok;
-    } catch (mysqli_sql_exception $e) {
-        if ($e->getCode() === 1451) {
+        $stmt = $conn->prepare("DELETE FROM facilities WHERE fac_id = ?");
+        return $stmt->execute([$id]);
+    } catch (PDOException $e) {
+        if ($e->getCode() == 23000 || (isset($e->errorInfo[1]) && $e->errorInfo[1] == 1451)) {
             return 'has_history';
         }
         throw $e;
@@ -113,24 +92,17 @@ function deleteFacility($conn, $id)
 
 function setFacilityStatus($conn, $id, $status)
 {
-    $stmt = mysqli_prepare($conn, "UPDATE facilities SET fac_status = ? WHERE fac_id = ?");
-    mysqli_stmt_bind_param($stmt, "ss", $status, $id);
-    $ok = mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
-
-    return $ok;
+    $stmt = $conn->prepare("UPDATE facilities SET fac_status = ? WHERE fac_id = ?");
+    return $stmt->execute([$status, $id]);
 }
 
 function countFacilitiesByStatus($conn, $status)
 {
-    $stmt = mysqli_prepare($conn, "SELECT COUNT(*) as total FROM facilities WHERE fac_status = ?");
-    mysqli_stmt_bind_param($stmt, "s", $status);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $row = mysqli_fetch_assoc($result);
-    mysqli_stmt_close($stmt);
+    $stmt = $conn->prepare("SELECT COUNT(*) as total FROM facilities WHERE fac_status = ?");
+    $stmt->execute([$status]);
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    return (int) $row['total'];
+    return (int) ($row['total'] ?? 0);
 }
 
 function getRekapPerLokasi($facilities)

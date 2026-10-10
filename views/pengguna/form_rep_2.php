@@ -15,7 +15,7 @@ check_session_valid('pengguna');
         <?php elseif ($_GET['from'] === 'detail_fasilitas') : ?>
             <span id="header_title">Beranda</span>
         <?php endif; ?>
-        <button id="logout_btn">LogOut</button>
+        <button id="logout_btn">Keluar</button>
     </div>
 
     <div id="dashboard_layout">
@@ -129,4 +129,4 @@ check_session_valid('pengguna');
 </body>
 </html>
 <script src="../../public/js/pengguna/pengguna.js"></script>
-<script src="../../public/js/pengguna/form_rep_2.js"></script>
+<script src="../../public/js/pengguna/form_rep_2.js?v=<?= filemtime(__DIR__ . '/../../public/js/pengguna/form_rep_2.js') ?>"></script>

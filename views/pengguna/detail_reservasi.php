@@ -1,4 +1,5 @@
 <?php
+date_default_timezone_set('Asia/Jakarta');
 require_once __DIR__ . '/../../app/helpers/validate_session.php';
 check_session_valid('pengguna');
 ?>
@@ -12,7 +13,7 @@ check_session_valid('pengguna');
         <button id="header_logo" type="button" onclick="toggleSidebar()" aria-label="Buka atau tutup menu"><span></span><span></span><span></span></button>
         <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Reservasi Saya</span>
-        <button id="logout_btn">LogOut</button>
+        <button id="logout_btn">Keluar</button>
     </div>
 
     <div id="dashboard_layout">
@@ -81,6 +82,7 @@ check_session_valid('pengguna');
             <div id="dtl_rsv_tombolBatal">
 
                 <?php
+                    $status_rsv = strtolower(trim($reservasi['rsv_status'] ?? ''));
                     $batas_pembatalan = strtotime(
                         $reservasi['rsv_date'] . ' ' . $reservasi['start_time']
                     ) - (24 * 60 * 60);
@@ -88,8 +90,7 @@ check_session_valid('pengguna');
                     $sekarang = time();
 
                     $bisa_batal =
-                        ($reservasi['rsv_status'] === 'proses pengajuan'
-                        || $reservasi['rsv_status'] === 'disetujui')
+                        ($status_rsv === 'proses pengajuan' || $status_rsv === 'disetujui')
                         && $sekarang < $batas_pembatalan;
                 ?>
 

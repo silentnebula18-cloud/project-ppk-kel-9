@@ -1,13 +1,5 @@
 <?php
-$host = "127.0.0.1";
-$username = "root";
-$password = "";
-$database = "projectppk";
-
-$conn = @mysqli_connect($host, $username, $password, $database);
-if (!$conn) {
-    $conn = @mysqli_connect($host, $username, "mysql8034", $database);
-}
+date_default_timezone_set('Asia/Jakarta');
 
 class db_connect {
     private string $host = "127.0.0.1";
@@ -43,3 +35,9 @@ class db_connect {
         return $this->conn;
     }
 }
+
+class Database extends db_connect {}
+
+$db_connect_instance = new db_connect();
+$conn = $db_connect_instance->getConnection();
+$pdo = $conn;

@@ -121,7 +121,7 @@ class laporan_saya_controller {
         }
 
         // Path foto berdasarkan rep_id
-        $foto = 'storage/report_img/' . $rep_id . ".webp";
+        $foto = 'storage/reports_img/' . $rep_id . ".webp";
 
         require_once __DIR__ . '/../../../views/pengguna/detail_laporan.php';
     }
