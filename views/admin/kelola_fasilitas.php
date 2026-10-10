@@ -6,8 +6,9 @@ $facilities = getAllFacilities($conn);
 <body id="admin_body">
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Dashboard Admin</span>
-        <button id="logout_btn" onclick="logout()">LogOut</button>
+        <a href="../../app/controllers/logout_controller.php"><button id="logout_btn">LogOut</button></a>
     </div>
 
     <div id="dashboard_layout">
@@ -29,7 +30,7 @@ $facilities = getAllFacilities($conn);
                 <tr>
                     <th>id_Fac</th>
                     <th>Nama</th>
-                    <th>...</th>
+                    <th>Tipe & Lokasi</th>
                     <th>Status</th>
                     <th>Frekuensi Reservasi</th>
                     <th>Frekuensi Kerusakan</th>
@@ -45,8 +46,9 @@ $facilities = getAllFacilities($conn);
                             <?= htmlspecialchars($fac['fac_id']) ?>
                         </a></td>
                         <td><?= htmlspecialchars($fac['fac_name']) ?></td>
-                        <td><?= htmlspecialchars($fac['type']) ?> — <?= htmlspecialchars($fac['location']) ?></td>
-                        <td><?= htmlspecialchars($fac['fac_status']) ?></td>
+                        <td><?= ucwords(htmlspecialchars($fac['type'])) ?> - <?= htmlspecialchars($fac['location']) ?></td>
+                        <?php $statusSlug = strtolower(str_replace(' ', '-', $fac['fac_status'])); ?>
+                        <td><span class="status_badge status_<?= $statusSlug ?>"><?= ucwords(htmlspecialchars($fac['fac_status'])) ?></span></td>
                         <td><?= (int) $fac['rsv_count'] ?></td>
                         <td><?= (int) $fac['report_count'] ?></td>
                     </tr>
@@ -54,12 +56,15 @@ $facilities = getAllFacilities($conn);
                 <?php endif; ?>
             </table>
 
-            <button onclick="downloadRekap()">Download Rekap</button>
+            <div class="rekap_actions">
+                <a href="../../app/controllers/rekap_controller.php"><button>Rekap CSV</button></a>
+                <a href="../../app/controllers/rekap_excel_controller.php"><button>Rekap Excel</button></a>
+                <a href="../../app/controllers/rekap_pdf_controller.php"><button>Rekap PDF</button></a>
+            </div>
         </div>
     </div>
 </body>
 
-<link rel="stylesheet" href="../../public/css/admin/admin_style.css">
+<link rel="stylesheet" href="../../public/css/admin/admin_style.css?v=<?= filemtime(__DIR__ . '/../../public/css/admin/admin_style.css') ?>">
 <script src="../../public/js/admin/sidebar.js"></script>
 <script src="../../public/js/admin/table_actions.js"></script>
-<script src="../../public/js/admin/form_actions.js"></script>

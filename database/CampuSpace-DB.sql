@@ -24,11 +24,11 @@ CREATE TABLE users (
 CREATE TABLE facilities (
     fac_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     fac_name VARCHAR(30) NOT NULL,
-    type ENUM('ruang kelas', 'aula', 'laboratorium', 'alat', 'lapangan') NOT NULL,
+    type ENUM('Ruang Kelas', 'Aula', 'Laboratorium', 'Alat', 'Lapangan', 'ruang kelas', 'aula', 'laboratorium', 'alat', 'lapangan') NOT NULL,
     location VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
     fac_desc VARCHAR(1000) NOT NULL,
-    fac_status ENUM('aktif', 'dalam perbaikan') NOT NULL
+    fac_status ENUM('Aktif', 'Dalam perbaikan', 'Nonaktif', 'aktif', 'dalam perbaikan', 'nonaktif') NOT NULL
 );
 
 CREATE TABLE reservations (
@@ -62,7 +62,6 @@ CREATE TABLE reservations (
     )
 );
 
--- Trigger pada tabel reservations untuk mengisi cancelled_at
 DELIMITER //
 CREATE TRIGGER reservation_cancelled_at
 BEFORE UPDATE ON reservations
@@ -95,7 +94,6 @@ CREATE TABLE reports (
     )
 );
 
--- Trigger pada tabel reports untuk mengisi kolom closed_at (kapan laporan ditutup)
 DELIMITER //
 CREATE TRIGGER reports_closed_at
 BEFORE UPDATE ON reports
@@ -108,16 +106,16 @@ END //
 DELIMITER ;
 
 INSERT INTO facilities (fac_name, type, location, capacity, fac_desc, fac_status) VALUES
-('Ruang Kuliah Gedung A', 'ruang kelas', 'Fakultas Hukum (FH)', 50, 'Ruang kelas dilengkapi AC, proyektor, dan papan tulis interaktif.', 'aktif'),
-('Hall Utama FEB', 'aula', 'Fakultas Ekonomika dan Bisnis (FEB)', 300, 'Aula luas untuk seminar nasional, simposium, dan acara akademik.', 'aktif'),
-('Lab Komputer Pemrograman', 'laboratorium', 'Fakultas Teknik (FT)', 40, 'Laboratorium komputer spesifikasi tinggi untuk praktikum koding.', 'aktif'),
-('Mikroskop Binokuler Advanced', 'alat', 'Fakultas Kedokteran (FK)', 15, 'Perangkat mikroskop presisi tinggi untuk riset patologi dan praktikum.', 'aktif'),
-('Lapangan Agrostologi', 'lapangan', 'Fakultas Peternakan dan Pertanian (FPP)', 100, 'Lapangan terbuka untuk penelitian vegetasi dan praktikum lapangan.', 'aktif'),
-('Ruang Teater Bahasa', 'ruang kelas', 'Fakultas Ilmu Budaya (FIB)', 80, 'Ruang audio visual khusus pementasan karya dan studi linguistik.', 'aktif'),
-('Studio Diskusi Publik', 'laboratorium', 'Fakultas Ilmu Sosial dan Ilmu Politik (FISIP)', 25, 'Studio khusus simulasi debat, fokus grup, dan penyiaran.', 'dalam perbaikan'),
-('Lab Kimia Organik', 'laboratorium', 'Fakultas Sains dan Matematika (FSM)', 35, 'Laboratorium dengan peralatan isolasi bahan kimia dan lemari asam.', 'aktif'),
-('Lapangan Basket Vokasi', 'lapangan', 'Sekolah Vokasi & Sekolah Pascasarjana', 150, 'Lapangan olahraga outdoor untuk mahasiswa dan kegiatan kampus.', 'aktif'),
-('Auditorium Pascasarjana', 'aula', 'Sekolah Vokasi & Sekolah Pascasarjana', 200, 'Aula ber-AC dengan sistem suara modern untuk sidang terbuka.', 'dalam perbaikan');
+('Ruang Kuliah Gedung A', 'Ruang Kelas', 'Fakultas Hukum (FH)', 50, 'Ruang kelas dilengkapi AC, proyektor, dan papan tulis interaktif.', 'Aktif'),
+('Hall Utama FEB', 'Aula', 'Fakultas Ekonomika dan Bisnis (FEB)', 300, 'Aula luas untuk seminar nasional, simposium, dan acara akademik.', 'Aktif'),
+('Lab Komputer Pemrograman', 'Laboratorium', 'Fakultas Teknik (FT)', 40, 'Laboratorium komputer spesifikasi tinggi untuk praktikum koding.', 'Aktif'),
+('Mikroskop Binokuler Advanced', 'Alat', 'Fakultas Kedokteran (FK)', 15, 'Perangkat mikroskop presisi tinggi untuk riset patologi dan praktikum.', 'Aktif'),
+('Lapangan Agrostologi', 'Lapangan', 'Fakultas Peternakan dan Pertanian (FPP)', 100, 'Lapangan terbuka untuk penelitian vegetasi dan praktikum lapangan.', 'Aktif'),
+('Ruang Teater Bahasa', 'Ruang Kelas', 'Fakultas Ilmu Budaya (FIB)', 80, 'Ruang audio visual khusus pementasan karya dan studi linguistik.', 'Aktif'),
+('Studio Diskusi Publik', 'Laboratorium', 'Fakultas Ilmu Sosial dan Ilmu Politik (FISIP)', 25, 'Studio khusus simulasi debat, fokus grup, dan penyiaran.', 'Dalam perbaikan'),
+('Lab Kimia Organik', 'Laboratorium', 'Fakultas Sains dan Matematika (FSM)', 35, 'Laboratorium dengan peralatan isolasi bahan kimia dan lemari asam.', 'Aktif'),
+('Lapangan Basket Vokasi', 'Lapangan', 'Sekolah Vokasi & Sekolah Pascasarjana', 150, 'Lapangan olahraga outdoor untuk mahasiswa dan kegiatan kampus.', 'Aktif'),
+('Auditorium Pascasarjana', 'Aula', 'Sekolah Vokasi & Sekolah Pascasarjana', 200, 'Aula ber-AC dengan sistem suara modern untuk sidang terbuka.', 'Dalam perbaikan');
 
 INSERT INTO unverified_acc (unv_username, unv_password, unv_email) VALUES
 ('mhs_dimas', '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'dimas.prasetyo@students.undip.ac.id'),
@@ -126,16 +124,11 @@ INSERT INTO unverified_acc (unv_username, unv_password, unv_email) VALUES
 ('mhs_nadia', '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'nadia.safitri@students.undip.ac.id');
 
 INSERT INTO users (username, password, email, role) VALUES
--- Role: Admin
 ('admin_utama',  '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'admin.sarpras@undip.ac.id', 'admin'),
 ('admin_bapsi',  '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'admin.bapsi@undip.ac.id', 'admin'),
-
--- Role: Petugas Fasilitas / Verifikator
 ('petugas_ft',    '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'petugas.ft@undip.ac.id', 'petugas'),
 ('petugas_feb',   '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'petugas.feb@undip.ac.id', 'petugas'),
 ('petugas_vokasi','$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'petugas.vokasi@undip.ac.id', 'petugas'),
-
--- Role: Pengguna (Mahasiswa / Tendik)
 ('budi_santoso',  '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'budi.santoso@students.undip.ac.id', 'pengguna'),
 ('anisa_rahma',  '$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'anisa.rahma@students.undip.ac.id', 'pengguna'),
 ('reza_firmansyah','$2y$12$Vk2JUb5PRwqahFZx2W/Fiu/OLmo/bcHv77V3d0RGQPVXKbP3pKLWq', 'reza.firmansyah@students.undip.ac.id', 'pengguna');

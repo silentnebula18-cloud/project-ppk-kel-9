@@ -6,8 +6,9 @@ $pending = getPendingAccounts($conn);
 <body id="admin_body">
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Dashboard Admin</span>
-        <button id="logout_btn" onclick="logout()">LogOut</button>
+        <a href="../../app/controllers/logout_controller.php"><button id="logout_btn">LogOut</button></a>
     </div>
 
     <div id="dashboard_layout">
@@ -27,6 +28,7 @@ $pending = getPendingAccounts($conn);
 
             <table id="akun_table">
                 <tr>
+                    <th>Username</th>
                     <th>Email</th>
                     <th>Role</th>
                     <th>Tanggal daftar</th>
@@ -34,25 +36,21 @@ $pending = getPendingAccounts($conn);
                 </tr>
                 <?php if (empty($pending)): ?>
                 <tr>
-                    <td colspan="6">Tidak ada akun pending.</td>
+                    <td colspan="5">Tidak ada akun pending.</td>
                 </tr>
                 <?php else: ?>
                     <?php foreach ($pending as $acc): ?>
                     <tr>
+                        <td><?= htmlspecialchars($acc['unv_username']) ?></td>
                         <td><?= htmlspecialchars($acc['unv_email']) ?></td>
-                        <td>Belum ditentukan</td>
+                        <td>Pengguna</td>
                         <td><?= htmlspecialchars($acc['unv_registered_at']) ?></td>
                         <td>
                             <form class="admit_form" method="post" action="../../app/controllers/account_controller.php"
                                   onsubmit="return confirm('Yakin mau admit akun ini?');">
                                 <input type="hidden" name="action" value="admit">
                                 <input type="hidden" name="unv_id" value="<?= htmlspecialchars($acc['unv_id']) ?>">
-                                <select name="role" required>
-                                    <option value=""> Role </option>
-                                    <option value="pengguna">Pengguna</option>
-                                    <option value="petugas">Petugas</option>
-                                    <option value="admin">Admin</option>
-                                </select>
+                                <input type="hidden" name="role" value="pengguna">
                                 <button type="submit">Admit</button>
                             </form>
 
@@ -71,6 +69,6 @@ $pending = getPendingAccounts($conn);
     </div>
 </body>
 
-<link rel="stylesheet" href="../../public/css/admin/admin_style.css">
+<link rel="stylesheet" href="../../public/css/admin/admin_style.css?v=<?= filemtime(__DIR__ . '/../../public/css/admin/admin_style.css') ?>">
 <script src="../../public/js/admin/sidebar.js"></script>
 <script src="../../public/js/admin/table_actions.js"></script>

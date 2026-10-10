@@ -11,8 +11,9 @@ if (!$facility) {
 <body id="admin_body">
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Dashboard Admin</span>
-        <button id="logout_btn">LogOut</button>
+        <a href="../../app/controllers/logout_controller.php"><button id="logout_btn">LogOut</button></a>
     </div>
 
     <div id="dashboard_layout">
@@ -38,6 +39,13 @@ if (!$facility) {
             <p>Status: <?= htmlspecialchars($facility['fac_status']) ?></p>
             <p>Deskripsi: <?= nl2br(htmlspecialchars($facility['fac_desc'])) ?></p>
 
+            <?php if (($_GET['error'] ?? '') === 'has_history'): ?>
+            <p style="color:var(--danger,red); font-weight:bold;">
+                Fasilitas ini tidak bisa dihapus karena masih mempunyai riwayat reservasi atau laporan.
+                Coba dinonaktifkan saja jika tidak ingin dipakai lagi.
+            </p>
+            <?php endif; ?>
+
             <form id="delete_form" method="post" action="../../app/controllers/facility_controller.php"
                   onsubmit="return confirm('Yakin mau hapus fasilitas ini? Data akan hilang permanen.');">
                 <input type="hidden" name="action" value="delete">
@@ -53,7 +61,7 @@ if (!$facility) {
             </form>
             <?php else: ?>
             <form method="post" action="../../app/controllers/facility_controller.php"
-                  onsubmit="return confirm('Yakin mau nonaktifkan fasilitas ini? Fasilitas gak akan bisa direservasi selama nonaktif.');">
+                  onsubmit="return confirm('Yakin mau nonaktifkan fasilitas ini? Fasilitas tidak akan bisa direservasi selama nonaktif.');">
                 <input type="hidden" name="action" value="deactivate">
                 <input type="hidden" name="fac_id" value="<?= htmlspecialchars($facility['fac_id']) ?>">
                 <button type="submit">Nonaktifkan</button>
@@ -63,5 +71,5 @@ if (!$facility) {
     </div>
 </body>
 
-<link rel="stylesheet" href="../../public/css/admin/admin_style.css">
+<link rel="stylesheet" href="../../public/css/admin/admin_style.css?v=<?= filemtime(__DIR__ . '/../../public/css/admin/admin_style.css') ?>">
 <script src="../../public/js/admin/sidebar.js"></script>

@@ -94,12 +94,19 @@ function updateFacility($conn, $id, $name, $type, $location, $capacity, $desc, $
  */
 function deleteFacility($conn, $id)
 {
-    $stmt = mysqli_prepare($conn, "DELETE FROM facilities WHERE fac_id = ?");
-    mysqli_stmt_bind_param($stmt, "s", $id);
-    $ok = mysqli_stmt_execute($stmt);
-    mysqli_stmt_close($stmt);
-
-    return $ok;
+    try {
+        $stmt = mysqli_prepare($conn, "DELETE FROM facilities WHERE fac_id = ?");
+        mysqli_stmt_bind_param($stmt, "s", $id);
+        $ok = mysqli_stmt_execute($stmt);
+        mysqli_stmt_close($stmt);
+        return $ok;
+    } catch (mysqli_sql_exception $e) {
+        // error code 1451 = foreign key constraint fails (masih ada reservasi/laporan)
+        if ($e->getCode() === 1451) {
+            return 'has_history';
+        }
+        throw $e;
+    }
 }
 
 /**

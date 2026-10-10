@@ -5,8 +5,9 @@ $action = $_POST['action'] ?? '';
 switch ($action) {
     case 'admit':
         $unv_id = $_POST['unv_id'] ?? '';
-        $role   = $_POST['role'] ?? '';
-        if ($unv_id === '' || !in_array($role, ['pengguna', 'petugas', 'admin'])) {
+
+        $role   = 'pengguna';
+        if ($unv_id === '') {
             header("Location: ../../views/admin/kelola_akun.php?error=1");
             exit;
         }
