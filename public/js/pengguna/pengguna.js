@@ -7,5 +7,3 @@ function toggleSlotWaktu() {
     var slot_waktu = document.getElementById("slot_waktu");
     slot_waktu.classList.toggle("hidden");
 }
-
-

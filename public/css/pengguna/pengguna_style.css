@@ -1,69 +1,116 @@
+/* ==================================================
+   1. GLOBAL VARIABLES & RESET
+   ================================================== */
+
 :root {
-    --primary: #4f46e5;
-    --primary-dark: #4338ca;
-    --bg: #f4f5f9;
-    --surface: #ffffff;
-    --border: #e2e4ea;
-    --text: #1f2430;
-    --text-muted: #6b7280;
-    --danger: #dc2626;
+    --ink: #3E2A1E;
+    --ink-2: #4E3626;
+    --gold: #C89B3C;
+    --gold-dark: #A67E2D;
+    --paper: #F0EAE0;
+    --paper-dark: #e8ddc9;
+    --surface: #FFFDFA;
+    --border: #DDD3C7;
+    --text: #2A2019;
+    --text-muted: #7A6F63;
+    --success: #2E7D4F;
+    --success-bg: #E6F3EB;
+    --warning: #8A5A00;
+    --warning-bg: #FBF0DA;
+    --danger: #B3261E;
+    --danger-bg: #FBE7E6;
 }
 
 * {
-    font-family: "Segoe UI", Arial, sans-serif;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Sans', Arial, sans-serif;
 }
 
-/*----------- LAYOUT LAYAR ------------*/
-#pengguna_body {
+h1, h2, h3, .content_title, #header_title, #header_brand {
+    font-family: 'Fraunces', Georgia, serif;
+}
+
+body#pengguna_body {
     margin: 0;
-    box-sizing: border-box;
-    background-color: var(--bg);
+    background-color: var(--paper);
     color: var(--text);
     min-height: 100vh;
 }
 
-/*----------- DASHBOARD HEADER ------------*/
+
+/* ==================================================
+   2. DASHBOARD LAYOUT & HEADER
+   ================================================== */
+
 #dashboard_header {
     display: flex;
     align-items: center;
     gap: 10px;
     background-color: var(--surface);
-    padding: 14px 20px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    padding: 16px 24px;
+    border-bottom: 2px solid var(--ink);
 }
 
 #header_logo {
     cursor: pointer;
     font-size: 18px;
-    color: var(--primary);
+    color: var(--gold);
     transition: transform 0.15s;
 }
 
 #header_logo:hover {
-    transform: scale(1.15);
+    transform: rotate(20deg);
+}
+
+#header_brand {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--ink);
+    letter-spacing: 0.3px;
+}
+
+#header_brand em {
+    font-style: normal;
+    color: var(--gold);
 }
 
 #header_title {
     flex: 1;
-    font-weight: bold;
-    font-style: italic;
-    color: var(--text);
+    font-weight: 500;
+    font-style: normal;
+    font-size: 15px;
+    color: var(--text-muted);
+    letter-spacing: 0.2px;
+    margin-left: 6px;
+    padding-left: 14px;
+    border-left: 1px solid var(--border);
+}
+
+#logout_btn {
+    background-color: transparent;
+    color: var(--ink);
+    border: 1px solid var(--border);
+    font-weight: 500;
+}
+
+#logout_btn:hover {
+    background-color: var(--paper);
 }
 
 #dashboard_layout {
     display: flex;
+    border-top: 3px solid var(--gold);
 }
 
-/*----------- SIDEBAR ------------*/
 #sidebar {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    width: 190px;
-    padding: 16px 12px;
-    background-color: var(--surface);
+    gap: 2px;
+    width: 210px;
+    padding: 20px 0;
+    background-color: var(--ink);
     box-sizing: border-box;
-    min-height: calc(100vh - 53px);
+    min-height: calc(100vh - 65px);
 }
 
 #sidebar.hidden {
@@ -73,20 +120,19 @@
 .nav_item {
     box-sizing: border-box;
     text-align: left;
-    padding: 10px 12px;
-    color: var(--text-muted);
+    padding: 12px 20px;
+    color: #B8C0D4;
     text-decoration: none;
     display: flex;
     align-items: center;
-    gap: 10px;
-    border-radius: 8px;
-    font-size: 15px;
-    transition: background-color 0.15s, color 0.15s;
+    gap: 12px;
+    border-left: 3px solid transparent;
+    transition: background-color 0.15s, color 0.15s;   
 }
 
 .nav_item:hover {
-    background-color: var(--bg);
-    color: var(--text);
+    background-color: var(--ink-2);
+    color: #fff;
 }
 
 .nav_icon {
@@ -94,46 +140,85 @@
 }
 
 .nav_item.active {
-    background-color: var(--primary);
-    color: #fff;
-    font-weight: bold;
+    background-color: var(--ink-2);
+    color: var(--gold);
+    border-left-color: var(--gold);
+    font-weight: 600;
 }
 
-/*----------- MAIN CONTENT ------------*/
+
 .main_content {
     flex: 1;
+    min-width: 0;
     padding: 24px;
-    box-sizing: border-box;
 }
 
-/*----------- CONTENTS ------------*/
+
+/* ==================================================
+   3. SHARED CONTENT LAYOUT
+   ================================================== */
+
 #content_1 {
     display: flex;
     flex-direction: column;
     margin-bottom: 14px;
 }
 
-.content_title{
-    font-size: 18px;
+.content_title {
+    color: var(--ink);
+    font-size: 24px;
     font-weight: bold;
-    color: var(--text);
 }
 
-#filter_fac{
+.small_desc, #rsv_saya_description {
+    color: var(--text-muted);
+    font-size: 18px;
+}
+
+/* Dipakai untuk halaman detail yang menumpuk beberapa bagian. */
+.content_stack {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Baris untuk judul, tombol, atau link navigasi. */
+.section_header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Pengganti inline style untuk kelompok tombol. */
+.action_group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+
+/* ==================================================
+   4. FILTER & PAGINATION
+   ================================================== */
+
+#filter_fac {
     display: flex;
     gap: 20px;
     margin-top: 12px;
 }
 
-#facility_table {
-    width: 100%;
-    table-layout: fixed;
+/* Filter fasilitas dipakai di beberapa halaman. */
+#filter_fac_box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
 }
 
-#facility_table thead th{
-    width: 100%;
-    table-layout: fixed;
-    text-align: center;
+.filter_capacity {
+    width: 70px;
 }
 
 #pagination_controls {
@@ -144,50 +229,231 @@
     margin-top: 12px;
 }
 
-.pagin_link{
-    background-color: var(--primary);
-    color: #fff;
-    text-decoration: none;
+.pagin_link {
     padding: 8px 14px;
     border-radius: 6px;
+
+    background-color: var(--gold);
+    color: var(--ink);
+    border: none;
+    border-radius: 4px;
     cursor: pointer;
+    text-decoration: none;
     font-size: 13px;
+    cursor: pointer;
+
     transition: background-color 0.15s;
 }
 
 .pagin_link:hover {
-    background-color: var(--primary-dark);
+    background-color: var(--gold-dark);
 }
 
-/*---------- DETAIL FASILITAS ---------------*/
-#slot_waktu.hidden {
-    display: none;
+#page_info {
+    text-align: center;
 }
 
-.back_href{
-    text-decoration: none;
+
+/* ==================================================
+   5. FACILITY TABLE & GENERAL TABLES
+   ================================================== */
+
+#facility_table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#facility_table thead th, #report_table thead th {
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+    background-color: var(--surface);
+    border-top: 2px solid var(--ink);
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+th,
+td {
+    padding: 12px 12px;
+    border: 1px solid var(--border);
+    text-align: left;
+    font-size: 13px;
+}
+
+th {
+    background-color: var(--paper);
+    color: var(--ink);
+    font-weight: bold;
+}
+
+/* Hanya baris yang memang bisa diklik yang memakai class ini. */
+.clickable-row {
+    cursor: pointer;
+}
+
+.clickable-row:hover td {
+    background-color: #FAFAF8;
+}
+
+.table_empty {
+    text-align: center;
+}
+
+#facility_table .col-facility-name {
+    width: 25%;
+}
+
+#facility_table .col-facility-type {
+    width: 15%;
+}
+
+#facility_table .col-facility-location {
+    width: 30%;
+}
+
+#facility_table .col-facility-capacity {
+    width: 10%;
+}
+
+#facility_table .col-facility-status {
+    width: 15%;
+}
+
+#facility_table .col-facility-action {
+    width: 15%;
+}
+
+/* Used in: reservasi_saya */
+#rsv_saya_table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#rsv_saya_table th {
+    text-align: center;
+    vertical-align: middle;
+}
+
+#rsv_saya_table td {
+    vertical-align: middle;
+    overflow-wrap: anywhere;
+}
+
+#rsv_saya_table th:nth-child(1),
+#rsv_saya_table td:nth-child(1) {
+    width: 20%;
+}
+
+#rsv_saya_table th:nth-child(2),
+#rsv_saya_table td:nth-child(2) {
+    width: 25%;
+}
+
+#rsv_saya_table th:nth-child(3),
+#rsv_saya_table td:nth-child(3) {
+    width: 23%;
+}
+
+#rsv_saya_table th:nth-child(4),
+#rsv_saya_table td:nth-child(4) {
+    width: 20%;
+}
+
+#rsv_saya_table th:nth-child(5),
+#rsv_saya_table td:nth-child(5) {
+    width: 12%;
+}
+
+
+/* ==================================================
+   6. FACILITY DETAIL & SLOT AVAILABILITY
+   ================================================== */
+
+.back_href {
     font-size: 30px;
+    text-decoration: none;
 }
 
 .back_href:hover {
     cursor: pointer;
 }
 
-#warn_cek_slot_waktu.hidden{
-    display: none;
-    color:#b91c1c;
+/* Used in: detail_fasilitas */
+#detail_fac {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 24px;
 }
 
-/*---------- TABEL SLOT WAKTU -----------*/
+#detail_fac_img {
+    flex: 0 0 280px;
+}
+
+#detail_fac_img img {
+    display: block;
+    width: 100%;
+    height: 220px;
+    object-fit: cover;
+    border-radius: 8px;
+}
+
+#detail_fac_txt {
+    flex: 1;
+    min-width: 0;
+}
+
+#detail_fac_btn {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+#buat_reservasi,
+#buat_laporan {
+    min-width: 0;
+}
+
+#buat_reservasi p,
+#buat_laporan p {
+    color: var(--danger);
+}
+
+#slot_waktu.hidden {
+    display: none;
+}
+
+#warn_cek_slot_waktu.hidden {
+    display: none;
+    color: #b91c1c;
+}
+
 #slot_waktu_table_container {
     max-height: 500px;
     overflow-y: auto;
     overflow-x: auto;
 }
 
+#slot_waktu table {
+    width: 100%;
+    table-layout: fixed;
+}
+
+#slot_waktu table th:first-child,
+#slot_waktu table td:first-child {
+    width: 130px;
+}
+
 .slot_terisi {
     background-color: #ff6b6b;
-    color: white;
+    color: #fff;
     font-weight: bold;
     text-align: center;
 }
@@ -205,117 +471,119 @@
 }
 
 .slot_legend_color {
+    display: inline-block;
     width: 20px;
     height: 20px;
+    background-color: #fff;
     border: 1px solid #ccc;
-    display: inline-block;
 }
 
 .slot_legend_color.slot_terisi {
     background-color: #ff6b6b;
 }
 
-#slot_waktu table {
-    width: 100%;
-    table-layout: fixed;
-}
 
-#slot_waktu table th:first-child,
-#slot_waktu table td:first-child {
-    width: 130px;
-}
+/* ==================================================
+   7. BUTTONS
+   ================================================== */
 
-
-/* tombol umum */
-button {
-    background-color: var(--primary);
-    color: #fff;
+button,
+input[type="submit"], .btn {
+    background-color: var(--gold);
+    color: var(--ink);
     border: none;
-    padding: 8px 14px;
-    border-radius: 6px;
+    padding: 9px 16px;
+    border-radius: 4px;
     cursor: pointer;
     font-size: 13px;
+    font-weight: 600;
     transition: background-color 0.15s;
 }
 
-button:hover {
-    background-color: var(--primary-dark);
+button:hover,
+input[type="submit"]:hover, .btn:hover {
+    background-color: var(--gold-dark);
 }
 
-#logout_btn {
-    background-color: transparent;
-    color: var(--text-muted);
-    border: 1px solid var(--border);
+/* Used in: form_rsv_1, form_rep_1 */
+.btn {
+    /* display: inline-block; */
+    text-decoration: none;
+    text-align: center;
 }
 
-#logout_btn:hover {
-    background-color: var(--bg);
-    color: var(--text);
+
+/* ==================================================
+   8. INPUTS & FORMS
+   ================================================== */
+
+/* Used in: form_rsv_2, form_rep_2 */
+#form_rsv_entry, #form_rep_entry {
+    margin-top: 24px;
+    padding: 20px;
+    border: 1px solid var(--ink);
+    border-radius: 8px;
+    background-color: var(--paper-dark);
 }
 
-#delete_btn {
-    background-color: var(--danger);
-}
-
-#delete_btn:hover {
-    background-color: #b91c1c;
-}
-
-/* input & select */
-input, select, textarea {
+input,
+select,
+textarea {
+    padding: 8px 10px;
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 8px 10px;
+
     font-size: 13px;
-    box-sizing: border-box;
     outline: none;
+
     transition: border-color 0.15s;
 }
 
-input:focus, select:focus, textarea:focus {
-    border-color: var(--primary);
+input:focus,
+select:focus,
+textarea:focus {
+    border-color: var(--ink-2);
 }
 
-input[type="text"], input[type="password"] {
+input[type="text"],
+input[type="password"] {
     width: 260px;
 }
 
-/* tabel */
-table {
+/* Used in: form_rsv_2 */
+.form_group {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 20px;
+}
+
+.form_group label {
+    color: var(--text);
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.form_group input,
+.form_group select,
+.form_group textarea {
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 12px;
+    max-width: 100%;
+    min-height: 40px;
     background-color: var(--surface);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.06);
 }
 
-th, td {
-    padding: 10px 12px;
-    text-align: left;
-    font-size: 13px;
-    border-bottom: 1px solid var(--border);
+.form_group textarea {
+    min-height: 110px;
+    resize: vertical;
 }
 
-th {
-    background-color: var(--bg);
+.form_hint {
     color: var(--text-muted);
-    font-weight: bold;
+    font-size: 12px;
 }
 
-tr:hover td {
-    background-color: #f9fafc;
-    cursor: pointer;
-}
-
-table a {
-    color: var(--primary);
-    text-decoration: none;
-    font-weight: bold;
-}
-
-/* form */
 .form_row {
     display: flex;
     align-items: center;
@@ -325,54 +593,209 @@ table a {
 
 .form_row label {
     width: 80px;
+    color: var(--text-muted);
     font-size: 13px;
-    color: var(--text_muted);
 }
 
 #form_note {
-    font-size: 12px;
-    color: var(--text-muted);
-    background-color: #fff8e6;
-    border: 1px solid #fde68a;
     padding: 8px 10px;
+    border: 1px solid #fde68a;
     border-radius: 6px;
+    background-color: #fff8e6;
+    color: var(--text-muted);
+    font-size: 12px;
 }
 
-/* Notice message */
+/* Foto laporan, untuk menggantikan inline style di view. */
+.report_photo {
+    display: block;
+    max-width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+}
+
+/* Used_in: form_rsv_2 */
+.form_submit_btn {
+    margin-top: 20px;
+}
+
+
+/* ==================================================
+   9. NOTIFICATIONS
+   ================================================== */
+
 .notice {
-    margin: 15px 30px;
+    box-sizing: border-box;
+    margin: 0 0 15px;
     padding: 12px 16px;
     border-radius: 8px;
+    overflow-wrap: anywhere;
 }
 
-/* Notice berhasil */
 .notice.success {
-    background-color: #e8f5e9;
+    background-color: var(--success-bg);
     color: #2e7d32;
-    border: 1px solid #a5d6a7;
+    border: 1px solid var(--success);
 }
 
-/* Notice gagal */
 .notice.error {
-    background-color: #ffebee;
+    background-color: var(--warning-bg);
     color: #c62828;
-    border: 1px solid #ef9a9a;
+    border: 1px solid var(--warning); 
 }
 
-/*---------- DETAIL RESERVASI ---------------*/
+
+/* ==================================================
+   10. RESERVATION & REPORT LISTS
+   ================================================== */
+
+#rsv_saya_top{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+#rsv_saya_filter {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.action_group {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-left: auto;
+}
+
+#rsv_saya_description {
+    margin-bottom: 12px;
+}
+
+#rsv_content {
+    width: 100%;
+}
+
+#rep_saya_top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+#rep_saya_filter {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+#rep_saya_filter .action_group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 0;
+}
+
+#rep_saya_top > .action_group {
+    margin-left: auto;
+    flex: 0 0 auto;
+}
+
+.status-proses {
+    color: #b45309;
+}
+
+.status-disetujui {
+    color: #15803d;
+}
+
+.status-ditolak {
+    color: #b91c1c;
+}
+
+.status-dibatalkan {
+    color: var(--text-muted);
+}
+
+.status-kadaluarsa {
+    color: var(--text-muted);
+}
+
+
+/* ==================================================
+   11. RESERVATION DETAIL & CANCELLATION POPUP, LAPORAN DETAIL
+   ================================================== */
+
+#dtl_rsv_detailReservasi, #dtl_rep_detailLaporan{
+    margin-top: 24px;
+    padding: 20px;
+    border: 1px solid var(--ink);
+    border-radius: 8px;
+    background-color: var(--paper-dark);
+}
+
+#dtl_rsv_popup_konfirmasi {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    width: 500px;
+    height: 300px;
+}
+
 #dtl_rsv_popup_konfirmasi.hidden {
     display: none !important;
 }
 
-#dtl_rsv_popup_konfirmasi{
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%); 
-    width: 450px; 
-    height: 200px; 
-    background-color: rgba(253, 251, 251, 0.914);
-    display: flex; 
-    justify-content: center; 
-    align-items: center;
+#error_alasan_batal.hidden {
+    display: none !important;
+}
+
+#error_alasan_batal{
+    color: var(--danger);
+}
+
+/* Reservation cancellation popup content */
+.popup_content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    width: 100%;
+    max-width: 420px;
+    padding: 24px;
+    background-color: var(--surface);
+    border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.popup_content textarea {
+    width: 100%;
+    min-height: 100px;
+    resize: vertical;
+}
+
+.popup_content > div {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+
+/* ==================================================
+   12. UTILITIES
+   ================================================== */
+
+.hidden {
+    display: none !important;
 }

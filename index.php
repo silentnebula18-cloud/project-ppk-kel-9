@@ -1,8 +1,30 @@
 <?php
-
 session_start();
 
-if (!isset($_SESSION["role"])) {
+// Belum login atau role tidak valid
+$validRoles = ['admin', 'pengguna', 'petugas'];
+
+if (
+    empty($_SESSION['role']) ||
+    !in_array($_SESSION['role'], $validRoles, true)
+) {
+    unset($_SESSION['role']);
+    require __DIR__ . "/views/index.html";
+    exit;
+}
+
+// Sesi login tidak lengkap
+if (
+    empty($_SESSION['user_id']) ||
+    empty($_SESSION['username'])
+) {
+    unset(
+        $_SESSION['role'],
+        $_SESSION['user_id'],
+        $_SESSION['username'],
+        $_SESSION['email']
+    );
+
     require __DIR__ . "/views/index.html";
     exit;
 }
@@ -97,6 +119,15 @@ switch ($_SESSION["role"]) {
     case "pengguna":
         $action = $_POST['action'] ?? '';
         switch($action){
+            case 'batalkan_reservasi':
+                require_once __DIR__ . "/app/controllers/pengguna/reservasi_saya_controller.php";
+                $controller = new reservasi_saya_controller();
+
+                $rsv_id = $_POST['rsv_id'] ?? '';
+                $cancel_reason = $_POST['cancel_reason'] ?? '';
+
+                $controller->batalkanReservasi($rsv_id, $cancel_reason);
+                break;
             case 'ajukan_reservasi':
                 require_once __DIR__ . "/app/controllers/pengguna/form_rsv_controller.php";
                 $controller = new form_rsv_controller();
@@ -111,18 +142,18 @@ switch ($_SESSION["role"]) {
                 $page = $_GET['page'] ?? '';
                 switch($page){
                     case 'beranda':
-                        require_once __DIR__ . "/app/controllers/pengguna/pengguna_dashboard_controller.php";
-                        $controller = new pengguna_dashboard_controller();
+                        require_once __DIR__ . "/app/controllers/pengguna/pengguna_beranda_controller.php";
+                        $controller = new pengguna_beranda_controller();
                         $controller->index();
                         break;
                     case 'detail_fasilitas':
-                        require_once __DIR__ . "/app/controllers/pengguna/pengguna_dashboard_controller.php";
-                        $controller = new pengguna_dashboard_controller();
+                        require_once __DIR__ . "/app/controllers/pengguna/pengguna_beranda_controller.php";
+                        $controller = new pengguna_beranda_controller();
                         $controller->detail_fasilitas();
                         break;
                     case 'cek_slot_waktu':
-                        require_once __DIR__ . "/app/controllers/pengguna/pengguna_dashboard_controller.php";
-                        $controller = new pengguna_dashboard_controller();
+                        require_once __DIR__ . "/app/controllers/pengguna/pengguna_beranda_controller.php";
+                        $controller = new pengguna_beranda_controller();
                         $controller->detail_fasilitas();
                         break;
                     case 'form_rsv_2':
@@ -147,23 +178,18 @@ switch ($_SESSION["role"]) {
                         $status = $_GET['status'] ?? '';
 
                         if ($rsv_id === '' || $fac_id === '' || $status === '') {
-                            die("Data reservasi tidak lengkap.");
+                            $_SESSION['notice'] = [
+                                'type' => 'error',
+                                'message' => 'Data reservasi tidak lengkap.'
+                            ];
+
+                            header("Location: index.php?page=reservasi_saya");
+                            exit;
                         }
 
                         require_once __DIR__ . "/app/controllers/pengguna/reservasi_saya_controller.php";
                         $controller = new reservasi_saya_controller();
                         $controller->detailReservasi($rsv_id, $fac_id, $status);
-                        break;
-                    case 'batalkan_reservasi':
-                        $rsv_id = $_GET['rsv_id'] ?? '';
-
-                        if ($rsv_id === '') {
-                            die("ID reservasi tidak ditemukan.");
-                        }
-
-                        require_once __DIR__ . "/app/controllers/pengguna/reservasi_saya_controller.php";
-                        $controller = new reservasi_saya_controller();
-                        $controller->batalkanReservasi($rsv_id);
                         break;
                     case 'form_rsv_1':
                         require_once __DIR__ . "/app/controllers/pengguna/form_rsv_controller.php";
@@ -191,8 +217,8 @@ switch ($_SESSION["role"]) {
                         $controller->detailLaporan();
                         break;
                     default:
-                        require_once __DIR__ . "/app/controllers/pengguna/pengguna_dashboard_controller.php";
-                        $controller = new pengguna_dashboard_controller();
+                        require_once __DIR__ . "/app/controllers/pengguna/pengguna_beranda_controller.php";
+                        $controller = new pengguna_beranda_controller();
                         $controller->index();
                         break;    
                 }

@@ -1,11 +1,12 @@
-<script>
-    const approvedReservations = <?= json_encode($reservations); ?>;
-</script>
+<head>
+    <link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
+</head>
 
 <body id="pengguna_body">
 
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <?php if ($_GET['from'] === 'form_rsv_1') : ?>
             <span id="header_title">Reservasi Saya</span>
         <?php elseif ($_GET['from'] === 'detail_fasilitas') : ?>
@@ -29,19 +30,20 @@
 
         <div class="main_content">
 
-           <div style= "display: flex; align-items: center">
-            <?php if ($_GET['from'] === 'form_rsv_1') : ?>
-                <a class = "back_href" href="../../index.php?page=form_rsv_1">⬅️</a>
-            <?php elseif ($_GET['from'] === 'detail_fasilitas') : ?>
-                <a class = "back_href" href="../../index.php?page=detail_fasilitas&id=<?= urlencode($fac['fac_id']); ?>">⬅️</a>
-            <?php endif; ?>
-            
-            <button id="cek_slot_waktu_btn" onclick="toggleSlotWaktu()">Cek Slot Waktu</button>
+           <div class="section_header">
+                <?php if ($_GET['from'] === 'form_rsv_1') : ?>
+                    <a class = "back_href" href="../../index.php?page=form_rsv_1">⬅️</a>
+                <?php elseif ($_GET['from'] === 'detail_fasilitas') : ?>
+                    <a class = "back_href" href="../../index.php?page=detail_fasilitas&id=<?= urlencode($fac['fac_id']); ?>">⬅️</a>
+                <?php endif; ?>
+                
+                <button id="cek_slot_waktu_btn" onclick="toggleSlotWaktu()">Cek Slot Waktu</button>
             </div>
 
             <div id="slot_waktu" class="<?= isset($_GET['tgl_cek_slot_waktu']) ? '' : 'hidden' ?>">
                 <h2> Slot Waktu </h2>
                 <form method="get" action="../../index.php" id="formCekSlotWaktu">
+                    <input type="hidden" name="from" value="<?=$_GET['from']?>">
                     <input type="hidden" name="page" value="cek_slot_waktu_form_rsv_2">
                     <input type="hidden" name="id" value="<?= htmlspecialchars($fac['fac_id']); ?>">
 
@@ -75,19 +77,22 @@
                             </thead>
 
                             <?php
-                            function isSlotOccupied($date, $startTime, $endTime, $reservations) {
-                                foreach ($reservations as $reservation) {
-                                    if (
-                                        $reservation['rsv_date'] === $date &&
-                                        $reservation['start_time'] < $endTime &&
-                                        $reservation['end_time'] > $startTime
-                                    ) {
-                                        return true;
-                                    }
-                                }
+                                function isSlotOccupied($date, $startTime, $endTime, $reservations) {
+                                    foreach ($reservations as $reservation) {
+                                        $reservationStart = substr($reservation['start_time'], 0, 5);
+                                        $reservationEnd = substr($reservation['end_time'], 0, 5);
 
-                                return false;
-                            }
+                                        if (
+                                            $reservation['rsv_date'] === $date &&
+                                            $reservationStart < $endTime &&
+                                            $reservationEnd > $startTime
+                                        ) {
+                                            return true;
+                                        }
+                                    }
+
+                                    return false;
+                                }
                             ?>
                             
                             <tbody>
@@ -150,33 +155,42 @@
                 
             </div>
 
-            <div id = "detail_fac">
-                <h2> Detail Fasilitas </h2>
-                <div> fac_id : <?=htmlspecialchars($fac['fac_id']);?> </div>
-                <div> Nama : <?=htmlspecialchars($fac['fac_name']);?> </div>
-                <div> Deskripsi : <?=htmlspecialchars($fac['fac_desc']);?> </div>
-                <div> Tipe : <?=htmlspecialchars($fac['type']);?> </div>
-                <div> Lokasi : <?=htmlspecialchars($fac['location']);?> </div>
-                <div> Kapasitas : <?=htmlspecialchars($fac['capacity']);?> </div>
-                <div> Status : <?=htmlspecialchars($fac['fac_status']);?> </div>
+            <div id="detail_fac">
+                <div id="detail_fac_img">
+                    <!-- JANGAN LUPA, PATH FOTO -->
+                    <img
+                        alt="Foto <?= htmlspecialchars($fac['fac_name']); ?>"
+                    >
+                </div>
+
+                <div id="detail_fac_txt">
+                    <h2>Detail Fasilitas</h2>
+
+                    <div>fac_id : <?= htmlspecialchars($fac['fac_id']); ?></div>
+                    <div>Nama : <?= htmlspecialchars($fac['fac_name']); ?></div>
+                    <div>Deskripsi : <?= htmlspecialchars($fac['fac_desc']); ?></div>
+                    <div>Tipe : <?= htmlspecialchars($fac['type']); ?></div>
+                    <div>Lokasi : <?= htmlspecialchars($fac['location']); ?></div>
+                    <div>Kapasitas : <?= htmlspecialchars($fac['capacity']); ?></div>
+                    <div>Status : <?= htmlspecialchars($fac['fac_status']); ?></div>
+                </div>
             </div>
 
             <div id = "form_rsv_entry">
-                <h2>Ajukan Reservasi</h2>
-
+                <h2>Form Ajukan Reservasi</h2>     
                 <form id="form_rsv_2" method="post" action="../../index.php">
-
                     <input type="hidden" name="action" value="ajukan_reservasi">
                     <input type="hidden" name="fac_id" value="<?= htmlspecialchars($fac['fac_id']); ?>">
                     <input type="hidden" name="from" value="<?= htmlspecialchars($_GET['from'] ?? ''); ?>">
+                    <input type="hidden" id="fac_status" value="<?= htmlspecialchars($fac['fac_status']); ?>">
 
-                    <div>
-                        <label for="rsv_date">Tanggal:</label>
+                    <div class="form_group">
+                        <label for="rsv_date">Tanggal</label>
                         <input type="date" id="rsv_date" name="rsv_date" required>
                     </div>
 
-                    <div>
-                        <label for="start_time">Jam Mulai:</label>
+                    <div class="form_group">
+                        <label for="start_time">Jam Mulai</label>
                         <select id="start_time" name="start_time" required>
                             <option value="">-- Pilih Jam Mulai --</option>
 
@@ -186,15 +200,13 @@
                                 $minute = $time % 60;
                                 $value = sprintf("%02d:%02d", $hour, $minute);
                             ?>
-                                <option value="<?= $value ?>">
-                                    <?= $value ?>
-                                </option>
+                                <option value="<?= $value ?>"><?= $value ?></option>
                             <?php endfor; ?>
                         </select>
                     </div>
 
-                    <div>
-                        <label for="end_time">Jam Selesai:</label>
+                    <div class="form_group">
+                        <label for="end_time">Jam Selesai</label>
                         <select id="end_time" name="end_time" required disabled>
                             <option value="">-- Pilih Jam Selesai --</option>
 
@@ -204,26 +216,29 @@
                                 $minute = $time % 60;
                                 $value = sprintf("%02d:%02d", $hour, $minute);
                             ?>
-                                <option value="<?= $value ?>">
-                                    <?= $value ?>
-                                </option>
+                                <option value="<?= $value ?>"><?= $value ?></option>
                             <?php endfor; ?>
                         </select>
                     </div>
 
-                    <div>
-                        <label for="purpose">Tujuan:</label>
-                        <textarea id="purpose" name="purpose" maxlength="300" required></textarea>
+                    <div class="form_group">
+                        <label for="purpose">Tujuan Reservasi</label>
+                        <textarea
+                            id="purpose"
+                            name="purpose"
+                            maxlength="300"
+                            rows="4"
+                            required
+                        ></textarea>
+                        <small class="form_hint">Maksimal 300 karakter.</small>
                     </div>
 
-                    <button type="submit" style="margin-top: 20px;">Ajukan Reservasi</button>
-
+                    <button type="submit" class="form_submit_btn">
+                        Ajukan Reservasi
+                    </button>
                 </form>
-
             </div>
 
-
-           
         </div>
 
     </div>
@@ -231,6 +246,8 @@
 </body>
 </html>
 
-<link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
+<script>
+    const approvedReservations = <?= json_encode($reservations); ?>;
+</script>
 <script src="../../public/js/pengguna/pengguna.js"></script>
 <script src="../../public/js/pengguna/form_rsv_2.js"></script>

@@ -1,6 +1,10 @@
+<head>
+    <link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
+</head>
 <body id="pengguna_body">
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Beranda</span>
         <button id="logout_btn">LogOut</button>
     </div>
@@ -12,10 +16,10 @@
             <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a>
         </div>
 
-        <div class="main_content" id = "hal_detail_fasilitas">
-            <div style= "display: flex; align-items: center">
-            <a class = "back_href" href="../../index.php?page=beranda">⬅️</a>
-            <button id="cek_slot_waktu_btn" onclick="toggleSlotWaktu()">Cek Slot Waktu</button>
+        <div class="main_content" id="hal_detail_fasilitas">
+            <div class="section_header">
+                <a class = "back_href" href="../../index.php?page=beranda">⬅️</a>
+                <button id="cek_slot_waktu_btn" onclick="toggleSlotWaktu()">Cek Slot Waktu</button>
             </div>
 
             <div id="slot_waktu" class="<?= isset($_GET['tgl_cek_slot_waktu']) ? '' : 'hidden' ?>">
@@ -54,19 +58,22 @@
                             </thead>
 
                             <?php
-                            function isSlotOccupied($date, $startTime, $endTime, $reservations) {
-                                foreach ($reservations as $reservation) {
-                                    if (
-                                        $reservation['rsv_date'] === $date &&
-                                        $reservation['start_time'] < $endTime &&
-                                        $reservation['end_time'] > $startTime
-                                    ) {
-                                        return true;
-                                    }
-                                }
+                                function isSlotOccupied($date, $startTime, $endTime, $reservations) {
+                                    foreach ($reservations as $reservation) {
+                                        $reservationStart = substr($reservation['start_time'], 0, 5);
+                                        $reservationEnd = substr($reservation['end_time'], 0, 5);
 
-                                return false;
-                            }
+                                        if (
+                                            $reservation['rsv_date'] === $date &&
+                                            $reservationStart < $endTime &&
+                                            $reservationEnd > $startTime
+                                        ) {
+                                            return true;
+                                        }
+                                    }
+
+                                    return false;
+                                }
                             ?>
                             
                             <tbody>
@@ -130,27 +137,35 @@
             </div>
 
             
-            <div id = "detail_fac" style="display: flex; align-items: center; flex-direction: row; gap: 20px">
-                <div id = "detail_fac_txt">
-                    <h2> Detail Fasilitas </h2>
-                    <div> fac_id : <?=htmlspecialchars($fac['fac_id']);?> </div>
-                    <div> Nama : <?=htmlspecialchars($fac['fac_name']);?> </div>
-                    <div> Deskripsi : <?=htmlspecialchars($fac['fac_desc']);?> </div>
-                    <div> Tipe : <?=htmlspecialchars($fac['type']);?> </div>
-                    <div> Lokasi : <?=htmlspecialchars($fac['location']);?> </div>
-                    <div> Kapasitas : <?=htmlspecialchars($fac['capacity']);?> </div>
-                    <div> Status : <?=htmlspecialchars($fac['fac_status']);?> </div>
+            <div id="detail_fac">
+                <div id="detail_fac_img">
+                    <!-- JANGAN LUPA, PATH FOTO -->
+                    <img
+                        alt="Foto <?= htmlspecialchars($fac['fac_name']); ?>"
+                    >
+                </div>
+
+                <div id="detail_fac_txt">
+                    <h2>Detail Fasilitas</h2>
+
+                    <div>fac_id : <?= htmlspecialchars($fac['fac_id']); ?></div>
+                    <div>Nama : <?= htmlspecialchars($fac['fac_name']); ?></div>
+                    <div>Deskripsi : <?= htmlspecialchars($fac['fac_desc']); ?></div>
+                    <div>Tipe : <?= htmlspecialchars($fac['type']); ?></div>
+                    <div>Lokasi : <?= htmlspecialchars($fac['location']); ?></div>
+                    <div>Kapasitas : <?= htmlspecialchars($fac['capacity']); ?></div>
+                    <div>Status : <?= htmlspecialchars($fac['fac_status']); ?></div>
                 </div>
             </div>
 
-            <div id="detail_fac_btn" style="margin-top: 20px; display: flex; align-items: center; gap: 20px">
+            <div id="detail_fac_btn">
                  <div id="buat_reservasi">
                         <?php if ($fac['fac_status'] === 'aktif'): ?>
                             <a href="../../index.php?page=form_rsv_2&id=<?= urlencode($fac['fac_id']); ?>&from=detail_fasilitas">
-                                <button type="button">Buat Reservasi</button>
+                                <button type="button">Ajukan Reservasi</button>
                             </a>
                         <?php else: ?>
-                            <p style="color: #b91c1c;">
+                            <p>
                                 Fasilitas sedang tidak dapat digunakan untuk reservasi.
                             </p>
                         <?php endif; ?>
@@ -161,20 +176,15 @@
                                 <button type="button">Buat Laporan</button>
                             </a>
                         <?php else: ?>
-                            <p style="color: #b91c1c;">
+                            <p>
                                 Fasilitas sedang tidak dapat digunakan untuk membuat laporan.
                             </p>
                         <?php endif; ?>
                  </div>
             </div>
 
-
-
-           
-
         </div>
     </div>
 </body>
 </html>
-<link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
 <script src="../../public/js/pengguna/pengguna.js"></script>

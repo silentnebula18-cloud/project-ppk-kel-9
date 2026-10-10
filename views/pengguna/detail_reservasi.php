@@ -1,7 +1,12 @@
+<head>
+    <link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
+</head>
+
 <body id="pengguna_body">
     
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Reservasi Saya</span>
         <button id="logout_btn">LogOut</button>
     </div>
@@ -13,28 +18,40 @@
             <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a>
         </div>
 
-        <div class="main_content" style="display: flex; flex-direction: column; gap: 20px;">
+        <div class="main_content content_stack">
         
-            <a class = "back_href" href="../../index.php?page=reservasi_saya">⬅️</a>
-            
+            <div class="section_header">
+                <a class = "back_href" href="../../index.php?page=reservasi_saya">⬅️</a>
+                <div class="content_title">Reservasi <?=htmlspecialchars($reservasi['rsv_id']);?></div>
+            </div>
 
             <!-- DETAIL FASILITAS -->    
-            <div id="dtl_rsv_detailFasilitas">
-                <h2> Detail Fasilitas </h2>
-                <div> fac_id : <?=htmlspecialchars($fasilitas['fac_id']);?> </div>
-                <div> Nama : <?=htmlspecialchars($fasilitas['fac_name']);?> </div>
-                <div> Deskripsi : <?=htmlspecialchars($fasilitas['fac_desc']);?> </div>
-                <div> Tipe : <?=htmlspecialchars($fasilitas['type']);?> </div>
-                <div> Lokasi : <?=htmlspecialchars($fasilitas['location']);?> </div>
-                <div> Kapasitas : <?=htmlspecialchars($fasilitas['capacity']);?> </div>
-                <div> Status : <?=htmlspecialchars($fasilitas['fac_status']);?> </div>
+            <div id="detail_fac">
+                <div id="detail_fac_img">
+                    <!-- JANGAN LUPA, PATH FOTO -->
+                    <img
+                        alt="Foto <?= htmlspecialchars($fasilitas['fac_name']); ?>"
+                    >
+                </div>
+
+                <div id="detail_fac_txt">
+                    <h3>Detail Fasilitas</h3>
+
+                    <div>fac_id : <?= htmlspecialchars($fasilitas['fac_id']); ?></div>
+                    <div>Nama : <?= htmlspecialchars($fasilitas['fac_name']); ?></div>
+                    <div>Deskripsi : <?= htmlspecialchars($fasilitas['fac_desc']); ?></div>
+                    <div>Tipe : <?= htmlspecialchars($fasilitas['type']); ?></div>
+                    <div>Lokasi : <?= htmlspecialchars($fasilitas['location']); ?></div>
+                    <div>Kapasitas : <?= htmlspecialchars($fasilitas['capacity']); ?></div>
+                    <div>Status : <?= htmlspecialchars($fasilitas['fac_status']); ?></div>
+                </div>
             </div>
             
 
             <!-- DETAIL RESERVASI -->
             <div id="dtl_rsv_detailReservasi">
-                <h2> Detail Reservasi </h2>
-                <div> rsv_id : <?=htmlspecialchars($reservasi['rsv_id']);?> </div>
+                <h3>Detail Reservasi</h3>
+                <div> ID Reservasi : <?=htmlspecialchars($reservasi['rsv_id']);?> </div>
                 <div> Tanggal : <?=htmlspecialchars($reservasi['rsv_date']);?> </div>
                 <div> Waktu Mulai : <?=htmlspecialchars($reservasi['start_time']);?> </div>
                 <div> Waktu Selesai : <?=htmlspecialchars($reservasi['end_time']);?> </div>
@@ -42,11 +59,18 @@
                 <div> Tanggal Buat Reservasi : <?=htmlspecialchars($reservasi['created_at']);?> </div>
                 <?php if ($reservasi['rsv_status'] === 'dibatalkan') : ?>
                     <div> Dibatalkan pada : <?=htmlspecialchars($reservasi['cancelled_at']);?> </div>
+                    <?php if($reservasi['cancelled_by'] === $_SESSION['user_id']):?>
+                        <div> Dibatalkan oleh : pengguna </div>
+                    <?php else: ?>
+                        <div> Dibatalkan oleh : petugas </div>
+                    <?php endif; ?>
                 <?php elseif ($reservasi['rsv_status'] === 'ditolak') : ?>
                     <div> Ditolak pada : <?=htmlspecialchars($reservasi['cancelled_at']);?> </div>
                     <div> Alasan Ditolak : <?=htmlspecialchars($reservasi['cancel_reason']);?> </div>
+                <?php elseif ($reservasi['rsv_status'] === 'proses pengajuan' || $reservasi['rsv_status'] === 'disetujui') : ?>
+                    <div>Batas pembatalan: <?=date('d-m-Y H:i:s',strtotime($reservasi['rsv_date'] . ' ' . $reservasi['start_time']) - 86400);?></div>
                 <?php endif; ?>
-                <div> Status : <?=htmlspecialchars($reservasi['rsv_status']);?> </div>
+                <div> Status : <?= htmlspecialchars(ucwords($reservasi['rsv_status'])) ?></div>
             </div>
 
            <!-- TOMBOL PEMBATALAN -->
@@ -92,13 +116,28 @@
                     Apakah Anda yakin ingin membatalkan reservasi ini?
                 </p>
 
-                <button type="button" id="btn_batal_konfirmasi">
-                    Ya, Batalkan
-                </button>
+                <label for="alasan_batal">Alasan pembatalan</label>
+                <textarea
+                    id="alasan_batal"
+                    maxlength="300"
+                    required
+                    placeholder="Tuliskan alasan pembatalan..."
+                ></textarea>
 
-                <button type="button" id="btn_batal_batal">
-                    Tidak
-                </button>
+                <p id="error_alasan_batal" class="hidden">
+                    Alasan pembatalan wajib diisi.
+                </p>
+
+                <div>
+                    <button type="button" id="btn_batal_konfirmasi">
+                        Ya, Batalkan
+                    </button>
+
+                    <button type="button" id="btn_batal_batal">
+                        Tidak
+                    </button>
+                </div>
+                
             </div>
         </div>
 
@@ -106,6 +145,5 @@
 </body>
 </html>
 
-<link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
 <script src="../../public/js/pengguna/pengguna.js"></script>
 <script src="../../public/js/pengguna/detail_reservasi.js"></script>

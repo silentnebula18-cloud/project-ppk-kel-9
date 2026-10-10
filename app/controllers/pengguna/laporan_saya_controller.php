@@ -23,8 +23,7 @@ class laporan_saya_controller {
     }
 
     public function index() {
-
-        // Ambil user yang sedang login
+        // Memastikan pengguna sudah login
         $user_id = $_SESSION['user_id'] ?? '';
 
         if ($user_id === '') {
@@ -32,41 +31,27 @@ class laporan_saya_controller {
             exit;
         }
 
-        // Pengaturan pagination
-        $limit = 5;
-
-        $page = isset($_GET['haltab'])
-            ? max(1, (int) $_GET['haltab'])
-            : 1;
-
         // Ambil filter
         $category = $_GET['category'] ?? '';
         $status = $_GET['status'] ?? '';
 
         // Validasi filter kategori
-        $kategoriValid = [
-            'kerusakan bangunan',
-            'kerusakan peralatan',
-            'kelistrikan',
-            'kebersihan',
-            'lainnya'
-        ];
+        $kategoriValid = ['kerusakan bangunan', 'kerusakan peralatan', 'kelistrikan', 'kebersihan', 'lainnya'];
 
         if (!in_array($category, $kategoriValid, true)) {
             $category = '';
         }
 
         // Validasi filter status
-        $statusValid = [
-            'baru',
-            'diproses',
-            'selesai',
-            'ditolak'
-        ];
+        $statusValid = ['baru', 'diproses', 'selesai', 'ditolak'];
 
         if (!in_array($status, $statusValid, true)) {
             $status = '';
         }
+
+        // Pengaturan pagination
+        $limit = 5;
+        $page = max(1, (int) ($_GET['haltab'] ?? 1));
 
         // Hitung jumlah data sesuai filter
         $totalData = $this->repModel->countByUser_filtered(
@@ -86,7 +71,7 @@ class laporan_saya_controller {
 
         $offset = ($page - 1) * $limit;
 
-        // Ambil data laporan
+        // Ambil data laporan untuk halaman saat ini
         $reports = $this->repModel->getByUser_filtered(
             $user_id,
             $category,
@@ -99,6 +84,7 @@ class laporan_saya_controller {
     }
 
     public function detailLaporan() {
+        // Memastikan pengguna sudah login
         $user_id = $_SESSION['user_id'] ?? '';
 
         if ($user_id === '') {
@@ -109,7 +95,10 @@ class laporan_saya_controller {
         $rep_id = $_GET['rep_id'] ?? '';
 
         if ($rep_id === '') {
-            $_SESSION['notice'] = "Laporan tidak ditemukan.";
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Laporan tidak ditemukan.'
+            ];
             header("Location: ../../index.php?page=laporan_saya");
             exit;
         }
@@ -118,7 +107,10 @@ class laporan_saya_controller {
         $laporan = $this->repModel->getDetailById($rep_id, $user_id);
 
         if (!$laporan) {
-            $_SESSION['notice'] = "Laporan tidak ditemukan.";
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Laporan tidak ditemukan.'
+            ];
             header("Location: ../../index.php?page=laporan_saya");
             exit;
         }
@@ -127,7 +119,10 @@ class laporan_saya_controller {
         $fasilitas = $this->facModel->getFacilityById($laporan['fac_id']);
 
         if (!$fasilitas) {
-            $_SESSION['notice'] = "Data fasilitas tidak ditemukan.";
+            $_SESSION['notice'] = [
+                'type' => 'error',
+                'message' => 'Data fasilitas tidak ditemukan.'
+            ];
             header("Location: ../../index.php?page=laporan_saya");
             exit;
         }

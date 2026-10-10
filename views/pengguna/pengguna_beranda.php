@@ -1,36 +1,14 @@
+<head>
+    <link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
+</head>
 <body id="pengguna_body">
     
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Beranda</span>
         <button id="logout_btn">LogOut</button>
     </div>
-
-    
-    <?php if (isset($_SESSION['notice'])): ?>
-        <?php
-            $notice = $_SESSION['notice'];
-            unset($_SESSION['notice']);
-
-            // Format array baru; string lama tetap ditangani sebagai error.
-            if (is_array($notice)) {
-                $noticeType = $notice['type'] ?? 'error';
-                $noticeMessage = $notice['message'] ?? '';
-            } else {
-                $noticeType = 'error';
-                $noticeMessage = $notice;
-            }
-
-            if (!in_array($noticeType, ['success', 'error'], true)) {
-                $noticeType = 'error';
-            }
-        ?>
-
-        <div class="notice <?= htmlspecialchars($noticeType); ?>">
-            <?= htmlspecialchars($noticeMessage); ?>
-        </div>
-    <?php endif; ?>
-
 
     <div id="dashboard_layout">
         <div id="sidebar" class="hidden">
@@ -40,31 +18,55 @@
         </div>
 
         <div class="main_content">
+            <?php if (isset($_SESSION['notice'])): ?>
+                <?php
+                    $notice = $_SESSION['notice'];
+                    unset($_SESSION['notice']);
+
+                    // Format array baru; string lama tetap ditangani sebagai error.
+                    if (is_array($notice)) {
+                        $noticeType = $notice['type'] ?? 'error';
+                        $noticeMessage = $notice['message'] ?? '';
+                    } else {
+                        $noticeType = 'error';
+                        $noticeMessage = $notice;
+                    }
+
+                    if (!in_array($noticeType, ['success', 'error'], true)) {
+                        $noticeType = 'error';
+                    }
+                ?>
+
+                <div class="notice <?= htmlspecialchars($noticeType); ?>">
+                    <?= htmlspecialchars($noticeMessage); ?>
+                </div>
+            <?php endif; ?>
+            
             <div id="content_1">
                 <div class="content_title">Daftar Fasilitas</div>
-                <p class="small_desc">Berikut adalah daftar fasilitas yang ada. Anda dapat memilih salah satu untuk melihat detail dan melakukan reservasi.</p>
+                <p class="small_desc">Berikut adalah daftar fasilitas yang ada. Anda dapat memilih salah satu untuk melihat detail dan melakukan reservasi/ membuat laporan.</p>
             </div>
                 
             <div id="filter_fac">
                 <form action = "../../index.php">
                     <input type="hidden" name="page" value="beranda">
-                    <div id = "filter_fac_box" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                    <div id = "filter_fac_box">
                         <label for="tipe_fac">Tipe:</label>
                         <select name="tipe_fac" id="tipe_fac">
                             <option value="" disabled <?= $tipe_fac === '' ? 'selected' : ''; ?> hidden></option>
-                            <option value="ruang Kelas" <?= $tipe_fac === 'Ruang Kelas' ? 'selected' : ''; ?>>
+                            <option value="ruang Kelas" <?= $tipe_fac === 'ruang kelas' ? 'selected' : ''; ?>>
                                 Ruang Kelas
                             </option>
-                            <option value="aula" <?= $tipe_fac === 'Aula' ? 'selected' : ''; ?>>
+                            <option value="aula" <?= $tipe_fac === 'aula' ? 'selected' : ''; ?>>
                                 Aula
                             </option>
-                            <option value="laboratorium" <?= $tipe_fac === 'Laboratorium' ? 'selected' : ''; ?>>
+                            <option value="laboratorium" <?= $tipe_fac === 'laboratorium' ? 'selected' : ''; ?>>
                                 Laboratorium
                             </option>
-                            <option value="alat" <?= $tipe_fac === 'Alat' ? 'selected' : ''; ?>>
+                            <option value="alat" <?= $tipe_fac === 'alat' ? 'selected' : ''; ?>>
                                 Alat
                             </option>
-                            <option value="lapangan" <?= $tipe_fac === 'Lapangan' ? 'selected' : ''; ?>>
+                            <option value="lapangan" <?= $tipe_fac === 'lapangan' ? 'selected' : ''; ?>>
                                 Lapangan
                             </option>
                         </select>
@@ -111,15 +113,15 @@
                         </select>
 
                         <label for="kapasitas_fac">Kapasitas Minimum:</label>
-                        <input type="number" name="kapasitas_fac" min="1" step="1" value="<?= htmlspecialchars($kapasitas_fac); ?>" style = "width: 70px">
+                        <input type="number" name="kapasitas_fac" id="kapasitas_fac" class="filter_capacity" min="1" step="1" value="<?= htmlspecialchars($kapasitas_fac); ?>">
 
-                        <br> <br>
+                        <div class="action_group">
+                            <input type="submit" value="Terapkan Filter">
 
-                        <input type = "submit" value="Terapkan Filter">
-
-                        <a href="../../index.php?page=beranda">
-                            <button type="button">Reset Filter</button>
-                        </a>
+                            <a href="../../index.php?page=beranda">
+                                <button type="button">Reset Filter</button>
+                            </a>
+                        </div>
                     </div>
                 </form>
             </div>
@@ -127,17 +129,18 @@
             <table id="facility_table">
                 <thead>
                     <tr>
-                        <th style="width: 25%;">Nama Fasilitas</th>
-                        <th style="width: 15%;">Tipe</th>
-                        <th style="width: 30%;">Lokasi</th>
-                        <th style="width: 10%;">Kapasitas</th>
-                        <th style="width: 15%;">Status</th>
+                        <th class="col-facility-name">Nama Fasilitas</th>
+                        <th class="col-facility-type">Tipe</th>
+                        <th class="col-facility-location">Lokasi</th>
+                        <th class="col-facility-capacity">Kapasitas</th>
+                        <th class="col-facility-status">Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php if (!empty($facilities)): ?>
                         <?php foreach ($facilities as $f): ?>
-                        <tr data-fac-id="<?= htmlspecialchars($f['fac_id']); ?>"
+                        <tr class="clickable-row"
+                            data-fac-id="<?= htmlspecialchars($f['fac_id']); ?>"
                             onclick="window.location.href='../../index.php?page=detail_fasilitas&id=<?= urlencode($f['fac_id']); ?>'">
                             <td ><?= htmlspecialchars($f['fac_name'] ?? ''); ?></td>
                             <td ><?= htmlspecialchars($f['type'] ?? ''); ?></td>
@@ -148,7 +151,7 @@
                         <?php endforeach; ?>
                     <?php else: ?>
                         <tr>
-                            <td colspan="5">Belum ada data fasilitas.</td>
+                            <td colspan="5" class="table_empty">Belum ada data fasilitas.</td>
                         </tr>
                     <?php endif; ?>
                 </tbody>
@@ -173,6 +176,4 @@
     </div>
 </body>
 </html>
-
-<link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
 <script src="../../public/js/pengguna/pengguna.js"></script>

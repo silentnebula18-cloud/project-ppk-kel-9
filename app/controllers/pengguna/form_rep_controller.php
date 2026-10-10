@@ -59,6 +59,7 @@ class form_rep_controller {
     }
         
     
+    
     public function ajukan_laporan() {
 
         $user_id = $_SESSION['user_id'] ?? '';
@@ -140,65 +141,94 @@ class form_rep_controller {
             exit;
         }
 
-        // 5. Validasi upload foto
+        // 5. Persiapan upload foto (opsional)
+        $folder = __DIR__ . '/../../../storage/report_img';
+        $filePath = null;
+        $extension = null;
+        $file = null;
+
+        // Validasi hanya dilakukan jika pengguna memilih foto
         if (
-            !isset($_FILES['rep_img']) ||
-            $_FILES['rep_img']['error'] !== UPLOAD_ERR_OK
+            isset($_FILES['rep_img']) &&
+            $_FILES['rep_img']['error'] !== UPLOAD_ERR_NO_FILE
         ) {
-            $_SESSION['notice'] = [
-                'type' => 'error',
-                'message' => 'Foto laporan wajib diunggah.'
+            $file = $_FILES['rep_img'];
+
+            // Periksa error upload
+            if ($file['error'] !== UPLOAD_ERR_OK) {
+                $message = in_array(
+                    $file['error'],
+                    [UPLOAD_ERR_INI_SIZE, UPLOAD_ERR_FORM_SIZE],
+                    true
+                )
+                    ? 'Ukuran foto maksimal 2 MB.'
+                    : 'Foto gagal diunggah.';
+
+                $_SESSION['notice'] = [
+                    'type' => 'error',
+                    'message' => $message
+                ];
+                header("Location: " . $redirect);
+                exit;
+            }
+
+            // Validasi ukuran maksimal 2 MB
+            $maxSize = 2 * 1024 * 1024;
+
+            if ($file['size'] > $maxSize) {
+                $_SESSION['notice'] = [
+                    'type' => 'error',
+                    'message' => 'Ukuran foto maksimal 2 MB.'
+                ];
+                header("Location: " . $redirect);
+                exit;
+            }
+
+            // Pastikan file berasal dari upload HTTP
+            if (!is_uploaded_file($file['tmp_name'])) {
+                $_SESSION['notice'] = [
+                    'type' => 'error',
+                    'message' => 'File upload tidak valid.'
+                ];
+                header("Location: " . $redirect);
+                exit;
+            }
+
+            // Validasi MIME type berdasarkan isi file
+            $finfo = new finfo(FILEINFO_MIME_TYPE);
+            $mimeType = $finfo->file($file['tmp_name']);
+
+            $allowedTypes = [
+                'image/jpeg' => 'jpg',
+                'image/png'  => 'png',
+                'image/webp' => 'webp'
             ];
-            header("Location: " . $redirect);
-            exit;
-        }
 
-        $file = $_FILES['rep_img'];
+            if (!isset($allowedTypes[$mimeType])) {
+                $_SESSION['notice'] = [
+                    'type' => 'error',
+                    'message' => 'Foto harus berformat JPG, PNG, atau WEBP.'
+                ];
+                header("Location: " . $redirect);
+                exit;
+            }
 
-        // Maksimal 2 MB
-        $maxSize = 2 * 1024 * 1024;
+            // Pastikan file benar-benar gambar
+            if (@getimagesize($file['tmp_name']) === false) {
+                $_SESSION['notice'] = [
+                    'type' => 'error',
+                    'message' => 'File yang diunggah bukan gambar yang valid.'
+                ];
+                header("Location: " . $redirect);
+                exit;
+            }
 
-        if ($file['size'] > $maxSize) {
-            $_SESSION['notice'] = [
-                'type' => 'error',
-                'message' => 'Ukuran foto maksimal 2 MB.'
-            ];
-            header("Location: " . $redirect);
-            exit;
-        }
-
-        // Periksa tipe file sebenarnya
-        $finfo = new finfo(FILEINFO_MIME_TYPE);
-        $mimeType = $finfo->file($file['tmp_name']);
-
-        $allowedTypes = [
-            'image/jpeg' => 'jpg',
-            'image/png'  => 'png',
-            'image/webp' => 'webp'
-        ];
-
-        if (!isset($allowedTypes[$mimeType])) {
-            $_SESSION['notice'] = [
-                'type' => 'error',
-                'message' => 'Foto harus berformat JPG, PNG, atau WEBP.'
-            ];
-            header("Location: " . $redirect);
-            exit;
-        }
-
-        // Pastikan file benar-benar dapat dibaca sebagai gambar
-        if (getimagesize($file['tmp_name']) === false) {
-            $_SESSION['notice'] = [
-                'type' => 'error',
-                'message' => 'File yang diunggah bukan gambar yang valid.'
-            ];
-            header("Location: " . $redirect);
-            exit;
+            // Simpan ekstensi hanya setelah semua validasi lolos
+            $extension = $allowedTypes[$mimeType];
         }
 
         // 6. Buat UUID laporan
         $data = random_bytes(16);
-
         $data[6] = chr((ord($data[6]) & 0x0f) | 0x40);
         $data[8] = chr((ord($data[8]) & 0x3f) | 0x80);
 
@@ -213,33 +243,33 @@ class form_rep_controller {
             substr($hex, 20, 12)
         );
 
-        // 7. Tentukan lokasi penyimpanan foto
-        $folder = __DIR__ . '/../../../storage/report_img';
+        // 7. Simpan foto hanya jika pengguna mengunggahnya
+        if ($extension !== null) {
 
-        if (!is_dir($folder) && !mkdir($folder, 0755, true)) {
-            $_SESSION['notice'] = [
-                'type' => 'error',
-                'message' => 'Folder penyimpanan foto gagal dibuat.'
-            ];
-            header("Location: " . $redirect);
-            exit;
+            // Buat folder hanya jika diperlukan
+            if (!is_dir($folder) && !mkdir($folder, 0755, true)) {
+                $_SESSION['notice'] = [
+                    'type' => 'error',
+                    'message' => 'Folder penyimpanan foto gagal dibuat.'
+                ];
+                header("Location: " . $redirect);
+                exit;
+            }
+
+            $fileName = $rep_id . '.' . $extension;
+            $filePath = $folder . '/' . $fileName;
+
+            if (!move_uploaded_file($file['tmp_name'], $filePath)) {
+                $_SESSION['notice'] = [
+                    'type' => 'error',
+                    'message' => 'Foto laporan gagal disimpan.'
+                ];
+                header("Location: " . $redirect);
+                exit;
+            }
         }
 
-        $extension = $allowedTypes[$mimeType];
-        $fileName = $rep_id . '.' . $extension;
-        $filePath = $folder . '/' . $fileName;
-
-        // 8. Simpan foto
-        if (!move_uploaded_file($file['tmp_name'], $filePath)) {
-            $_SESSION['notice'] = [
-                'type' => 'error',
-                'message' => 'Foto laporan gagal disimpan.'
-            ];
-            header("Location: " . $redirect);
-            exit;
-        }
-
-        // 9. Simpan data laporan ke database
+        // 8. Simpan laporan ke database
         try {
             $success = $this->repModel->create(
                 $rep_id,
@@ -253,9 +283,9 @@ class form_rep_controller {
             $success = false;
         }
 
-        // Jika penyimpanan database gagal, hapus foto
+        // 9. Jika database gagal, hapus foto yang sudah tersimpan
         if (!$success) {
-            if (file_exists($filePath)) {
+            if ($filePath !== null && is_file($filePath)) {
                 unlink($filePath);
             }
 
@@ -267,7 +297,7 @@ class form_rep_controller {
             exit;
         }
 
-        // Jika berhasil
+        // 10. Berhasil
         $_SESSION['notice'] = [
             'type' => 'success',
             'message' => 'Laporan berhasil diajukan.'
@@ -276,6 +306,7 @@ class form_rep_controller {
         header("Location: " . $redirect);
         exit;
     }
+
 
 
     

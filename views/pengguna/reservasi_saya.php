@@ -1,33 +1,13 @@
+<head>
+    <link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
+</head>
 <body id="pengguna_body">
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Reservasi Saya</span>
         <button id="logout_btn">LogOut</button>
     </div>
-
-    <?php if (isset($_SESSION['notice'])): ?>
-        <?php
-            $notice = $_SESSION['notice'];
-            unset($_SESSION['notice']);
-
-            // Format array baru; string lama tetap ditangani sebagai error.
-            if (is_array($notice)) {
-                $noticeType = $notice['type'] ?? 'error';
-                $noticeMessage = $notice['message'] ?? '';
-            } else {
-                $noticeType = 'error';
-                $noticeMessage = $notice;
-            }
-
-            if (!in_array($noticeType, ['success', 'error'], true)) {
-                $noticeType = 'error';
-            }
-        ?>
-
-        <div class="notice <?= htmlspecialchars($noticeType); ?>">
-            <?= htmlspecialchars($noticeMessage); ?>
-        </div>
-    <?php endif; ?>
 
     <div id="dashboard_layout">
         <div id="sidebar" class="hidden">
@@ -36,15 +16,88 @@
             <a class="nav_item" href="../../index.php?page=laporan_saya"><span class="nav_icon">📜</span>Laporan saya</a>
         </div>
 
-        <div class="main_content" id = "hal_detail_fasilitas">
-            <h2> Reservasi Saya </h2>
+        <div class="main_content">
+            <?php if (isset($_SESSION['notice'])): ?>
+                <?php
+                    $notice = $_SESSION['notice'];
+                    unset($_SESSION['notice']);
 
-            <div id="rsv_saya_top" style="display: flex; align-items: center;">
-                <!-- DROPDOWN FILTER STATUS -->
-                <div id="rsv_saya_filter" style="display: flex; align-items: center; gap: 10px;">
-                    <?php $rsv_saya_fltr_status = $_GET['rsv_saya_fltr_status'] ?? 'semua'; ?>
+                    // Format array baru; string lama tetap ditangani sebagai error.
+                    if (is_array($notice)) {
+                        $noticeType = $notice['type'] ?? 'error';
+                        $noticeMessage = $notice['message'] ?? '';
+                    } else {
+                        $noticeType = 'error';
+                        $noticeMessage = $notice;
+                    }
+
+                    if (!in_array($noticeType, ['success', 'error'], true)) {
+                        $noticeType = 'error';
+                    }
+                ?>
+
+                <div class="notice <?= htmlspecialchars($noticeType); ?>">
+                    <?= htmlspecialchars($noticeMessage); ?>
+                </div>
+            <?php endif; ?>
+
+            <?php $rsv_saya_fltr_status = $_GET['rsv_saya_fltr_status'] ?? 'semua';?>
+            <div id="content_1">
+                <div class="content_title">Reservasi Saya</div>
+                <p id="rsv_saya_description">
+                    <?php
+                        switch ($rsv_saya_fltr_status) {
+                            case 'semua':
+                                echo "Berikut semua reservasi terlepas dari statusnya. "
+                                . "Pilih salah satu baris untuk melihat detail reservasinya. "
+                                . "Khusus reservasi berstatus 'Proses Pengajuan' dan 'Disetujui' "
+                                . "dapat dibatalkan sesuai batas waktu yang tertera.";
+                                break;
+
+                            case 'proses pengajuan':
+                                echo "Berikut semua reservasi yang masih dalam proses pengajuan "
+                                . "yang belum melewati slot waktu yang dipilih reservasi. "
+                                . "Pilih salah satu baris untuk melihat detail atau membatalkan reservasinya.";
+                                break;
+
+                            case 'disetujui':
+                                echo "Berikut semua reservasi yang sudah disetujui pengajuan "
+                                . "yang belum melewati slot waktu yang dipilih reservasi. "
+                                . "Pilih salah satu baris untuk melihat detail atau membatalkan reservasinya.";
+                                break;
+
+                            case 'ditolak':
+                                echo "Berikut reservasi yang telah ditolak oleh petugas. "
+                                . "Pilih salah satu baris untuk melihat detail reservasinya.";
+                                break;
+
+                            case 'dibatalkan':
+                                echo "Berikut reservasi yang telah dibatalkan (oleh anda maupun petugas). "
+                                . "Pilih salah satu baris untuk melihat detail reservasinya.";
+                                break;
+
+                            case 'kadaluarsa':
+                                echo "Berikut reservasi yang kadaluarsa "
+                                . "(pengajuan reservasi yang belum disetujui/ditolak petugas "
+                                . "hingga slot waktu reservasi). "
+                                . "Pilih salah satu baris untuk melihat detail reservasinya.";
+                                break;
+
+                            case 'riwayat':
+                                echo "Reservasi yang ditampilkan termasuk yang sudah disetujui "
+                                . "(sudah melewati slot waktu yang dipilih reservasi), "
+                                . "sudah ditolak petugas, sudah dbatalkan oleh anda maupun petugas, atau sudah kadaluarsa. "
+                                . "Pilih salah satu baris untuk melihat detail reservasinya.";
+                                break;
+                            }
+                    ?>
+                </p>
+            </div>
+
+            
+            <div id="rsv_saya_top">
+                <div id="rsv_saya_filter">
                     <label for="rsv_saya_fltr_status">Filter Status:</label>
-
                     <select id="rsv_saya_fltr_status" name="rsv_saya_fltr_status">
                         <option value="semua" <?= $rsv_saya_fltr_status === 'semua' ? 'selected' : ''; ?>>
                             Semua
@@ -61,75 +114,26 @@
                         <option value="dibatalkan" <?= $rsv_saya_fltr_status === 'dibatalkan' ? 'selected' : ''; ?>>
                             Dibatalkan
                         </option>
-
                         <option value="kadaluarsa" <?= $rsv_saya_fltr_status === 'kadaluarsa' ? 'selected' : ''; ?>>
                             Kadaluarsa
                         </option>
-
                         <option value="riwayat" <?= $rsv_saya_fltr_status === 'riwayat' ? 'selected' : ''; ?>>
                             Riwayat
                         </option>
                     </select>
-
                 </div>
 
-                <div id="btn_buat_rsv" style="flex: 1; display: flex; justify-content: flex-end;">
-                    <a href="../../index.php?page=form_rsv_1" class="btn">Buat Reservasi</a>
+                <div class="action_group">
+                    <a href="../../index.php?page=form_rsv_1" class="btn">
+                        Buat Reservasi
+                    </a>
                 </div>
             </div>
 
-            <div id="rsv_saya_description">
-                <?php
-                    switch ($rsv_saya_fltr_status) {
-                        case 'semua':
-                            echo "Berikut semua reservasi terlepas dari statusnya. "
-                            . "Pilih salah satu baris untuk melihat detail reservasinya. "
-                            . "Khusus reservasi berstatus 'Proses Pengajuan' dan 'Disetujui' "
-                            . "dapat dibatalkan sesuai batas waktu yang tertera.";
-                            break;
-
-                        case 'proses pengajuan':
-                            echo "Berikut semua reservasi yang masih dalam proses pengajuan "
-                            . "yang belum melewati slot waktu yang dipilih reservasi. "
-                            . "Pilih salah satu baris untuk melihat detail atau membatalkan reservasinya.";
-                            break;
-
-                        case 'disetujui':
-                            echo "Berikut semua reservasi yang sudah disetujui pengajuan "
-                            . "yang belum melewati slot waktu yang dipilih reservasi. "
-                            . "Pilih salah satu baris untuk melihat detail atau membatalkan reservasinya.";
-                            break;
-
-                        case 'ditolak':
-                            echo "Berikut reservasi yang telah ditolak oleh petugas. "
-                            . "Pilih salah satu baris untuk melihat detail reservasinya.";
-                            break;
-
-                        case 'dibatalkan':
-                            echo "Berikut reservasi yang telah anda batalkan. "
-                            . "Pilih salah satu baris untuk melihat detail reservasinya.";
-                            break;
-
-                        case 'kadaluarsa':
-                            echo "Berikut reservasi yang kadaluarsa "
-                            . "(pengajuan reservasi yang belum disetujui/ditolak petugas "
-                            . "hingga slot waktu reservasi). "
-                            . "Pilih salah satu baris untuk melihat detail reservasinya.";
-                            break;
-
-                        case 'riwayat':
-                            echo "Reservasi yang ditampilkan termasuk yang sudah disetujui "
-                            . "(sudah melewati slot waktu yang dipilih reservasi), "
-                            . "sudah ditolak petugas, sudah anda batalkan, atau sudah kadaluarsa. "
-                            . "Pilih salah satu baris untuk melihat detail reservasinya.";
-                            break;
-                    }
-                ?>
-            </div>
 
             <!-- TABEL RESERVASI -->
            <div id="rsv_content">
-                <table>
+                <table id="rsv_saya_table">
                     <thead>
                         <tr>
                             <th>ID Reservasi</th>
@@ -143,7 +147,7 @@
                     <tbody>
                         <?php if (empty($reservasi)): ?>
                             <tr>
-                                <td colspan="5" style="text-align: center;">
+                                <td colspan="5" class="table_empty">
                                     Tidak ada reservasi.
                                 </td>
                             </tr>
@@ -155,10 +159,7 @@
                                 <?php
                                     // Batas pembatalan hanya untuk
                                     // reservasi yang masih aktif
-                                    if (
-                                        $rsv['rsv_status'] === 'proses pengajuan' ||
-                                        $rsv['rsv_status'] === 'disetujui'
-                                    ) {
+                                    if ($rsv['rsv_status'] === 'proses pengajuan' || $rsv['rsv_status'] === 'disetujui') {
                                         $batasPembatalan = date(
                                             'd-m-Y H:i',
                                             strtotime($rsv['rsv_date'] . ' ' . $rsv['start_time']) - 86400
@@ -179,7 +180,7 @@
                                 ?>
 
                                <tr
-                                    class="rsv-row <?= $statusClass ?>"
+                                    class="clickable-row <?= $statusClass ?>"
                                     onclick="window.location.href='../../index.php?page=detail_reservasi&rsv_id=<?= urlencode($rsv['rsv_id']) ?>&fac_id=<?= urlencode($rsv['fac_id']) ?>&status=<?= urlencode($rsv['rsv_status']) ?>'"
                                 >
                                     <td>
@@ -204,7 +205,16 @@
                                     </td>
 
                                     <td>
-                                        <?= htmlspecialchars(ucwords($rsv['rsv_status'])) ?>
+                                        <?php if($rsv['rsv_status'] === 'dibatalkan'): ?>
+                                            <?php if($rsv['cancelled_by'] === $_SESSION['user_id']):?>
+                                                <?= htmlspecialchars(ucwords($rsv['rsv_status']) . ' (pengguna)') ?>
+                                            <?php else: ?>
+                                                <?= htmlspecialchars(ucwords($rsv['rsv_status']) . ' (petugas)') ?>
+                                            <?php endif; ?>
+                                        <?php else: ?>
+                                            <?= htmlspecialchars(ucwords($rsv['rsv_status'])) ?>
+                                        <?php endif; ?>
+                                        
                                     </td>
                                 </tr>
 
@@ -214,12 +224,29 @@
                     </tbody>
                 </table>
             </div>
+
+            <!-- PAGINATION -->
+            <div id="pagination_controls">
+
+                <a href="../../index.php?page=reservasi_saya&haltab=<?= max(1, $page - 1); ?>&rsv_saya_fltr_status=<?= urlencode($rsv_saya_fltr_status); ?>"
+                class="pagin_link">
+                    Previous
+                </a>
+
+                <span id="page_info">
+                    Page <?= $page; ?> of <?= max(1, $totalPages); ?>
+                </span>
+
+                <a href="../../index.php?page=reservasi_saya&haltab=<?= min(max(1, $totalPages), $page + 1); ?>&rsv_saya_fltr_status=<?= urlencode($rsv_saya_fltr_status); ?>"
+                class="pagin_link">
+                    Next
+                </a>
+            </div>
+
+        </div> <!-- main_content -->
+    </div> <!-- dashboard_layout -->
            
-        </div>
-    </div>
 </body>
 </html>
-<link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
 <script src="../../public/js/pengguna/pengguna.js"></script>
 <script src="../../public/js/pengguna/reservasi_saya.js"></script>
-

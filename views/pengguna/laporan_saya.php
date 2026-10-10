@@ -1,35 +1,14 @@
-
+<head>
+    <link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
+</head>
 <body id="pengguna_body">
 
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Laporan Saya</span>
         <button id="logout_btn">LogOut</button>
     </div>
-
-    <?php if (isset($_SESSION['notice'])): ?>
-        <?php
-            $notice = $_SESSION['notice'];
-            unset($_SESSION['notice']);
-
-            // Format array baru; string lama tetap ditangani sebagai error.
-            if (is_array($notice)) {
-                $noticeType = $notice['type'] ?? 'error';
-                $noticeMessage = $notice['message'] ?? '';
-            } else {
-                $noticeType = 'error';
-                $noticeMessage = $notice;
-            }
-
-            if (!in_array($noticeType, ['success', 'error'], true)) {
-                $noticeType = 'error';
-            }
-        ?>
-
-        <div class="notice <?= htmlspecialchars($noticeType); ?>">
-            <?= htmlspecialchars($noticeMessage); ?>
-        </div>
-    <?php endif; ?>
 
     <div id="dashboard_layout">
 
@@ -48,97 +27,122 @@
         </div>
 
         <div class="main_content" id="hal_laporan_saya">
+            <?php if (isset($_SESSION['notice'])): ?>
+                <?php
+                    $notice = $_SESSION['notice'];
+                    unset($_SESSION['notice']);
 
-            <h2>Laporan Saya</h2>
+                    // Format array baru; string lama tetap ditangani sebagai error.
+                    if (is_array($notice)) {
+                        $noticeType = $notice['type'] ?? 'error';
+                        $noticeMessage = $notice['message'] ?? '';
+                    } else {
+                        $noticeType = 'error';
+                        $noticeMessage = $notice;
+                    }
 
-            <div id="rep_saya_top"
-                 style="display:flex; align-items:center; gap:15px; flex-wrap:wrap;">
+                    if (!in_array($noticeType, ['success', 'error'], true)) {
+                        $noticeType = 'error';
+                    }
+                ?>
 
-                <!-- Filter kategori dan status -->
-                <form action="../../index.php" method="get">
+                <div class="notice <?= htmlspecialchars($noticeType); ?>">
+                    <?= htmlspecialchars($noticeMessage); ?>
+                </div>
+            <?php endif; ?>
 
-                    <input type="hidden" name="page" value="laporan_saya">
+            <div id="content_1">
+                <div class="content_title">Laporan Saya</div>
 
-                    <label for="category">Kategori:</label>
-                    <select name="category" id="category">
+                <p class="small_desc">
+                    Berikut adalah daftar laporan yang telah Anda ajukan.
+                </p>
+            </div>
 
-                        <option value="" <?= $category === '' ? 'selected' : ''; ?>>
-                            Semua
-                        </option>
+            <div id="rep_saya_top">
 
-                        <option value="kerusakan bangunan"
-                            <?= $category === 'kerusakan bangunan' ? 'selected' : ''; ?>>
-                            Kerusakan Bangunan
-                        </option>
+                <div>
+                    <!-- Filter kategori dan status -->
+                    <form action="../../index.php" method="get" id="rep_saya_filter">
+                        <input type="hidden" name="page" value="laporan_saya">
 
-                        <option value="kerusakan peralatan"
-                            <?= $category === 'kerusakan peralatan' ? 'selected' : ''; ?>>
-                            Kerusakan Peralatan
-                        </option>
+                        <label for="category">Kategori:</label>
+                        <select name="category" id="category">
 
-                        <option value="kelistrikan"
-                            <?= $category === 'kelistrikan' ? 'selected' : ''; ?>>
-                            Kelistrikan
-                        </option>
+                            <option value="" <?= $category === '' ? 'selected' : ''; ?> hidden></option>
 
-                        <option value="kebersihan"
-                            <?= $category === 'kebersihan' ? 'selected' : ''; ?>>
-                            Kebersihan
-                        </option>
+                            <option value="kerusakan bangunan"
+                                <?= $category === 'kerusakan bangunan' ? 'selected' : ''; ?>>
+                                Kerusakan Bangunan
+                            </option>
 
-                        <option value="lainnya"
-                            <?= $category === 'lainnya' ? 'selected' : ''; ?>>
-                            Lainnya
-                        </option>
+                            <option value="kerusakan peralatan"
+                                <?= $category === 'kerusakan peralatan' ? 'selected' : ''; ?>>
+                                Kerusakan Peralatan
+                            </option>
 
-                    </select>
+                            <option value="kelistrikan"
+                                <?= $category === 'kelistrikan' ? 'selected' : ''; ?>>
+                                Kelistrikan
+                            </option>
 
-                    <label for="status">Status:</label>
-                    <select name="status" id="status">
+                            <option value="kebersihan"
+                                <?= $category === 'kebersihan' ? 'selected' : ''; ?>>
+                                Kebersihan
+                            </option>
 
-                        <option value="" <?= $status === '' ? 'selected' : ''; ?>>
-                            Semua
-                        </option>
+                            <option value="lainnya"
+                                <?= $category === 'lainnya' ? 'selected' : ''; ?>>
+                                Lainnya
+                            </option>
 
-                        <option value="baru"
-                            <?= $status === 'baru' ? 'selected' : ''; ?>>
-                            Baru
-                        </option>
+                        </select>
 
-                        <option value="diproses"
-                            <?= $status === 'diproses' ? 'selected' : ''; ?>>
-                            Diproses
-                        </option>
+                        <label for="status">Status:</label>
+                        <select name="status" id="status">
 
-                        <option value="selesai"
-                            <?= $status === 'selesai' ? 'selected' : ''; ?>>
-                            Selesai
-                        </option>
+                            <option value="" <?= $status === '' ? 'selected' : ''; ?> hidden></option>
 
-                        <option value="ditolak"
-                            <?= $status === 'ditolak' ? 'selected' : ''; ?>>
-                            Ditolak
-                        </option>
+                            <option value="baru"
+                                <?= $status === 'baru' ? 'selected' : ''; ?>>
+                                Baru
+                            </option>
 
-                    </select>
+                            <option value="diproses"
+                                <?= $status === 'diproses' ? 'selected' : ''; ?>>
+                                Diproses
+                            </option>
 
-                    <button type="submit">Terapkan Filter</button>
+                            <option value="selesai"
+                                <?= $status === 'selesai' ? 'selected' : ''; ?>>
+                                Selesai
+                            </option>
 
-                    <a href="../../index.php?page=laporan_saya">
-                        <button type="button">Reset Filter</button>
-                    </a>
+                            <option value="ditolak"
+                                <?= $status === 'ditolak' ? 'selected' : ''; ?>>
+                                Ditolak
+                            </option>
 
-                </form>
+                        </select>
 
-                <div style="flex:1; display:flex; justify-content:flex-end;">
+                        <div class="action_group">
+                            <button type="submit">Terapkan Filter</button>
+                            <a href="../../index.php?page=laporan_saya" class="btn">
+                                Reset Filter
+                            </a>
+                        </div>
+
+                    </form>
+                </div>
+                
+
+                <div class="action_group">
                     <a href="../../index.php?page=form_rep_1" class="btn">
                         Buat Laporan
                     </a>
                 </div>
 
             </div>
-
-            <p>Berikut adalah daftar laporan yang telah Anda ajukan.</p>
 
             <!-- Tabel laporan -->
             <table id="report_table">
@@ -160,8 +164,9 @@
                         <?php foreach ($reports as $rep): ?>
 
                             <tr
-                                onclick="window.location.href='../../index.php?page=detail_laporan&rep_id=<?= urlencode($rep['rep_id']); ?>'"
-                                style="cursor:pointer;">
+                            class="clickable-row"
+                            onclick="window.location.href='../../index.php?page=detail_laporan&rep_id=<?= urlencode($rep['rep_id']); ?>'"
+                            >
 
                                 <td>
                                     <?= htmlspecialchars($rep['rep_id']); ?>
@@ -190,7 +195,7 @@
                     <?php else: ?>
 
                         <tr>
-                            <td colspan="5">Belum ada laporan yang sesuai.</td>
+                            <td colspan="5" class="table_empty">Belum ada laporan yang sesuai.</td>
                         </tr>
 
                     <?php endif; ?>
@@ -221,10 +226,6 @@
         </div>
 
     </div>
-
 </body>
-
 </html>
-
-<link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
 <script src="../../public/js/pengguna/pengguna.js"></script>

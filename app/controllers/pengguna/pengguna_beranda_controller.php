@@ -3,7 +3,7 @@ require_once __DIR__ . '/../../../config/db_connect.php';
 require_once __DIR__ . "/../../models/facility_model.php";
 require_once __DIR__ . "/../../models/reservation_model.php";
 
-class pengguna_dashboard_controller {
+class pengguna_beranda_controller {
     private $db;
     private $facModel;
     private $rsvModel;
@@ -18,16 +18,46 @@ class pengguna_dashboard_controller {
     }
 
     public function index() {
+        // Memastikan pengguna sudah login
+        $user_id = $_SESSION['user_id'] ?? '';
+
+        if ($user_id === '') {
+            header("Location: ../../index.php");
+            exit;
+        }
+
+        // Pengaturan pagination
         $limit = 5;
-        $page = isset($_GET['haltab']) ? (int)$_GET['haltab'] : 1;
-        $offset = ($page - 1) * $limit;
+        $page = max(1, (int) ($_GET['haltab'] ?? 1));
 
         $tipe_fac = $_GET['tipe_fac'] ?? '';
         $lokasi_fac = $_GET['lokasi_fac'] ?? '';
         $kapasitas_fac = $_GET['kapasitas_fac'] ?? '';
 
+        // Hitung total data dan halaman
         if ($tipe_fac !== '' || $lokasi_fac !== '' || $kapasitas_fac !== '') {
+            $totalData = $this->facModel->countFac_filtered(
+                $tipe_fac,
+                $lokasi_fac,
+                $kapasitas_fac
+            );
+        } else {
+            $totalData = $this->facModel->getTotalFacilities();
+        }
 
+        $totalPages = (int) ceil($totalData / $limit);
+
+        // Jika belum ada data, tetap gunakan halaman 1
+        if ($totalPages === 0) {
+            $page = 1;
+        } else {
+            $page = min($page, $totalPages);
+        }
+
+        $offset = ($page - 1) * $limit;
+
+        // Ambil fasilitas untuk halaman saat ini
+        if ($tipe_fac !== '' || $lokasi_fac !== '' || $kapasitas_fac !== '') {
             $facilities = $this->facModel->getFac_limit_filtered(
                 $limit,
                 $offset,
@@ -35,20 +65,9 @@ class pengguna_dashboard_controller {
                 $lokasi_fac,
                 $kapasitas_fac
             );
-
-            $totalData = $this->facModel->countFac_filtered(
-                $tipe_fac,
-                $lokasi_fac,
-                $kapasitas_fac
-            );
-
         } else {
-
             $facilities = $this->facModel->getFac_limit($limit, $offset);
-            $totalData = $this->facModel->getTotalFacilities();
         }
-
-        $totalPages = ceil($totalData / $limit);
 
         require_once __DIR__ . '/../../../views/pengguna/pengguna_beranda.php';
     }
@@ -81,7 +100,6 @@ class pengguna_dashboard_controller {
             $startDate,
             $endDate
         );
-
         require_once __DIR__ . '/../../../views/pengguna/detail_fasilitas.php';
     }
     

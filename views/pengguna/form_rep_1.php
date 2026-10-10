@@ -1,7 +1,11 @@
+<head>
+    <link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
+</head>
 <body id="pengguna_body">
 
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Laporan Saya</span>
         <button id="logout_btn">LogOut</button>
     </div>
@@ -16,16 +20,23 @@
 
         <div class="main_content">
 
-            <a class="back_href" href="../../index.php?page=laporan_saya">⬅️</a>
+            <div id="content_1">
+                <div class="section_header">
+                    <a class="back_href" href="../../index.php?page=laporan_saya">⬅️</a>
+                    <div class="content_title">Pilih Fasilitas</div>
+                </div>
 
-            <h2>Pilih Fasilitas</h2>
+                <p class="small_desc">
+                    Pilih fasilitas yang ingin Anda laporakn.
+                </p>
+            </div>
+            
             <div id="filter_fac">
                 <form action="../../index.php">
 
-                    <input type="hidden" name="page" value="form_rsv_1">
+                    <input type="hidden" name="page" value="form_rep_1">
 
-                    <div id="filter_fac_box"
-                        style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+                    <div id="filter_fac_box">
 
                         <label for="tipe_fac">Tipe:</label>
 
@@ -52,8 +63,6 @@
                                 Lapangan
                             </option>
                         </select>
-
-                        <label for="lokasi_fac">Lokasi:</label>
 
                         <label for="lokasi_fac">Lokasi:</label>
                         <select name="lokasi_fac" id="lokasi_fac">
@@ -96,34 +105,31 @@
                             </option>
                         </select>
 
-                        <label for="kapasitas_fac">
-                            Kapasitas Minimum:
-                        </label>
+                        <label for="kapasitas_fac">Kapasitas Minimum:</label>
+                        <input type="number" name="kapasitas_fac" id="kapasitas_fac" class="filter_capacity" min="1" step="1" value="<?= htmlspecialchars($kapasitas_fac); ?>">
 
-                        <input type="number" name="kapasitas_fac" min="1" step="1" value="<?= htmlspecialchars($kapasitas_fac); ?>" style="width:70px">
+                        <div class="action_group">
+                            <input type="submit" value="Terapkan Filter">
 
-                        <input type="submit" value="Terapkan Filter">
-
-                        <a href="../../index.php?page=form_rsv_1">
-                            <button type="button">Reset Filter</button>
-                        </a>
+                            <a href="../../index.php?page=form_rep_1">
+                                <button type="button">Reset Filter</button>
+                            </a>
+                        </div>
 
                     </div>
 
                 </form>
             </div>
 
-            <p>Pilih fasilitas yang ingin Anda laporkan.</p>
-
             <table id="facility_table">
 
                 <thead>
                     <tr>
-                        <th>Nama Fasilitas</th>
-                        <th>Tipe</th>
-                        <th>Lokasi</th>
-                        <th>Kapasitas</th>
-                        <th>Aksi</th>
+                        <th class="col-facility-name">Nama Fasilitas</th>
+                        <th class="col-facility-type">Tipe</th>
+                        <th class="col-facility-location">Lokasi</th>
+                        <th class="col-facility-capacity">Kapasitas</th>
+                        <th class="col-facility-action">Aksi</th>
                     </tr>
                 </thead>
 
@@ -140,7 +146,10 @@
                                 <td><?= htmlspecialchars($f['capacity']); ?></td>
 
                                 <td>
-                                    <a href="../../index.php?page=form_rep_2&id=<?= urlencode($f['fac_id']); ?>&from=form_rep_1" class="btn">
+                                    <a
+                                        href="../../index.php?page=form_rep_2&id=<?= urlencode($f['fac_id']); ?>&from=form_rep_1"
+                                        class="btn"
+                                    >
                                         Pilih
                                     </a>
                                 </td>
@@ -151,7 +160,7 @@
                     <?php else: ?>
 
                         <tr>
-                            <td colspan="5">
+                            <td colspan="5" class="table_empty">
                                 Belum ada fasilitas aktif.
                             </td>
                         </tr>
@@ -164,7 +173,7 @@
 
             <div id="pagination_controls">
 
-                <a href="../../index.php?page=form_rsv_1&haltab=<?= max(1, $page - 1); ?>&tipe_fac=<?= urlencode($tipe_fac); ?>&lokasi_fac=<?= urlencode($lokasi_fac); ?>&kapasitas_fac=<?= urlencode($kapasitas_fac); ?>"
+                <a href="../../index.php?page=form_rep_1&haltab=<?= max(1, $page - 1); ?>&tipe_fac=<?= urlencode($tipe_fac); ?>&lokasi_fac=<?= urlencode($lokasi_fac); ?>&kapasitas_fac=<?= urlencode($kapasitas_fac); ?>"
                 class="pagin_link">
                     Previous
                 </a>
@@ -173,7 +182,7 @@
                     Page <?= $page; ?> of <?= $totalPages; ?>
                 </span>
 
-                <a href="../../index.php?page=form_rsv_1&haltab=<?= min($totalPages, $page + 1); ?>&tipe_fac=<?= urlencode($tipe_fac); ?>&lokasi_fac=<?= urlencode($lokasi_fac); ?>&kapasitas_fac=<?= urlencode($kapasitas_fac); ?>"
+                <a href="../../index.php?page=form_rep_1&haltab=<?= min($totalPages, $page + 1); ?>&tipe_fac=<?= urlencode($tipe_fac); ?>&lokasi_fac=<?= urlencode($lokasi_fac); ?>&kapasitas_fac=<?= urlencode($kapasitas_fac); ?>"
                 class="pagin_link">
                     Next
                 </a>
@@ -187,6 +196,4 @@
 </body>
 
 </html>
-
-<link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
 <script src="../../public/js/pengguna/pengguna.js"></script>

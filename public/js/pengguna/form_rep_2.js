@@ -38,39 +38,34 @@ document.addEventListener("DOMContentLoaded", function () {
         }
 
         // 3. Validasi foto
-        if (image.files.length === 0) {
-            alert("Silakan unggah foto laporan.");
-            event.preventDefault();
-            image.focus();
-            return;
-        }
+        if (image.files.length > 0) {
+            const file = image.files[0];
 
-        const file = image.files[0];
+            // Format file yang diperbolehkan
+            const allowedTypes = [
+                "image/jpeg",
+                "image/png",
+                "image/webp"
+            ];
 
-        // Format file yang diperbolehkan
-        const allowedTypes = [
-            "image/jpeg",
-            "image/png",
-            "image/webp"
-        ];
+            if (!allowedTypes.includes(file.type)) {
+                alert("Foto harus berformat JPG, PNG, atau WEBP.");
+                event.preventDefault();
+                image.focus();
+                return;
+            }
 
-        if (!allowedTypes.includes(file.type)) {
-            alert("Foto harus berformat JPG, PNG, atau WEBP.");
-            event.preventDefault();
-            image.focus();
-            return;
-        }
+            // Ukuran maksimal 2 MB
+            const maxSize = 2 * 1024 * 1024;
 
-        // Ukuran maksimal 2 MB
-        const maxSize = 2 * 1024 * 1024;
+            if (file.size > maxSize) {
+                alert("Ukuran foto maksimal 2 MB.");
+                event.preventDefault();
+                image.focus();
+                return;
+            }
 
-        if (file.size > maxSize) {
-            alert("Ukuran foto maksimal 2 MB.");
-            event.preventDefault();
-            image.focus();
-            return;
-        }
-
+        }      
     });
 
 });

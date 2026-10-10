@@ -1,7 +1,11 @@
+<head>
+    <link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
+</head>
 <body id="pengguna_body">
 
     <div id="dashboard_header">
         <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Reservasi Saya</span>
         <button id="logout_btn">LogOut</button>
     </div>
@@ -16,9 +20,15 @@
 
         <div class="main_content">
 
-            <a class="back_href" href="../../index.php?page=reservasi_saya">⬅️</a>
+            <div class="content_1">
+                <div style="display: flex; flex-direction: row; align-items: center;">
+                    <a class="back_href" href="../../index.php?page=reservasi_saya">⬅️</a>
+                    <div class="content_title">Pilih Fasilitas</div>
+                </div>
+                
+                <p class="small_desc">Pilih fasilitas yang ingin Anda reservasi.</p>
+            </div>
 
-            <h2>Pilih Fasilitas</h2>
             <div id="filter_fac">
                 <form action="../../index.php">
 
@@ -52,8 +62,6 @@
                                 Lapangan
                             </option>
                         </select>
-
-                        <label for="lokasi_fac">Lokasi:</label>
 
                         <label for="lokasi_fac">Lokasi:</label>
                         <select name="lokasi_fac" id="lokasi_fac">
@@ -96,36 +104,31 @@
                             </option>
                         </select>
 
-                        <label for="kapasitas_fac">
-                            Kapasitas Minimum:
-                        </label>
+                        <label for="kapasitas_fac">Kapasitas Minimum:</label>
+                        <input type="number" name="kapasitas_fac" id="kapasitas_fac" class="filter_capacity" min="1" step="1" value="<?= htmlspecialchars($kapasitas_fac); ?>">
 
-                        <input type="number" name="kapasitas_fac" min="1" step="1" value="<?= htmlspecialchars($kapasitas_fac); ?>" style="width:70px">
+                        <div class="action_group">
+                            <input type="submit" value="Terapkan Filter">
 
-                        <input type="submit" value="Terapkan Filter">
-
-                        <a href="../../index.php?page=form_rsv_1">
-                            <button type="button">Reset Filter</button>
-                        </a>
+                            <a href="../../index.php?page=form_rsv_1">
+                                <button type="button">Reset Filter</button>
+                            </a>
+                        </div>
 
                     </div>
 
                 </form>
             </div>
 
-            <p>
-                Pilih fasilitas yang ingin Anda reservasi.
-            </p>
-
             <table id="facility_table">
 
                 <thead>
                     <tr>
-                        <th>Nama Fasilitas</th>
-                        <th>Tipe</th>
-                        <th>Lokasi</th>
-                        <th>Kapasitas</th>
-                        <th>Aksi</th>
+                        <th class="col-facility-name">Nama Fasilitas</th>
+                        <th class="col-facility-type">Tipe</th>
+                        <th class="col-facility-location">Lokasi</th>
+                        <th class="col-facility-capacity">Kapasitas</th>
+                        <th class="col-facility-action">Aksi</th>
                     </tr>
                 </thead>
 
@@ -153,7 +156,7 @@
                     <?php else: ?>
 
                         <tr>
-                            <td colspan="5">
+                            <td colspan="5" class="table_empty">
                                 Belum ada fasilitas aktif.
                             </td>
                         </tr>
@@ -189,6 +192,4 @@
 </body>
 
 </html>
-
-<link rel="stylesheet" href="../../public/css/pengguna/pengguna_style.css">
 <script src="../../public/js/pengguna/pengguna.js"></script>

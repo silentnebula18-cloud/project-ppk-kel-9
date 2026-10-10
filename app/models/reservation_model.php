@@ -112,8 +112,8 @@ class reservation_model {
         return $stmt->fetchColumn() > 0;
     }
 
-    // Mengambil reservasi pengguna dengan status 'proses pengajuan'
-    public function getByUser_ProsesPengajuan($user_id) {
+    // Mengambil daftar reservasi pengguna berdasarkan filter dan pagination
+    public function getByUser_filtered($user_id, $status, $limit, $offset) {
         $sql = "SELECT
                     r.rsv_id,
                     r.fac_id,
@@ -122,139 +122,90 @@ class reservation_model {
                     r.rsv_date,
                     r.start_time,
                     r.end_time,
-                    r.rsv_status
-                FROM " . $this->table_name . " r
+                    r.rsv_status,
+                    r.cancelled_by
+                FROM reservations r
                 JOIN facilities f ON r.fac_id = f.fac_id
-                WHERE r.user_id = ?
-                AND r.rsv_status = 'proses pengajuan'
-                ORDER BY r.created_at DESC";
+                WHERE r.user_id = ?";
+
+        $params = [$user_id];
+
+        switch ($status) {
+            case 'proses pengajuan':
+            case 'disetujui':
+            case 'ditolak':
+            case 'dibatalkan':
+            case 'kadaluarsa':
+                $sql .= " AND r.rsv_status = ?";
+                $params[] = $status;
+                break;
+
+            case 'riwayat':
+                $sql .= " AND (
+                    (r.rsv_status = 'disetujui'
+                        AND TIMESTAMP(r.rsv_date, r.end_time) <= NOW())
+                    OR r.rsv_status IN ('kadaluarsa', 'dibatalkan', 'ditolak')
+                )";
+                break;
+
+            case 'semua':
+                break;
+
+            default:
+                $status = 'semua';
+                break;
+        }
+
+        $sql .= " ORDER BY r.created_at DESC, r.rsv_id DESC
+                LIMIT ? OFFSET ?";
+
+        $params[] = (int) $limit;
+        $params[] = (int) $offset;
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$user_id]);
+        $stmt->execute($params);
 
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
 
-    // Mengambil reservasi pengguna dengan status 'disetujui'
-    public function getByUser_Disetujui($user_id) {
-        $sql = "SELECT
-                    r.rsv_id,
-                    r.fac_id,
-                    f.fac_name,
-                    f.location,
-                    r.rsv_date,
-                    r.start_time,
-                    r.end_time,
-                    r.rsv_status
-                FROM " . $this->table_name . " r
-                JOIN facilities f ON r.fac_id = f.fac_id
-                WHERE r.user_id = ?
-                AND r.rsv_status = 'disetujui'
-                ORDER BY r.created_at DESC";
+    // Menghitung jumlah reservasi pengguna berdasarkan filter
+    public function countByUser_filtered($user_id, $status) {
+        $sql = "SELECT COUNT(*)
+                FROM reservations r
+                WHERE r.user_id = ?";
+
+        $params = [$user_id];
+
+        switch ($status) {
+            case 'proses pengajuan':
+            case 'disetujui':
+            case 'ditolak':
+            case 'dibatalkan':
+            case 'kadaluarsa':
+                $sql .= " AND r.rsv_status = ?";
+                $params[] = $status;
+                break;
+
+            case 'riwayat':
+                $sql .= " AND (
+                    (r.rsv_status = 'disetujui'
+                        AND TIMESTAMP(r.rsv_date, r.end_time) <= NOW())
+                    OR r.rsv_status IN ('kadaluarsa', 'dibatalkan', 'ditolak')
+                )";
+                break;
+
+            case 'semua':
+                break;
+
+            default:
+                break;
+        }
 
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$user_id]);
+        $stmt->execute($params);
 
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-
-    // Mengambil reservasi pengguna dengan status 'kadaluarsa'
-    public function getByUser_Kadaluarsa($user_id) {
-        $sql = "SELECT
-                    r.rsv_id,
-                    r.fac_id,
-                    f.fac_name,
-                    f.location,
-                    r.rsv_date,
-                    r.start_time,
-                    r.end_time,
-                    r.rsv_status
-                FROM " . $this->table_name . " r
-                JOIN facilities f ON r.fac_id = f.fac_id
-                WHERE r.user_id = ?
-                AND r.rsv_status = 'kadaluarsa'
-                ORDER BY r.created_at DESC";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$user_id]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-
-    // Mengambil reservasi pengguna dengan status 'dibatalkan'
-    public function getByUser_Dibatalkan($user_id) {
-        $sql = "SELECT
-                    r.rsv_id,
-                    r.fac_id,
-                    f.fac_name,
-                    f.location,
-                    r.rsv_date,
-                    r.start_time,
-                    r.end_time,
-                    r.rsv_status
-                FROM " . $this->table_name . " r
-                JOIN facilities f ON r.fac_id = f.fac_id
-                WHERE r.user_id = ?
-                AND r.rsv_status = 'dibatalkan'
-                ORDER BY r.created_at DESC";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$user_id]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-
-    // Mengambil reservasi pengguna dengan status 'ditolak'
-    public function getByUser_Ditolak($user_id) {
-        $sql = "SELECT
-                    r.rsv_id,
-                    r.fac_id,
-                    f.fac_name,
-                    f.location,
-                    r.rsv_date,
-                    r.start_time,
-                    r.end_time,
-                    r.rsv_status
-                FROM " . $this->table_name . " r
-                JOIN facilities f ON r.fac_id = f.fac_id
-                WHERE r.user_id = ?
-                AND r.rsv_status = 'ditolak'
-                ORDER BY r.created_at DESC";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$user_id]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
-    }
-
-
-    // Mengambil reservasi pengguna dengan status 'disetujui'
-    // yang slot waktunya sudah selesai, sehingga masuk Riwayat
-    public function getByUser_RiwayatDisetujui($user_id) {
-        $sql = "SELECT
-                    r.rsv_id,
-                    r.fac_id,
-                    f.fac_name,
-                    f.location,
-                    r.rsv_date,
-                    r.start_time,
-                    r.end_time,
-                    r.rsv_status
-                FROM " . $this->table_name . " r
-                JOIN facilities f ON r.fac_id = f.fac_id
-                WHERE r.user_id = ?
-                AND r.rsv_status = 'disetujui'
-                AND TIMESTAMP(r.rsv_date, r.end_time) <= NOW()
-                ORDER BY r.created_at DESC";
-
-        $stmt = $this->conn->prepare($sql);
-        $stmt->execute([$user_id]);
-
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        return (int) $stmt->fetchColumn();
     }
 
     // Detail reservasi: proses pengajuan
@@ -363,7 +314,6 @@ class reservation_model {
                     purpose,
                     created_at,
                     cancelled_at,
-                    cancelled_by,
                     cancel_reason
                 FROM " . $this->table_name . "
                 WHERE rsv_id = ?
@@ -394,19 +344,25 @@ class reservation_model {
         return $stmt->fetch(PDO::FETCH_ASSOC);
     }
 
-    // Batalkan reservasi
-    public function batalkanReservasi($rsv_id, $user_id) {
+    // Batalkan reservasi oleh pengguna beserta alasannya
+    public function batalkanReservasi_pengguna($rsv_id, $user_id, $cancel_reason) {
         $sql = "UPDATE " . $this->table_name . "
                 SET
-                    rsv_status = 'dibatalkan',
-                    cancelled_at = NOW(),
-                    cancelled_by = ?
+                    rsv_status = ?,
+                    cancelled_at = ?,
+                    cancelled_by = ?,
+                    cancel_reason = ?
                 WHERE rsv_id = ?
-                AND user_id = ?";
+                AND user_id = ?
+                AND rsv_status IN ('proses pengajuan', 'disetujui')";
 
         $stmt = $this->conn->prepare($sql);
+
         $stmt->execute([
+            'dibatalkan',
+            date('Y-m-d H:i:s'),
             $user_id,
+            $cancel_reason,
             $rsv_id,
             $user_id
         ]);
