@@ -19,16 +19,14 @@ class Report {
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
-    // Update status, fasilitas, dan resolusi
-    public function updateReport($id, $status, $fac_id, $resolution_note) {
+    // Update status dan resolusi (fasilitas tidak diubah)
+    public function updateReport($id, $status, $resolution_note) {
         $query = "UPDATE " . $this->table_name . " 
                   SET rep_status = :status, 
-                      fac_id = :fac_id, 
                       resolution_note = :resolution_note 
                   WHERE rep_id = :id";
         $stmt = $this->conn->prepare($query);
         $stmt->bindParam(":status", $status);
-        $stmt->bindParam(":fac_id", $fac_id);
         $stmt->bindParam(":resolution_note", $resolution_note);
         $stmt->bindParam(":id", $id);
         return $stmt->execute();

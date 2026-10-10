@@ -34,14 +34,16 @@ class DashboardController {
         $stmtReports->execute();
         $reports = $stmtReports->fetchAll(PDO::FETCH_ASSOC);
 
-        // 3. Fetch Reservasi Diterima ('disetujui' dan tanggal >= hari ini) - Ditambahkan f.fac_status
+        // 3. Fetch Reservasi Diterima ('disetujui' dan tanggal >= hari ini)
+        //    Reservasi dengan fasilitas nonaktif/dalam perbaikan dinaikkan ke atas
         $queryApproved = "SELECT r.rsv_id, r.rsv_date, r.start_time, r.end_time, 
                                  u.username, f.fac_name, f.fac_status 
                           FROM reservations r 
                           JOIN users u ON r.user_id = u.user_id 
                           JOIN facilities f ON r.fac_id = f.fac_id 
                           WHERE r.rsv_status = 'disetujui' AND r.rsv_date >= CURDATE() 
-                          ORDER BY r.rsv_date ASC, r.start_time ASC";
+                          ORDER BY (f.fac_status IN ('Nonaktif', 'Dalam perbaikan')) DESC,
+                                   r.rsv_date ASC, r.start_time ASC";
         $stmtApproved = $this->db->prepare($queryApproved);
         $stmtApproved->execute();
         $approvedReservations = $stmtApproved->fetchAll(PDO::FETCH_ASSOC);

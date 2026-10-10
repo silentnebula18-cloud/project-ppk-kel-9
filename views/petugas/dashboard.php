@@ -154,7 +154,7 @@ $approvedCount = count($approvedReservations ?? []);
                                         </div>
                                         <div class="actions">
                                             <span class="status_badge status_<?= e(statusSlug($rp['rep_status'])) ?>"><?= e(ucfirst($rp['rep_status'])) ?></span>
-                                            <a class="btn btn_secondary" href="edit_report.php?id=<?= e($rp['rep_id']) ?>">Edit</a>
+                                            <a class="btn btn_secondary" href="index.php?page=reports&edit=<?= urlencode($rp['rep_id']) ?>">Edit</a>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>
@@ -172,7 +172,8 @@ $approvedCount = count($approvedReservations ?? []);
                                 <p class="empty_note">Belum ada reservasi disetujui mendatang.</p>
                             <?php else: ?>
                                 <?php foreach ($approvedReservations as $app): ?>
-                                    <div class="item">
+                                    <?php $needsAttention = in_array($app['fac_status'] ?? '', ['Nonaktif', 'Dalam perbaikan'], true); ?>
+                                    <div class="item<?= $needsAttention ? ' item_alert' : '' ?>">
                                         <div>
                                             <div class="item_title">
                                                 <?= e($app['fac_name']) ?><?= facilityBadge($app['fac_status'] ?? '') ?>

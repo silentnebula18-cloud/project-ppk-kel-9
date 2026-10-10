@@ -465,3 +465,22 @@ select:focus, .form_group textarea:focus { border-color: var(--gold); outline: n
 @media (max-width: 900px) {
     .report_card { flex-wrap: wrap; }
 }
+
+.readonly_value {
+    margin: 0;
+    padding: 9px 12px;
+    border: 1px dashed var(--border);
+    border-radius: 4px;
+    background-color: var(--paper);
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+/* Reservasi disetujui yang fasilitasnya bermasalah */
+.item_alert {
+    margin: 0 -12px;
+    padding: 12px;
+    background-color: var(--warning-bg);
+    border-left: 3px solid var(--gold);
+    border-radius: 4px;
+}

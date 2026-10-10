@@ -100,12 +100,8 @@ if (!function_exists('statusSlug')) {
                 </div>
 
                 <div class="form_group">
-                    <label for="edit_fac_id">Fasilitas</label>
-                    <select name="fac_id" id="edit_fac_id" required>
-                        <?php foreach ($facilities as $fac): ?>
-                            <option value="<?= e($fac['fac_id']) ?>"><?= e($fac['fac_name']) ?></option>
-                        <?php endforeach; ?>
-                    </select>
+                    <label>Fasilitas</label>
+                    <p id="edit_fac_name" class="readonly_value"></p>
                 </div>
 
                 <div class="form_group">
@@ -127,7 +123,7 @@ if (!function_exists('statusSlug')) {
         function openEditModal(report) {
             document.getElementById('edit_rep_id').value = report.rep_id;
             document.getElementById('edit_rep_status').value = report.rep_status;
-            document.getElementById('edit_fac_id').value = report.fac_id;
+            document.getElementById('edit_fac_name').textContent = report.fac_name || 'Tidak terkait';
             document.getElementById('edit_resolution_note').value = report.resolution_note || '';
             const modal = document.getElementById('editReportModal');
             modal.style.display = 'block';
@@ -141,6 +137,15 @@ if (!function_exists('statusSlug')) {
             if (e.target.closest('.js-close') || e.target.classList.contains('modal')) closeEditModal();
         });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') closeEditModal(); });
+
+        // Buka modal otomatis jika datang dari dashboard (?edit=ID)
+        const editId = new URLSearchParams(location.search).get('edit');
+        if (editId) {
+            document.querySelectorAll('.js-edit').forEach(btn => {
+                const report = JSON.parse(btn.dataset.report);
+                if (String(report.rep_id) === editId) openEditModal(report);
+            });
+        }
 
         document.querySelectorAll('.toast').forEach(t => setTimeout(() => t.remove(), 5000));
     </script>
