@@ -4,5 +4,5 @@ function toggleSidebar() {
 }
 
 function logout(){
-    window.location.replace("../../views/index.html")
+    window.location.replace("../../app/controllers/logout_controller.php")
 }
