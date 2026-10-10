@@ -24,10 +24,12 @@ if ($page === 'reservation') {
     } elseif ($action === 'cancel') {
         $controller->cancel();
     }
-} elseif ($page === 'reports') { // <--- TAMBAHKAN BLOK PERCABANGAN INI
+} elseif ($page === 'reports') { // ROUTE LAPORAN
     $controller = new ReportController();
     if ($action === 'update') {
         $controller->update();
+    } elseif ($action === 'image') {
+        $controller->image();
     } else {
         $controller->index();
     }
