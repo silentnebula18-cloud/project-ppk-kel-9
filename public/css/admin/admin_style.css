@@ -80,35 +80,6 @@ h1, h2, h3, .card_value, #header_title, #header_brand {
     font-family: 'Fraunces', Georgia, serif;
 }
 
-#admin_body {
-    margin: 0;
-    box-sizing: border-box;
-    background-color: var(--paper);
-    color: var(--text);
-    min-height: 100vh;
-}
-
-/* ===== Header ===== */
-#dashboard_header {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background-color: var(--surface);
-    padding: 16px 24px;
-    border-bottom: 2px solid var(--ink);
-}
-
-#header_logo {
-    cursor: pointer;
-    font-size: 18px;
-    color: var(--gold);
-    transition: transform 0.15s;
-}
-
-#header_logo:hover {
-    transform: rotate(20deg);
-}
-
 #header_brand {
     font-size: 24px;
     font-weight: 700;
