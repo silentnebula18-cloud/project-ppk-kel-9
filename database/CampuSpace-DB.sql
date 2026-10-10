@@ -40,6 +40,7 @@ CREATE TABLE facilities(
     location VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
     fac_desc VARCHAR(1000) NOT NULL,
+    fac_photo VARCHAR(300) NULL, -- path foto, contoh: storage/fac_img/<fac_id>.webp
     fac_status ENUM("Aktif", "Dalam perbaikan", "Nonaktif") NOT NULL
 );
 
