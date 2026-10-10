@@ -59,8 +59,13 @@ if (!function_exists('statusSlug')) {
                         <?php $slug = statusSlug($rp['rep_status']); ?>
                         <div class="report_card rep_<?= e($slug) ?>">
                             <div class="report_thumb">
-                                <?php if (!empty($rp['photo'])): ?>
-                                    <img src="../../public/uploads/<?= e($rp['photo']) ?>" alt="Foto laporan <?= $index + 1 ?>">
+                                <?php
+                                    // Foto: storage/reports_img/{rep_id}.webp (disajikan lewat ReportController::image)
+                                    $photoId = basename((string) $rp['rep_id']);
+                                    $hasPhoto = is_file(__DIR__ . '/../../storage/reports_img/' . $photoId . '.webp');
+                                ?>
+                                <?php if ($hasPhoto): ?>
+                                    <img src="index.php?page=reports&action=image&id=<?= urlencode($photoId) ?>" alt="Foto laporan <?= $index + 1 ?>" loading="lazy">
                                 <?php else: ?>
                                     Tanpa foto
                                 <?php endif; ?>

@@ -47,4 +47,27 @@ class ReportController {
         header("Location: index.php?page=reports");
         exit;
     }
+
+    // Sajikan foto laporan dari storage/reports_img/{rep_id}.webp
+    public function image() {
+        if (empty($_SESSION['user_id'])) {
+            http_response_code(403);
+            exit;
+        }
+
+        $id = basename((string) ($_GET['id'] ?? ''));
+        $file = __DIR__ . '/../../storage/reports_img/' . $id . '.webp';
+
+        if ($id === '' || !is_file($file)) {
+            http_response_code(404);
+            exit;
+        }
+
+        header('Content-Type: image/webp');
+        header('Content-Length: ' . filesize($file));
+        header('Cache-Control: private, max-age=3600');
+        header('X-Content-Type-Options: nosniff');
+        readfile($file);
+        exit;
+    }
 }
