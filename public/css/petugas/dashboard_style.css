@@ -45,15 +45,36 @@ body#petugas_body {
     box-shadow: 0 3px 0 var(--gold);
 }
 #header_logo {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 38px;
+    height: 38px;
+    padding: 0 9px;
+    background-color: transparent;
+    border: 1px solid #DDD3C7;
+    border-radius: 6px;
     cursor: pointer;
-    font-size: 18px;
-    color: var(--gold);
-    background: none;
-    border: none;
-    padding: 0;
-    transition: transform .15s;
+    transition: background-color 0.15s, border-color 0.15s;
 }
-#header_logo:hover { transform: rotate(20deg); background: none; }
+
+#header_logo span {
+    display: block;
+    height: 2px;
+    border-radius: 2px;
+    background-color: #3E2A1E;
+}
+
+#header_logo:hover {
+    background-color: #FFF8EA;
+    border-color: #C89B3C;
+}
+
+#header_logo:focus-visible {
+    outline: 2px solid #C89B3C;
+    outline-offset: 2px;
+}
 #header_brand { font-size: 24px; font-weight: 700; color: var(--ink); letter-spacing: .3px; }
 #header_brand em { font-style: normal; color: var(--gold); }
 #header_title {

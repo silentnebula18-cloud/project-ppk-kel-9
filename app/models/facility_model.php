@@ -1,11 +1,6 @@
 <?php
 require_once __DIR__ . "/../../config/db_connect.php";
 
-/**
- * Ambil semua fasilitas, lengkap dengan hitungan frekuensi reservasi & frekuensi laporan kerusakan
- * @param mysqli $conn
- * @return array daftar fasilitas (tiap elemen = array asosiatif satu baris)
- */
 function getAllFacilities($conn)
 {
     $sql = "SELECT
@@ -33,12 +28,6 @@ function getAllFacilities($conn)
     return $facilities;
 }
 
-/**
- * Ambil satu fasilitas berdasarkan fac_id
- * @param mysqli $conn
- * @param string $id
- * @return array|null null kalau gak ketemu
- */
 function getFacilityById($conn, $id)
 {
     $stmt = mysqli_prepare($conn, "SELECT * FROM facilities WHERE fac_id = ?");
@@ -51,10 +40,6 @@ function getFacilityById($conn, $id)
     return $facility ?: null;
 }
 
-/**
- * Insert fasilitas baru. Status baru selalu "Aktif"
- * @return bool berhasil/tidak
- */
 function createFacility($conn, $name, $type, $location, $capacity, $desc)
 {
     $stmt = mysqli_prepare(
@@ -69,10 +54,6 @@ function createFacility($conn, $name, $type, $location, $capacity, $desc)
     return $ok;
 }
 
-/**
- * Update data fasilitas yang sudah ada
- * @return bool berhasil/tidak
- */
 function updateFacility($conn, $id, $name, $type, $location, $capacity, $desc, $status)
 {
     $stmt = mysqli_prepare(
@@ -88,10 +69,6 @@ function updateFacility($conn, $id, $name, $type, $location, $capacity, $desc, $
     return $ok;
 }
 
-/**
- * Hapus fasilitas berdasarkan fac_id
- * @return bool berhasil/tidak
- */
 function deleteFacility($conn, $id)
 {
     try {
@@ -101,7 +78,6 @@ function deleteFacility($conn, $id)
         mysqli_stmt_close($stmt);
         return $ok;
     } catch (mysqli_sql_exception $e) {
-        // error code 1451 = foreign key constraint fails (masih ada reservasi/laporan)
         if ($e->getCode() === 1451) {
             return 'has_history';
         }
@@ -109,10 +85,6 @@ function deleteFacility($conn, $id)
     }
 }
 
-/**
- * Ganti status fasilitas (dipakai buat nonaktifkan/aktifkan kembali)
- * @return bool berhasil/tidak
- */
 function setFacilityStatus($conn, $id, $status)
 {
     $stmt = mysqli_prepare($conn, "UPDATE facilities SET fac_status = ? WHERE fac_id = ?");
@@ -123,10 +95,6 @@ function setFacilityStatus($conn, $id, $status)
     return $ok;
 }
 
-/**
- * Hitung jumlah fasilitas berdasarkan status tertentu (mis. 'Aktif')
- * @return int
- */
 function countFacilitiesByStatus($conn, $status)
 {
     $stmt = mysqli_prepare($conn, "SELECT COUNT(*) as total FROM facilities WHERE fac_status = ?");
@@ -137,4 +105,274 @@ function countFacilitiesByStatus($conn, $status)
     mysqli_stmt_close($stmt);
 
     return (int) $row['total'];
+}
+
+class facility_model {
+    private $conn;
+
+    public function __construct($db) {
+        $this->conn = $db;
+    }
+
+    public function getAllFacilities()
+    {
+        $query = "SELECT
+                    f.fac_id,
+                    f.fac_name,
+                    f.type,
+                    f.location,
+                    f.capacity,
+                    f.fac_desc,
+                    f.fac_status,
+                    (SELECT COUNT(*) FROM reservations r
+                     WHERE r.fac_id = f.fac_id) AS rsv_count,
+                    (SELECT COUNT(*) FROM reports rp
+                     WHERE rp.fac_id = f.fac_id) AS report_count
+                  FROM facilities f
+                  ORDER BY f.fac_name ASC";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getFacilityById($id)
+    {
+        $query = "SELECT * FROM facilities WHERE fac_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$id]);
+        $facility = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $facility ?: null;
+    }
+
+    public function createFacility($name, $type, $location, $capacity, $desc)
+    {
+        $query = "INSERT INTO facilities(fac_name, type, location, capacity, fac_desc, fac_status)
+                  VALUES (?, ?, ?, ?, ?, 'Aktif')";
+
+        $stmt = $this->conn->prepare($query);
+
+        return $stmt->execute([$name, $type, $location, $capacity, $desc]);
+    }
+
+    public function updateFacility($id, $name, $type, $location, $capacity, $desc, $status)
+    {
+        $query = "UPDATE facilities
+                  SET fac_name = ?, type = ?, location = ?, capacity = ?, fac_desc = ?, fac_status = ?
+                  WHERE fac_id = ?";
+
+        $stmt = $this->conn->prepare($query);
+        return $stmt->execute([$name, $type, $location, $capacity, $desc, $status, $id]);
+    }
+
+    public function deleteFacility($id)
+    {
+        $query = "DELETE FROM facilities WHERE fac_id = ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$id]);
+
+        return $stmt->rowCount() > 0;
+    }
+
+    public function setFacilityStatus($id, $status)
+    {
+        $query = "UPDATE facilities SET fac_status = ? WHERE fac_id = ?";
+
+        $stmt = $this->conn->prepare($query);
+
+        return $stmt->execute([$status, $id]);
+    }
+
+    public function countFacilitiesByStatus($status)
+    {
+        $query = "SELECT COUNT(*) AS total FROM facilities WHERE fac_status = ?";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$status]);
+
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return (int) $row['total'];
+    }
+
+    public function getFac_limit($limit, $offset){
+        $query = "SELECT fac_id, fac_name, type, location, capacity, fac_status FROM facilities LIMIT ? OFFSET ?";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$limit, $offset]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getTotalFacilities(){
+        $query = "SELECT COUNT(*) as total FROM facilities";
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute();
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $data['total'] ?? 0;
+    }
+
+    public function getFac_limit_filtered($limit, $offset, $tipe_fac, $lokasi_fac, $kapasitas_fac){
+        $query = "SELECT fac_id, fac_name, type, location, capacity, fac_status FROM facilities";
+    
+        $conditions = [];
+        $params = [];
+        if (!empty($tipe_fac)) {
+            $conditions[] = "type = ?";
+            $params[] = $tipe_fac;
+        }
+        if (!empty($lokasi_fac)) {
+            $conditions[] = "location = ?";
+            $params[] = $lokasi_fac;
+        }
+        if (!empty($kapasitas_fac)) {
+            $conditions[] = "capacity >= ?"; 
+            $params[] = $kapasitas_fac;
+        }
+
+        if (count($conditions) > 0) {
+            $query .= " WHERE " . implode(" AND ", $conditions);
+        }
+        $query .= " LIMIT ? OFFSET ?";
+
+        $stmt = $this->conn->prepare($query);
+
+        $paramIndex = 1;
+        foreach ($params as $val) {
+            $stmt->bindValue($paramIndex, $val, PDO::PARAM_STR);
+            $paramIndex++;
+        }
+
+        $stmt->bindValue($paramIndex, (int) $limit, PDO::PARAM_INT);
+        $stmt->bindValue($paramIndex + 1, (int) $offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC) ?: [];
+    }
+
+    public function countFac_filtered($tipe_fac = null, $lokasi_fac = null, $kapasitas_fac = null){
+        $query = "SELECT COUNT(*) AS total FROM facilities";
+
+        $conditions = [];
+        $params = [];
+
+        if (!empty($tipe_fac)) {
+            $conditions[] = "type = ?";
+            $params[] = $tipe_fac;
+        }
+
+        if (!empty($lokasi_fac)) {
+            $conditions[] = "location = ?";
+            $params[] = $lokasi_fac;
+        }
+
+        if (!empty($kapasitas_fac)) {
+            $conditions[] = "capacity >= ?";
+            $params[] = $kapasitas_fac;
+        }
+
+        if (!empty($conditions)) {
+            $query .= " WHERE " . implode(" AND ", $conditions);
+        }
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute($params);
+
+        $data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return (int) ($data['total'] ?? 0);
+    }
+
+    public function getFacilitiesbyStatus($status) {
+        $query = "SELECT *
+                FROM facilities
+                WHERE fac_status = ?
+                ORDER BY fac_name";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->execute([$status]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function getActiveFac_limit_filtered($limit, $offset, $tipe_fac, $lokasi_fac, $kapasitas_fac) {
+        $query = "SELECT * FROM facilities WHERE fac_status = 'aktif'";
+
+        $params = [];
+
+        if ($tipe_fac !== '') {
+            $query .= " AND type = :tipe_fac";
+            $params[':tipe_fac'] = $tipe_fac;
+        }
+
+        if ($lokasi_fac !== '') {
+            $query .= " AND location = :lokasi_fac";
+            $params[':lokasi_fac'] = $lokasi_fac;
+        }
+
+        if ($kapasitas_fac !== '') {
+            $query .= " AND capacity >= :kapasitas_fac";
+            $params[':kapasitas_fac'] = $kapasitas_fac;
+        }
+
+        $query .= " ORDER BY fac_name
+                    LIMIT :limit OFFSET :offset";
+
+        $stmt = $this->conn->prepare($query);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+
+        $stmt->bindValue(':limit', (int)$limit, PDO::PARAM_INT);
+        $stmt->bindValue(':offset', (int)$offset, PDO::PARAM_INT);
+
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    public function countActiveFac_filtered($tipe_fac, $lokasi_fac, $kapasitas_fac) {
+        $query = "SELECT COUNT(*)
+                FROM facilities
+                WHERE fac_status = 'aktif'";
+
+        $params = [];
+
+        if ($tipe_fac !== '') {
+            $query .= " AND type = :tipe_fac";
+            $params[':tipe_fac'] = $tipe_fac;
+        }
+
+        if ($lokasi_fac !== '') {
+            $query .= " AND location = :lokasi_fac";
+            $params[':lokasi_fac'] = $lokasi_fac;
+        }
+
+        if ($kapasitas_fac !== '') {
+            $query .= " AND capacity >= :kapasitas_fac";
+            $params[':kapasitas_fac'] = $kapasitas_fac;
+        }
+
+        $stmt = $this->conn->prepare($query);
+
+        foreach ($params as $key => $value) {
+            $stmt->bindValue($key, $value);
+        }
+
+        $stmt->execute();
+
+        return $stmt->fetchColumn();
+    }
+
+    public function getDetailFasilitas_rsv_saya($fac_id) {
+        $query = "SELECT type, capacity, fac_desc, fac_status
+                  FROM facilities
+                  WHERE fac_id = :fac_id";
+
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':fac_id', $fac_id, PDO::PARAM_STR);
+        $stmt->execute();
+
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
 }

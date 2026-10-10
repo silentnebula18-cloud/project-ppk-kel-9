@@ -20,7 +20,7 @@ $statuses = ["Aktif", "Dalam Perbaikan", "Nonaktif"];
 ?>
 <body id="admin_body">
     <div id="dashboard_header">
-        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <button id="header_logo" type="button" onclick="toggleSidebar()" aria-label="Buka atau tutup menu"><span></span><span></span><span></span></button>
         <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Dashboard Admin</span>
         <a href="../../app/controllers/logout_controller.php"><button id="logout_btn">LogOut</button></a>
@@ -42,7 +42,7 @@ $statuses = ["Aktif", "Dalam Perbaikan", "Nonaktif"];
             <p style="color:red">Data gagal disimpan: semua field wajib diisi dengan benar.</p>
             <?php endif; ?>
 
-            <form method="post" action="../../app/controllers/facility_controller.php">
+            <form method="post" action="../../app/controllers/admin_facility_controller.php">
                 <input type="hidden" name="action" value="<?= $isEdit ? 'update' : 'create' ?>">
                 <?php if ($isEdit): ?>
                 <input type="hidden" name="fac_id" value="<?= htmlspecialchars($facility['fac_id']) ?>">

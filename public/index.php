@@ -5,7 +5,7 @@ check_session_valid('petugas');
 require_once __DIR__ . '/../app/controllers/DashboardController.php';
 require_once __DIR__ . '/../app/controllers/ReservationController.php';
 require_once __DIR__ . '/../app/controllers/ReportController.php';
-require_once __DIR__ . '/../app/controllers/FacilityController.php';
+require_once __DIR__ . '/../app/controllers/petugas_facility_controller.php';
 
 $page = $_GET['page'] ?? 'dashboard';
 $action = $_GET['action'] ?? 'index';

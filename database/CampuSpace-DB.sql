@@ -1,3 +1,5 @@
+SET GLOBAL event_scheduler = ON;
+
 DROP DATABASE IF EXISTS projectppk;
 CREATE DATABASE projectppk;
 USE projectppk;
@@ -25,6 +27,7 @@ CREATE TABLE facilities (
     location VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
     fac_desc VARCHAR(1000) NOT NULL,
+    fac_photo VARCHAR(300) NULL,
     fac_status ENUM('Aktif', 'Dalam perbaikan', 'Nonaktif', 'aktif', 'dalam perbaikan', 'nonaktif') NOT NULL
 );
 
@@ -35,8 +38,9 @@ CREATE TABLE reservations (
     rsv_date DATE NOT NULL,
     start_time TIME NOT NULL CHECK (start_time >= '07:00:00'),
     end_time TIME NOT NULL CHECK (end_time <= '20:00:00'),
-    rsv_status ENUM('proses pengajuan', 'disetujui', 'ditolak', 'dibatalkan') NOT NULL,
+    rsv_status ENUM('proses pengajuan', 'disetujui', 'ditolak', 'dibatalkan', 'kadaluarsa') NOT NULL DEFAULT 'proses pengajuan',
     purpose VARCHAR(300) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     cancelled_at TIMESTAMP NULL,
     cancelled_by CHAR(36) NULL,
     cancel_reason VARCHAR(300) NULL,
@@ -45,6 +49,7 @@ CREATE TABLE reservations (
     CONSTRAINT fk_reservations_facilities FOREIGN KEY (fac_id) REFERENCES facilities(fac_id),
     CONSTRAINT fk_reservations_users_c FOREIGN KEY (cancelled_by) REFERENCES users(user_id),
     CONSTRAINT chk_start_end_time CHECK (start_time < end_time),
+    CONSTRAINT chk_mod_rsv_time CHECK (TIMESTAMPDIFF(MINUTE, start_time, end_time) % 30 = 0),
     CONSTRAINT chk_cancelled_at CHECK (
         (rsv_status IN ('ditolak', 'dibatalkan') AND cancelled_at IS NOT NULL) 
         OR (rsv_status NOT IN ('ditolak', 'dibatalkan'))
@@ -75,7 +80,6 @@ CREATE TABLE reports (
     reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
     category ENUM('kerusakan bangunan', 'kerusakan peralatan', 'kelistrikan', 'kebersihan', 'lainnya') NOT NULL,
     rep_desc VARCHAR(1000) NOT NULL,
-    photo VARCHAR(300) NOT NULL,
     rep_status ENUM('baru', 'diproses', 'selesai', 'ditolak') NOT NULL,
     user_id CHAR(36) NOT NULL,
     fac_id CHAR(36) NOT NULL,
@@ -100,6 +104,14 @@ BEGIN
     END IF;
 END //
 DELIMITER ;
+
+CREATE EVENT IF NOT EXISTS expire_pending_reservations
+ON SCHEDULE EVERY 1 MINUTE
+DO
+    UPDATE reservations
+    SET rsv_status = 'kadaluarsa'
+    WHERE rsv_status = 'proses pengajuan'
+      AND TIMESTAMP(rsv_date, start_time) <= NOW();
 
 INSERT INTO facilities (fac_name, type, location, capacity, fac_desc, fac_status) VALUES
 ('Aula Utama', 'Aula', 'Gedung A Lantai 1', 300, 'Aula untuk seminar dan acara besar', 'Aktif'),

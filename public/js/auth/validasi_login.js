@@ -64,7 +64,7 @@ async function on_login_button_click(){
                         window.location.replace("../../views/admin/admin_beranda.php")
                         break
                     case "pengguna":
-                        window.location.replace("../../views/pengguna/pengguna_beranda.php")
+                        window.location.replace("../../index.php?page=beranda")
                         break
                     case "petugas":
                         window.location.replace("../../public/index.php")

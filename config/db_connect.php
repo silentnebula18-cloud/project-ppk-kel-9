@@ -1,15 +1,45 @@
 <?php
-// Kredensial Konfigurasi Database
-$host = "localhost";
+$host = "127.0.0.1";
 $username = "root";
-$password = ""; // Sesuaikan dengan password MySQL lokal Anda jika ada (misal: "mysql8034")
+$password = "";
 $database = "projectppk";
 
-// Membuat koneksi ke database
-$conn = mysqli_connect($host, $username, $password, $database);
-
-// Cek Koneksi
+$conn = @mysqli_connect($host, $username, $password, $database);
 if (!$conn) {
-    die("Koneksi ke database gagal: " . mysqli_connect_error());
+    $conn = @mysqli_connect($host, $username, "mysql8034", $database);
 }
-?>
+
+class db_connect {
+    private string $host = "127.0.0.1";
+    private string $db_name = "projectppk"; 
+    private string $username = "root";       
+    private string $password = "";           
+    private string $charset = "utf8mb4";
+    public ?PDO $conn = null;
+
+    public function getConnection(): ?PDO {
+        if ($this->conn !== null) {
+            return $this->conn; 
+        }
+
+        $dsn = "mysql:host={$this->host};dbname={$this->db_name};charset={$this->charset}";
+        $options = [
+            PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION, 
+            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,      
+            PDO::ATTR_EMULATE_PREPARES   => false,                  
+        ];
+
+        try {
+            $this->conn = new PDO($dsn, $this->username, $this->password, $options);
+        } catch (PDOException $e) {
+            try {
+                $this->conn = new PDO($dsn, $this->username, "mysql8034", $options);
+            } catch (PDOException $e2) {
+                error_log("Koneksi Database Gagal: " . $e2->getMessage());
+                die("Gagal terhubung ke server database.");
+            }
+        }
+
+        return $this->conn;
+    }
+}

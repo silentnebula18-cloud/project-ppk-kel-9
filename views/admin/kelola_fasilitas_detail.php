@@ -14,7 +14,7 @@ if (!$facility) {
 ?>
 <body id="admin_body">
     <div id="dashboard_header">
-        <span id="header_logo" onclick="toggleSidebar()">★</span>
+        <button id="header_logo" type="button" onclick="toggleSidebar()" aria-label="Buka atau tutup menu"><span></span><span></span><span></span></button>
         <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Dashboard Admin</span>
         <a href="../../app/controllers/logout_controller.php"><button id="logout_btn">LogOut</button></a>
@@ -50,7 +50,7 @@ if (!$facility) {
             </p>
             <?php endif; ?>
 
-            <form id="delete_form" method="post" action="../../app/controllers/facility_controller.php"
+            <form id="delete_form" method="post" action="../../app/controllers/admin_facility_controller.php"
                   onsubmit="return confirm('Yakin mau hapus fasilitas ini? Data akan hilang permanen.');">
                 <input type="hidden" name="action" value="delete">
                 <input type="hidden" name="fac_id" value="<?= htmlspecialchars($facility['fac_id']) ?>">
@@ -58,13 +58,13 @@ if (!$facility) {
             </form>
 
             <?php if ($facility['fac_status'] === 'Nonaktif'): ?>
-            <form method="post" action="../../app/controllers/facility_controller.php">
+            <form method="post" action="../../app/controllers/admin_facility_controller.php">
                 <input type="hidden" name="action" value="activate">
                 <input type="hidden" name="fac_id" value="<?= htmlspecialchars($facility['fac_id']) ?>">
                 <button type="submit">Aktifkan Kembali</button>
             </form>
             <?php else: ?>
-            <form method="post" action="../../app/controllers/facility_controller.php"
+            <form method="post" action="../../app/controllers/admin_facility_controller.php"
                   onsubmit="return confirm('Yakin mau nonaktifkan fasilitas ini? Fasilitas tidak akan bisa direservasi selama nonaktif.');">
                 <input type="hidden" name="action" value="deactivate">
                 <input type="hidden" name="fac_id" value="<?= htmlspecialchars($facility['fac_id']) ?>">

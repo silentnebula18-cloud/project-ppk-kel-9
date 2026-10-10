@@ -61,7 +61,7 @@ $approvedCount = count($approvedReservations ?? []);
     </div>
 
     <div id="dashboard_header">
-        <button type="button" id="header_logo" aria-label="Tampilkan atau sembunyikan menu" onclick="toggleSidebar()">★</button>
+        <button id="header_logo" type="button" onclick="toggleSidebar()" aria-label="Buka atau tutup menu"><span></span><span></span><span></span></button>
         <span id="header_brand">Campu<em>Space</em></span>
         <span id="header_title">Dashboard Petugas</span>
         <a href="../../app/controllers/logout_controller.php"><button type="button" id="logout_btn">Keluar</button></a>
