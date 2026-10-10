@@ -1,4 +1,8 @@
 <?php
+
+require_once __DIR__ . '/../../app/helpers/validate_session.php';
+check_session_valid('admin');
+
 ?>
 <body id="admin_body">
     <div id="dashboard_header">

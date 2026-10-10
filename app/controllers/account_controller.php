@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . "/../models/account_model.php";
+
+require_once __DIR__ . '/../helpers/validate_session.php';
+check_session_valid('admin');
+
 $action = $_POST['action'] ?? '';
 
 switch ($action) {

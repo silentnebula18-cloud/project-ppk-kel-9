@@ -1,16 +1,18 @@
 <?php
 require_once __DIR__ . '/../../config/database.php';
+require_once __DIR__ . '/../helpers/validate_session.php';
 
 class DashboardController {
     private $db;
 
     public function __construct() {
+        check_session_valid('petugas');
         $this->db = (new Database())->getConnection();
     }
 
     public function index() {
-        //List Reservasi Diproses
-        $queryPending = "SELECT r.*, u.username, f.fac_name 
+        $queryPending = "SELECT r.rsv_id, r.rsv_date, r.start_time, r.end_time, 
+                                u.username, f.fac_name, f.fac_status 
                          FROM reservations r 
                          JOIN users u ON r.user_id = u.user_id 
                          JOIN facilities f ON r.fac_id = f.fac_id 
@@ -20,8 +22,8 @@ class DashboardController {
         $stmtPending->execute();
         $pendingReservations = $stmtPending->fetchAll(PDO::FETCH_ASSOC);
 
-        //List Laporan
-        $queryReports = "SELECT rp.*, u.username, f.fac_name 
+        $queryReports = "SELECT rp.rep_id, rp.category, rp.rep_desc, rp.rep_status, 
+                                u.username, f.fac_name 
                          FROM reports rp 
                          JOIN users u ON rp.user_id = u.user_id 
                          JOIN facilities f ON rp.fac_id = f.fac_id 
@@ -31,18 +33,18 @@ class DashboardController {
         $stmtReports->execute();
         $reports = $stmtReports->fetchAll(PDO::FETCH_ASSOC);
 
-        //List Reservasi Diterima
-        $queryApproved = "SELECT r.*, u.username, f.fac_name 
+        $queryApproved = "SELECT r.rsv_id, r.rsv_date, r.start_time, r.end_time, 
+                                 u.username, f.fac_name, f.fac_status 
                           FROM reservations r 
                           JOIN users u ON r.user_id = u.user_id 
                           JOIN facilities f ON r.fac_id = f.fac_id 
                           WHERE r.rsv_status = 'disetujui' AND r.rsv_date >= CURDATE() 
-                          ORDER BY r.rsv_date ASC";
+                          ORDER BY (f.fac_status IN ('Nonaktif', 'Dalam perbaikan', 'nonaktif', 'dalam perbaikan')) DESC,
+                                   r.rsv_date ASC, r.start_time ASC";
         $stmtApproved = $this->db->prepare($queryApproved);
         $stmtApproved->execute();
         $approvedReservations = $stmtApproved->fetchAll(PDO::FETCH_ASSOC);
 
-        //Render file view dari folder views
         require_once __DIR__ . '/../../views/petugas/dashboard.php';
     }
 }

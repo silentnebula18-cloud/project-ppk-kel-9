@@ -1,4 +1,8 @@
 <?php
+
+require_once __DIR__ . '/../helpers/validate_session.php';
+check_session_valid('admin');
+
 require_once __DIR__ . "/../models/facility_model.php";
 
 $facilities = getAllFacilities($conn);

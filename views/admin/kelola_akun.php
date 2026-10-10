@@ -1,4 +1,8 @@
 <?php
+
+require_once __DIR__ . '/../../app/helpers/validate_session.php';
+check_session_valid('admin');
+
 require_once __DIR__ . "/../../app/models/account_model.php";
 
 $pending = getPendingAccounts($conn);

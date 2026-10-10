@@ -1,4 +1,3 @@
-// import users from "../../../database_mockup/users.json" with { type: "json" };
 
 let username_field = document.getElementById("username")
 let password_field = document.getElementById("password")
@@ -62,14 +61,13 @@ async function on_login_button_click(){
                 let role = result.user.role
                 switch (role){
                     case "admin":
-                        // console.log("a")
                         window.location.replace("../../views/admin/admin_beranda.php")
                         break
                     case "pengguna":
                         window.location.replace("../../views/pengguna/pengguna_beranda.php")
                         break
                     case "petugas":
-                        window.location.replace("../../public/php/petugas_index.php")
+                        window.location.replace("../../public/index.php")
                         break
                     default:
                         console.log("aaaa")
