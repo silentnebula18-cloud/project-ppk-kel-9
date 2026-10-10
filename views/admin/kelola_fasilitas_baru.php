@@ -2,7 +2,6 @@
 
 require_once __DIR__ . '/../../app/helpers/validate_session.php';
 check_session_valid('admin');
-
 require_once __DIR__ . "/../../app/models/facility_model.php";
 
 $facility = null;
@@ -38,11 +37,13 @@ $statuses = ["Aktif", "Dalam Perbaikan", "Nonaktif"];
             <?php if (!$isEdit): ?>
             <p id="form_note">Catatan: Saat data fasilitas berhasil dimasukan, status langsung aktif (bisa di reservasi)</p>
             <?php endif; ?>
-            <?php if (isset($_GET['error'])): ?>
+            <?php if (($_GET['error'] ?? '') === 'foto'): ?>
+            <p style="color:red">Foto gagal disimpan: <?= htmlspecialchars($_GET['msg'] ?? 'file tidak valid.') ?></p>
+            <?php elseif (isset($_GET['error'])): ?>
             <p style="color:red">Data gagal disimpan: semua field wajib diisi dengan benar.</p>
             <?php endif; ?>
 
-            <form method="post" action="../../app/controllers/admin_facility_controller.php">
+            <form method="post" action="../../app/controllers/admin_facility_controller.php" enctype="multipart/form-data">
                 <input type="hidden" name="action" value="<?= $isEdit ? 'update' : 'create' ?>">
                 <?php if ($isEdit): ?>
                 <input type="hidden" name="fac_id" value="<?= htmlspecialchars($facility['fac_id']) ?>">
@@ -83,6 +84,20 @@ $statuses = ["Aktif", "Dalam Perbaikan", "Nonaktif"];
                     <textarea name="fac_desc" required><?= htmlspecialchars($facility['fac_desc'] ?? '') ?></textarea>
                 </div>
 
+                <div class="form_row">
+                    <label>Foto:</label>
+                    <div class="foto_field">
+                        <?php if ($isEdit && adaFoto($facility['fac_photo'] ?? null)): ?>
+                        <img class="foto_current" src="<?= urlFoto($facility['fac_photo']) ?>"
+                             alt="Foto <?= htmlspecialchars($facility['fac_name']) ?>" onerror="this.style.display='none'">
+                        <?php endif; ?>
+                        <input type="file" name="fac_photo" id="fac_photo" accept="image/jpeg,image/png,image/webp">
+                        <small class="foto_hint">JPG, PNG, atau WebP, maksimal 2 MB (otomatis disimpan sebagai WebP).<?= $isEdit ? ' Kosongkan jika tidak ingin mengganti foto.' : ' (opsional)' ?></small>
+                        <small class="foto_error" id="foto_error"></small>
+                        <img class="foto_preview" id="foto_preview" alt="Pratinjau foto" hidden>
+                    </div>
+                </div>
+
                 <?php if ($isEdit): ?>
                 <div class="form_row">
                     <label>Status:</label>
@@ -104,3 +119,4 @@ $statuses = ["Aktif", "Dalam Perbaikan", "Nonaktif"];
 
 <link rel="stylesheet" href="../../public/css/admin/admin_style.css?v=<?= filemtime(__DIR__ . '/../../public/css/admin/admin_style.css') ?>">
 <script src="../../public/js/admin/sidebar.js"></script>
+<script src="../../public/js/admin/foto_preview.js"></script>

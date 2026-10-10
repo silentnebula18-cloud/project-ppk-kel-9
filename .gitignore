@@ -3,3 +3,6 @@
 /node_modules/
 .vscode/
 /vendor/
+
+/storage/fac_img/*
+!/storage/fac_img/[Cc]ontoh-*

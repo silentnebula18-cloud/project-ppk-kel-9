@@ -1,8 +1,9 @@
 <?php
-require_once __DIR__ . "/../models/account_model.php";
 
 require_once __DIR__ . '/../helpers/validate_session.php';
 check_session_valid('admin');
+
+require_once __DIR__ . "/../models/account_model.php";
 
 $action = $_POST['action'] ?? '';
 
@@ -10,7 +11,7 @@ switch ($action) {
     case 'admit':
         $unv_id = $_POST['unv_id'] ?? '';
 
-        $role   = 'pengguna';
+        $role = 'pengguna';
         if ($unv_id === '') {
             header("Location: ../../views/admin/kelola_akun.php?error=1");
             exit;

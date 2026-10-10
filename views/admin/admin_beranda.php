@@ -9,21 +9,18 @@ require_once __DIR__ . "/../../app/models/dashboard_model.php";
 
 date_default_timezone_set('Asia/Jakarta');
 
-// Kartu ringkasan
 $pendingCount = countPendingAccounts($conn);
 $petugasCount = countUsersByRole($conn, 'petugas');
 $fasilitasCount = countFacilitiesByStatus($conn, 'Aktif');
 $laporanBaruCount = countReportsByStatus($conn, 'baru');
 $reservasiMenungguCount = countReservationsByStatus($conn, 'proses pengajuan');
 
-// Data panel
 $statusCounts = getFacilityStatusCounts($conn);
 $topFasilitas = getTopReservedFacilities($conn, 5);
 $buildings = getFacilitiesByBuilding($conn);
 $typeIcons = ['Ruang Kelas' => '🏫', 'Aula' => '🏛️', 'Laboratorium' => '🔬', 'Alat' => '🎥', 'Lapangan' => '⚽'];
 $maxReservasi = !empty($topFasilitas) ? (int) $topFasilitas[0]['total'] : 0;
 
-// Sapaan, tanggal, & maskot sesuai jam
 $hari = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
 $bulan = ['', 'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
 $jam = (int) date('G');
@@ -42,7 +39,6 @@ if ($jam < 11) {
 }
 $tanggal = $hari[(int) date('w')] . ', ' . date('j') . ' ' . $bulan[(int) date('n')] . ' ' . date('Y');
 
-// Daftar tugas hari ini (dibuat otomatis dari data)
 $todos = [];
 if ($pendingCount > 0) {
     $todos[] = ['key' => 'akun', 'text' => "Verifikasi $pendingCount akun pending", 'href' => 'kelola_akun.php'];
@@ -56,11 +52,9 @@ if ($reservasiMenungguCount > 0) {
 if ($statusCounts['Dalam perbaikan'] > 0) {
     $todos[] = ['key' => 'perbaikan', 'text' => "Pantau {$statusCounts['Dalam perbaikan']} fasilitas dalam perbaikan", 'href' => 'kelola_fasilitas.php'];
 }
-$todos[] = ['key' => 'cek', 'text' => 'Lihat ringkasan hari ini', 'href' => null];
 
 $statusEmoji = ['Aktif' => '🟢', 'Dalam perbaikan' => '🟡', 'Nonaktif' => '🔴'];
 
-// Ubah status jadi nama class: "Dalam perbaikan" -> "dalam-perbaikan"
 function statusSlug($status)
 {
     return str_replace(' ', '-', strtolower($status));

@@ -12,8 +12,7 @@ header('Content-Disposition: attachment; filename=rekap_fasilitas_' . date('Y-m-
 
 $output = fopen('php://output', 'w');
 
-// baris pertama = nama kolom
-fputcsv($output, ['Nama Fasilitas', 'Tipe', 'Lokasi', 'Status', 'Frekuensi Reservasi', 'Frekuensi Kerusakan']);
+fputcsv($output, ['Nama Fasilitas', 'Tipe', 'Lokasi', 'Status', 'Okupansi (Reservasi/bulan)', 'Frekuensi Kerusakan (Laporan/bulan)']);
 
 foreach ($facilities as $f) {
     fputcsv($output, [
@@ -21,9 +20,16 @@ foreach ($facilities as $f) {
         $f['type'],
         $f['location'],
         $f['fac_status'],
-        $f['rsv_count'],
-        $f['report_count'],
+        formatRataBulan($f['rsv_avg']),
+        formatRataBulan($f['report_avg']),
     ]);
+}
+
+fputcsv($output, []);
+fputcsv($output, ['Rekap per Lokasi']);
+fputcsv($output, ['Lokasi', 'Jumlah Fasilitas', 'Okupansi (Reservasi/bulan)', 'Frekuensi Kerusakan (Laporan/bulan)']);
+foreach (getRekapPerLokasi($facilities) as $lok) {
+    fputcsv($output, [$lok['location'], $lok['fac_count'], formatRataBulan($lok['rsv_avg']), formatRataBulan($lok['report_avg'])]);
 }
 
 fclose($output);

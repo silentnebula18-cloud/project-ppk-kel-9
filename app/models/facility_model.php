@@ -10,9 +10,10 @@ function getAllFacilities($conn)
                 f.location,
                 f.capacity,
                 f.fac_desc,
+                f.fac_photo,
                 f.fac_status,
-                (SELECT COUNT(*) FROM reservations r WHERE r.fac_id = f.fac_id) as rsv_count,
-                (SELECT COUNT(*) FROM reports rp WHERE rp.fac_id = f.fac_id) as report_count
+                (SELECT COUNT(*) FROM reservations r WHERE r.fac_id = f.fac_id) as rsv_total,
+                (SELECT COUNT(*) FROM reports rp WHERE rp.fac_id = f.fac_id) as report_total
             FROM facilities f
             ORDER BY f.fac_name ASC";
     $result = mysqli_query($conn, $sql);
@@ -21,11 +22,35 @@ function getAllFacilities($conn)
         die("Query gagal: " . mysqli_error($conn));
     }
 
+    $bulan = getJumlahBulanData($conn);
+
     $facilities = [];
     while ($row = mysqli_fetch_assoc($result)) {
+        $row['periode_bulan'] = $bulan;
+        $row['rsv_avg'] = round($row['rsv_total'] / $bulan, 1);
+        $row['report_avg'] = round($row['report_total'] / $bulan, 1);
         $facilities[] = $row;
     }
     return $facilities;
+}
+
+function getJumlahBulanData($conn)
+{
+    $sql = "SELECT GREATEST(1, TIMESTAMPDIFF(MONTH,
+                LEAST(
+                    COALESCE((SELECT MIN(rsv_date) FROM reservations), CURDATE()),
+                    COALESCE((SELECT MIN(DATE(reported_at)) FROM reports), CURDATE())
+                ),
+                CURDATE()) + 1) AS bulan";
+    $result = mysqli_query($conn, $sql);
+    $row = $result ? mysqli_fetch_assoc($result) : null;
+
+    return max(1, (int) ($row['bulan'] ?? 1));
+}
+
+function formatRataBulan($nilai)
+{
+    return number_format((float) $nilai, 1, ',', '.');
 }
 
 function getFacilityById($conn, $id)
@@ -40,29 +65,30 @@ function getFacilityById($conn, $id)
     return $facility ?: null;
 }
 
-function createFacility($conn, $name, $type, $location, $capacity, $desc)
+function createFacility($conn, $id, $name, $type, $location, $capacity, $desc, $photo = null)
 {
     $stmt = mysqli_prepare(
         $conn,
-        "INSERT INTO facilities (fac_name, type, location, capacity, fac_desc, fac_status)
-         VALUES (?, ?, ?, ?, ?, 'Aktif')"
+        "INSERT INTO facilities (fac_id, fac_name, type, location, capacity, fac_desc, fac_photo, fac_status)
+         VALUES (?, ?, ?, ?, ?, ?, ?, 'Aktif')"
     );
-    mysqli_stmt_bind_param($stmt, "sssis", $name, $type, $location, $capacity, $desc);
+    mysqli_stmt_bind_param($stmt, "ssssiss", $id, $name, $type, $location, $capacity, $desc, $photo);
     $ok = mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
 
     return $ok;
 }
 
-function updateFacility($conn, $id, $name, $type, $location, $capacity, $desc, $status)
+function updateFacility($conn, $id, $name, $type, $location, $capacity, $desc, $status, $photo = null)
 {
     $stmt = mysqli_prepare(
         $conn,
         "UPDATE facilities
-         SET fac_name = ?, type = ?, location = ?, capacity = ?, fac_desc = ?, fac_status = ?
+         SET fac_name = ?, type = ?, location = ?, capacity = ?, fac_desc = ?, fac_status = ?,
+             fac_photo = COALESCE(?, fac_photo)
          WHERE fac_id = ?"
     );
-    mysqli_stmt_bind_param($stmt, "sssisss", $name, $type, $location, $capacity, $desc, $status, $id);
+    mysqli_stmt_bind_param($stmt, "sssissss", $name, $type, $location, $capacity, $desc, $status, $photo, $id);
     $ok = mysqli_stmt_execute($stmt);
     mysqli_stmt_close($stmt);
 
@@ -105,6 +131,50 @@ function countFacilitiesByStatus($conn, $status)
     mysqli_stmt_close($stmt);
 
     return (int) $row['total'];
+}
+
+function getRekapPerLokasi($facilities)
+{
+    $rekap = [];
+    foreach ($facilities as $f) {
+        $lok = $f['location'];
+        if (!isset($rekap[$lok])) {
+            $rekap[$lok] = ['location' => $lok, 'fac_count' => 0, 'rsv_total' => 0, 'report_total' => 0, 'periode' => (int) $f['periode_bulan']];
+        }
+        $rekap[$lok]['fac_count']++;
+        $rekap[$lok]['rsv_total']    += (int) $f['rsv_total'];
+        $rekap[$lok]['report_total'] += (int) $f['report_total'];
+    }
+    ksort($rekap);
+    foreach ($rekap as &$r) {
+        $r['rsv_avg']    = round($r['rsv_total'] / $r['periode'], 1);
+        $r['report_avg'] = round($r['report_total'] / $r['periode'], 1);
+    }
+    unset($r);
+    return array_values($rekap);
+}
+
+function buatUuid()
+{
+    $b = random_bytes(16);
+    $b[6] = chr((ord($b[6]) & 0x0f) | 0x40);
+    $b[8] = chr((ord($b[8]) & 0x3f) | 0x80);
+    return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($b), 4));
+}
+
+function adaFoto($path)
+{
+    if (empty($path) || strpos($path, '..') !== false) {
+        return false;
+    }
+    return is_file(__DIR__ . '/../../' . ltrim($path, '/'));
+}
+
+function urlFoto($path)
+{
+    $path = ltrim($path, '/');
+    $encoded = implode('/', array_map('rawurlencode', explode('/', $path)));
+    return '../../' . $encoded . '?v=' . filemtime(__DIR__ . '/../../' . $path);
 }
 
 class facility_model {

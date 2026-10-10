@@ -23,12 +23,12 @@ CREATE TABLE users (
 CREATE TABLE facilities (
     fac_id CHAR(36) PRIMARY KEY DEFAULT (UUID()),
     fac_name VARCHAR(30) NOT NULL,
-    type ENUM('Ruang Kelas', 'Aula', 'Laboratorium', 'Alat', 'Lapangan', 'ruang kelas', 'aula', 'laboratorium', 'alat', 'lapangan') NOT NULL,
+    type ENUM('Ruang Kelas', 'Aula', 'Laboratorium', 'Alat', 'Lapangan') NOT NULL,
     location VARCHAR(255) NOT NULL,
     capacity INT NOT NULL,
     fac_desc VARCHAR(1000) NOT NULL,
     fac_photo VARCHAR(300) NULL,
-    fac_status ENUM('Aktif', 'Dalam perbaikan', 'Nonaktif', 'aktif', 'dalam perbaikan', 'nonaktif') NOT NULL
+    fac_status ENUM('Aktif', 'Dalam Perbaikan', 'Nonaktif') NOT NULL DEFAULT 'Aktif'
 );
 
 CREATE TABLE reservations (
@@ -117,23 +117,23 @@ INSERT INTO facilities (fac_name, type, location, capacity, fac_desc, fac_status
 ('Aula Utama', 'Aula', 'Gedung A Lantai 1', 300, 'Aula untuk seminar dan acara besar', 'Aktif'),
 ('Aula Mini', 'Aula', 'Gedung A Lantai 2', 80, 'Aula kecil untuk rapat dan workshop', 'Aktif'),
 ('Lab Komputer 1', 'Laboratorium', 'Gedung B Lantai 2', 40, 'Lab dengan 40 unit PC', 'Aktif'),
-('Lab Jaringan', 'Laboratorium', 'Gedung B Lantai 3', 30, 'Lab untuk praktikum jaringan komputer', 'Dalam perbaikan'),
+('Lab Jaringan', 'Laboratorium', 'Gedung B Lantai 3', 30, 'Lab untuk praktikum jaringan komputer', 'Dalam Perbaikan'),
 ('Ruang Kelas 101', 'Ruang Kelas', 'Gedung C Lantai 1', 35, 'Ruang kelas reguler dengan proyektor', 'Aktif'),
 ('Ruang Kelas 102', 'Ruang Kelas', 'Gedung C Lantai 1', 35, 'Ruang kelas reguler dengan AC', 'Aktif'),
 ('Ruang Kelas 201', 'Ruang Kelas', 'Gedung C Lantai 2', 50, 'Ruang kelas besar untuk kuliah umum', 'Nonaktif'),
 ('Proyektor Portabel', 'Alat', 'Gudang Sarpras', 5, 'Proyektor yang bisa dipinjam per unit', 'Aktif'),
 ('Lapangan Basket', 'Lapangan', 'Area Olahraga Timur', 20, 'Lapangan basket outdoor', 'Aktif'),
-('Lapangan Futsal', 'Lapangan', 'Area Olahraga Barat', 24, 'Lapangan futsal indoor', 'Dalam perbaikan'),
+('Lapangan Futsal', 'Lapangan', 'Area Olahraga Barat', 24, 'Lapangan futsal indoor', 'Dalam Perbaikan'),
 ('Ruang Kuliah Gedung A', 'Ruang Kelas', 'Fakultas Hukum (FH)', 50, 'Ruang kelas dilengkapi AC, proyektor, dan papan tulis interaktif.', 'Aktif'),
 ('Hall Utama FEB', 'Aula', 'Fakultas Ekonomika dan Bisnis (FEB)', 300, 'Aula luas untuk seminar nasional, simposium, dan acara akademik.', 'Aktif'),
 ('Lab Komputer Pemrograman', 'Laboratorium', 'Fakultas Teknik (FT)', 40, 'Laboratorium komputer spesifikasi tinggi untuk praktikum koding.', 'Aktif'),
 ('Mikroskop Binokuler Advanced', 'Alat', 'Fakultas Kedokteran (FK)', 15, 'Perangkat mikroskop presisi tinggi untuk riset patologi dan praktikum.', 'Aktif'),
 ('Lapangan Agrostologi', 'Lapangan', 'Fakultas Peternakan dan Pertanian (FPP)', 100, 'Lapangan terbuka untuk penelitian vegetasi dan praktikum lapangan.', 'Aktif'),
 ('Ruang Teater Bahasa', 'Ruang Kelas', 'Fakultas Ilmu Budaya (FIB)', 80, 'Ruang audio visual khusus pementasan karya dan studi linguistik.', 'Aktif'),
-('Studio Diskusi Publik', 'Laboratorium', 'Fakultas Ilmu Sosial dan Ilmu Politik (FISIP)', 25, 'Studio khusus simulasi debat, fokus grup, dan penyiaran.', 'Dalam perbaikan'),
+('Studio Diskusi Publik', 'Laboratorium', 'Fakultas Ilmu Sosial dan Ilmu Politik (FISIP)', 25, 'Studio khusus simulasi debat, fokus grup, dan penyiaran.', 'Dalam Perbaikan'),
 ('Lab Kimia Organik', 'Laboratorium', 'Fakultas Sains dan Matematika (FSM)', 35, 'Laboratorium dengan peralatan isolasi bahan kimia dan lemari asam.', 'Aktif'),
 ('Lapangan Basket Vokasi', 'Lapangan', 'Sekolah Vokasi & Sekolah Pascasarjana', 150, 'Lapangan olahraga outdoor untuk mahasiswa dan kegiatan kampus.', 'Aktif'),
-('Auditorium Pascasarjana', 'Aula', 'Sekolah Vokasi & Sekolah Pascasarjana', 200, 'Aula ber-AC dengan sistem suara modern untuk sidang terbuka.', 'Dalam perbaikan');
+('Auditorium Pascasarjana', 'Aula', 'Sekolah Vokasi & Sekolah Pascasarjana', 200, 'Aula ber-AC dengan sistem suara modern untuk sidang terbuka.', 'Dalam Perbaikan');
 
 INSERT INTO unverified_acc (unv_username, unv_password, unv_email) VALUES
 ('jennifer_fylia', '$2y$10$C9vDC1YiNRo8sq7Qcr3BaehltDFzTwjkdnu8wUNBQFIhpehbm6hze', 'jennifer_fylia@example.com'),
