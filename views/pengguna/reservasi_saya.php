@@ -90,7 +90,7 @@ check_session_valid('pengguna');
                             case 'riwayat':
                                 echo "Reservasi yang ditampilkan termasuk yang sudah disetujui "
                                 . "(sudah melewati slot waktu yang dipilih reservasi), "
-                                . "sudah ditolak petugas, sudah dbatalkan oleh anda maupun petugas, atau sudah kadaluarsa. "
+                                . "sudah ditolak petugas, sudah dibatalkan oleh anda maupun petugas, atau sudah kadaluarsa. "
                                 . "Pilih salah satu baris untuk melihat detail reservasinya.";
                                 break;
                             }
